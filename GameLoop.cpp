@@ -41,6 +41,20 @@ void GameLoop::logic()
 		_objects[0]->setPosition(x-1,y);
 	}
 
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+	{
+		float x = _objects[0]->getPosition().x;
+		float y = _objects[0]->getPosition().y;
+		_objects[0]->setPosition(x,y+1);
+	}
+
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
+	{
+		float x = _objects[0]->getPosition().x;
+		float y = _objects[0]->getPosition().y;
+		_objects[0]->setPosition(x,y-1);
+	}
+
 
 }
 
