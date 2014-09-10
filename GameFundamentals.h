@@ -16,6 +16,7 @@
 #include <iostream>
 
 #define PI 3.14159265
+#define G 9.81
 
 
 //Exception Classes
@@ -44,10 +45,10 @@ public:
 	bool operator==(const Coordinate& rhs) const;
 	bool operator!=(const Coordinate& rhs) const;
 	Coordinate operator-(const Coordinate& rhs) const;
+	Coordinate operator+(const Coordinate& rhs) const;
 	float dist(const Coordinate& rhs) const;
 	float getX() const;
 	float getY() const;
-protected:
 	void setX(const float& x);
 	void setY(const float& y);
 	void setMass(const float& m);
@@ -85,7 +86,7 @@ public:
 	VectorQuantity(const VectorQuantity& vec);
 	VectorQuantity(const float& angle, const float& magnitude);
 
-	float getMagnitude()const; // TODO
+	float getMagnitude() const; // TODO
 	float getAngle() const; // TODO
 
 	bool doCompare(const VectorQuantity& rhs) const;
@@ -96,6 +97,7 @@ public:
 	float operator*(const VectorQuantity& rhs) const; //dot product, cross product is meaningless in 2D
 	float getX() const;
 	float getY() const;
+	Coordinate getCoordinate() const;
 protected:
 	Coordinate _coordinate;
 };

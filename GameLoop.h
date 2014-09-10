@@ -19,6 +19,7 @@ public:
 	GameLoop();
 	virtual ~GameLoop();
 	void addObject(const std::shared_ptr<GameObject> obj);
+	void addPlayer(const std::shared_ptr<GameObject> obj);
 	void logic();
 	void loop();
 	void draw();
@@ -27,6 +28,7 @@ private:
 	float _stepTime = 0.1; //sec
 	sf::RenderWindow _window{sf::VideoMode(1000,500), "Project Test 07"};
 	std::vector<std::shared_ptr<GameObject>> _objects;
+	std::vector<std::shared_ptr<GameObject>> _players;
 };
 
 #endif /* GAMELOOP_H_ */

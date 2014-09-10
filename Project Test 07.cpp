@@ -12,8 +12,18 @@
 using namespace std;
 
 
+//------------------------------------------------------------------------------
+//				VectorQuantity
+//------------------------------------------------------------------------------
+TEST(VectorQuantity, get_angle)
+{
+	float angle = 5.65;
+	float mag = 2.12;
 
+	VectorQuantity testVec{angle, mag};
 
+	EXPECT_EQ(angle, testVec.getAngle());
+}
 
 
 

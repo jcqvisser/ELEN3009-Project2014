@@ -14,6 +14,9 @@ GameLoop::~GameLoop(){}
 void GameLoop::addObject(const std::shared_ptr<GameObject> obj)
 {	_objects.push_back(obj);}
 
+void GameLoop::addPlayer(const std::shared_ptr<GameObject> obj)
+{	_players.push_back(obj);}
+
 void GameLoop::setStepTime(const float& time)
 {
 	if (time > 0)
@@ -26,34 +29,13 @@ void GameLoop::logic()
 {
 	//check keypresses
 	//apply keypress actions
-
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
-	{
-		float x = _objects[0]->getPosition().x;
-		float y = _objects[0]->getPosition().y;
-		_objects[0]->setPosition(x+1,y);
-	}
-
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
-	{
-		float x = _objects[0]->getPosition().x;
-		float y = _objects[0]->getPosition().y;
-		_objects[0]->setPosition(x-1,y);
-	}
-
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
-	{
-		float x = _objects[0]->getPosition().x;
-		float y = _objects[0]->getPosition().y;
-		_objects[0]->setPosition(x,y+1);
-	}
-
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
 	{
-		float x = _objects[0]->getPosition().x;
-		float y = _objects[0]->getPosition().y;
-		_objects[0]->setPosition(x,y-1);
+		//move P1 back
+		VectorQuantity backForce{3.1415927*3/2, 1};
+		_players[0]->applyForce(backForce, _players[0]->_centerOfMass);
 	}
+
 
 
 }

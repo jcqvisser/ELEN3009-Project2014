@@ -19,27 +19,24 @@ public:
 	GameObject(){};
 	virtual ~GameObject(){};
 	void applyForce(const VectorQuantity& force, const Coordinate& pos); // TODO implement this
-	void applyForce(const VectorImpulse& force, const Coordinate& pos); // TODO implement this
 	void addVertex(const std::shared_ptr<Vertex>& vert); //copy a vertex into the  vertices vector
 	void printVertices(); // prints the coordinates and mass of all the vertices
 	void glue(); //TODO implement this
 	void unglue(); //TODO implement this
-	void move(float time);//todo;
+	void move(const Coordinate& pos);
+	void animate(float time);
 	Vertex _centerOfMass{};
 	Vertex _center{};
-protected:
-	float _maxDistFromCoM = 0;
-	bool _glued = true; //represents the object's ability to move
-	float _angularForce = 0;
-	float _initialAngluarVelocity = 0;
-	float _frictionAngular = 0;
-	float _frictionLinear = 0;
+	bool _glued = false; //represents the object's ability to move
 	float _frictionCoeff = 1;
-	VectorQuantity _velocityInitialLinear;
-	VectorQuantity _forceLinear;
+	float _frictionForceMagnitude;
+	float _dragCoeff = 1;
+	VectorQuantity _initialVelocity;
+	VectorQuantity _summedForce;
 	std::vector<std::shared_ptr<Vertex>> _vertices; // order that vertices are listed define edges.
 
 };
+
 
 
 #endif /* GAMEOBJECT_H_ */

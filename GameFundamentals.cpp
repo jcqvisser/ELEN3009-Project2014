@@ -34,6 +34,14 @@ Coordinate Coordinate::operator-(const Coordinate& rhs) const
 	return Coordinate{x,y};
 }
 
+Coordinate Coordinate::operator+(const Coordinate& rhs) const
+{
+	float x = getX() - rhs.getX();
+	float y = getY() - rhs.getY();
+
+	return Coordinate{x,y};
+}
+
 float Coordinate::dist(const Coordinate& rhs) const
 {
 	float x1 = getX();
@@ -147,6 +155,21 @@ float VectorQuantity::getX() const
 
 float VectorQuantity::getY() const
 {	return _coordinate.getY();}
+
+float VectorQuantity::getMagnitude() const
+{
+	return sqrt(pow(_coordinate.getX(),2) + pow(_coordinate.getY(),2));
+}
+
+float VectorQuantity::getAngle() const
+{
+	return atan2(_coordinate.getY(), _coordinate.getX()) + 2*PI;
+}
+
+Coordinate VectorQuantity::getCoordinate() const
+{
+	return _coordinate;
+}
 
 
 
