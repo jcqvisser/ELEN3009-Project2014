@@ -136,18 +136,32 @@ VectorQuantity VectorQuantity::operator-(const VectorQuantity& rhs) const
 
 VectorQuantity VectorQuantity::operator+(const VectorQuantity& rhs) const
 {
-	float x = _coordinate.getX() + rhs._coordinate.getX();
-	float y = _coordinate.getY() + rhs._coordinate.getY();
+	float x = getX() + rhs._coordinate.getX();
+	float y = getY() + rhs._coordinate.getY();
 
 	return VectorQuantity{Coordinate{x,y}};
 }
 
 float VectorQuantity::operator*(const VectorQuantity& rhs) const
 {
-	float x = _coordinate.getX() * rhs._coordinate.getX();
-	float y = _coordinate.getY() * rhs._coordinate.getY();
+	float x = getX() * rhs._coordinate.getX();
+	float y = getY() * rhs._coordinate.getY();
 
 	return x + y;
+}
+
+VectorQuantity VectorQuantity::operator*(const float& scal) const
+{
+	float x = getX() * scal;
+	float y = getY() * scal;
+	return VectorQuantity(Coordinate{x,y});
+}
+
+VectorQuantity VectorQuantity::operator/(const float& scal) const
+{
+	float x = getX() / scal;
+	float y = getY() / scal;
+	return VectorQuantity(Coordinate{x,y});
 }
 
 float VectorQuantity::getX() const

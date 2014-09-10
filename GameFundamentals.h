@@ -15,8 +15,8 @@
 #include <memory>
 #include <iostream>
 
-#define PI 3.14159265
-#define G 9.81
+#define PI 3.14159265;
+#define GACC 9.81
 
 
 //Exception Classes
@@ -95,10 +95,11 @@ public:
 	VectorQuantity operator-(const VectorQuantity& rhs) const;
 	VectorQuantity operator+(const VectorQuantity& rhs) const;
 	float operator*(const VectorQuantity& rhs) const; //dot product, cross product is meaningless in 2D
+	VectorQuantity operator*(const float& scal) const; //multiplicztion with a scalar
+	VectorQuantity operator/(const float& scal) const; //division with a scalar
 	float getX() const;
 	float getY() const;
 	Coordinate getCoordinate() const;
-protected:
 	Coordinate _coordinate;
 };
 

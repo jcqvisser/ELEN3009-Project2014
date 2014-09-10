@@ -27,17 +27,20 @@ void GameLoop::setStepTime(const float& time)
 
 void GameLoop::logic()
 {
-	//check keypresses
-	//apply keypress actions
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
 	{
 		//move P1 back
-		VectorQuantity backForce{3.1415927*3/2, 1};
-		_players[0]->applyForce(backForce, _players[0]->_centerOfMass);
+		VectorQuantity backForce{0, 100};
+		_players[0]->applyForce(backForce);
 	}
 
-
-
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+	{
+		//move P1 back
+		VectorQuantity backForce{0, -100};
+		_players[0]->applyForce(backForce);
+	}
+	_players[0]->animate(_stepTime);
 }
 
 void GameLoop::loop()
@@ -61,6 +64,11 @@ void GameLoop::loop()
 void GameLoop::draw()
 {
 	for (auto obj : _objects)
+	{
+		_window.draw(*obj);
+	}
+
+	for (auto obj : _players)
 	{
 		_window.draw(*obj);
 	}

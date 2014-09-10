@@ -24,8 +24,8 @@ public:
 	void loop();
 	void draw();
 	void setStepTime(const float& time);
+	float _stepTime = 0.02; //sec
 private:
-	float _stepTime = 0.1; //sec
 	sf::RenderWindow _window{sf::VideoMode(1000,500), "Project Test 07"};
 	std::vector<std::shared_ptr<GameObject>> _objects;
 	std::vector<std::shared_ptr<GameObject>> _players;
