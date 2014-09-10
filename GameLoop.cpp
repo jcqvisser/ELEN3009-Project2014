@@ -40,6 +40,20 @@ void GameLoop::logic()
 		VectorQuantity backForce{0, -100};
 		_players[0]->applyForce(backForce);
 	}
+
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+	{
+		//move P1 back
+		VectorQuantity backForce{3.1415/2, -100};
+		_players[0]->applyForce(backForce);
+	}
+
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
+	{
+		//move P1 back
+		VectorQuantity backForce{-3.1415/2, -100};
+		_players[0]->applyForce(backForce);
+	}
 	_players[0]->animate(_stepTime);
 }
 
