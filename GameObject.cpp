@@ -1,107 +1,152 @@
 /*
  * GameObject.cpp
  *
- *  Created on: 07 Sep 2014
+ *  Created on: 17 Sep 2014
  *      Author: Jacques
  */
 
 #include "GameObject.h"
 
-void GameObject::addVertex(const std::shared_ptr<Vertex>& vert)
-{
-	_vertices.push_back(vert);
+GameObject::GameObject(float mass) :
+	_mass(mass)
+{}
 
-	//recompute the center of mass
-	if (_vertices.size() == 0)
+Coordinate GameObject::getCenter() const
+{
+	return _centerOfMass;
+}
+
+void GameObject::addTriangle(const shared_ptr<Triangle>& tri)
+{
+	_triangles.push_back(tri);
+	for (int i = 0; i < 3; i++)
 	{
-		_centerOfMass = *vert;
-		_frictionForceMagnitude = vert->getMass()*_frictionCoeff*GACC;
+		_centerOfMass += *(tri->getCoordinate(i));
+	}
+}
+
+void GameObject::glue()
+{	_glued = true;}
+
+void GameObject::unglue()
+{	_glued = false;}
+
+void GameObject::applyForceLinear(const Coordinate& force)
+{
+	if (_glued == true)
+		throw object_is_glued_and_cannot_move{};
+	_forceLinear += force;
+
+}
+
+void GameObject::applyForceAngular(const float& force)
+{
+	if (_glued == true)
+		throw object_is_glued_and_cannot_move{};
+	_forceAngular += force;
+}
+
+void GameObject::rotate(const float& angle)
+{
+	if (_glued == true)
+		throw object_is_glued_and_cannot_move{};
+	for (auto triangle : _triangles)
+		triangle->rotate(angle, _centerOfMass);
+	_forward.rotate(angle, _centerOfMass);
+}
+
+void GameObject::move(const Coordinate& change)
+{
+	if (_glued == true)
+		throw object_is_glued_and_cannot_move{};
+	for (auto triangle : _triangles)
+		triangle->move(change);
+}
+
+bool GameObject::animateLinear(const float& time)
+{
+	if (_glued == true)
+		throw object_is_glued_and_cannot_move{};
+	bool moved = false;
+
+	if (_forceLinear > _forceLinearThreshold)
+	{
+		Coordinate a = _forceLinear/_dragCoeffLinear;
+		float e2 = exp(-_dragCoeffLinear/_mass*time);
+		float e1 = 1-e2;
+		_velocityLinear = a*e1 + _velocityLinear*time*e2;
+
+		Coordinate dPos = _velocityLinear*time;
+		move(dPos);
+		moved = true;
+		_forceLinear = Coordinate{};
+	}
+	else if (_velocityLinear > _vThresholdLinear)
+	{
+		float e2 = exp(-_dragCoeffLinear/_mass*time);
+		_velocityLinear = _velocityLinear*time*e2;
+
+		Coordinate dPos = _velocityLinear*time;
+		move(dPos);
+		moved = true;
+		_forceLinear = Coordinate{};
 	}
 	else
 	{
-		_centerOfMass += *vert;
-		_frictionForceMagnitude = _frictionForceMagnitude/_vertices.size()*(_vertices.size()-1);
-		_frictionForceMagnitude += (vert->getMass())/_vertices.size()*_frictionCoeff*GACC;
+		_velocityLinear = Coordinate{0,0};
 	}
-	setPosition(_centerOfMass.getX(), _centerOfMass.getY()); //TODO should this be here?
+
+	return moved;
 }
 
-void GameObject::printVertices()
+bool GameObject::animateAngular(const float& time)
 {
-	for (auto vert : _vertices)
+	if (_glued == true)
+		throw object_is_glued_and_cannot_move{};
+
+	bool rotated = false;
+
+	if (_forceAngular > _forceAngularThreshold)
 	{
-	 std::cout << vert->getX()  << " " << vert->getY() << " " << vert->getMass() << std::endl;
-	}
-}
-
-
-void GameObject::applyForce(const VectorQuantity& force)
-{
-
-	_summedForce = force + _summedForce; // TODO incr by
-
-}
-
-void GameObject::animate(float time)
-{
-	if (_summedForce.getMagnitude() > _frictionForceMagnitude)
-	{
-		//See Notes\ForceApplication.pdf
-		VectorQuantity resultantForce{_summedForce.getAngle(), (_summedForce.getMagnitude() - _frictionForceMagnitude)}; // TODO scalar sub
-		auto a = resultantForce/_dragCoeff;
-		float e2 = exp(-_dragCoeff/_centerOfMass.getMass()*time);
+		float a = _forceAngular/_dragCoeffAngular;
+		float e2 = exp(-_dragCoeffAngular/_mass*time);
 		float e1 = 1-e2;
-		_velocity = a*e1 + _velocity*e2;
+		_velocityAngular = a*e1 + _velocityAngular*time*e2;
 
-		VectorQuantity dPos = _velocity * time;
-		moveBy(dPos);
-		clearForce();
+		float dPos = _velocityAngular*time;
+		rotate(dPos);
+
+		rotated = true;
+		_forceAngular = 0;
 	}
-	else if (_velocity.getMagnitude() != 0)
+	else if (_velocityAngular > _vThresholdAngular)
 	{
-		float e2 = exp(-_dragCoeff/_centerOfMass.getMass()*time);
-		_velocity = _velocity*e2;
+		float e2 = exp(-_dragCoeffAngular/_mass*time);
+		_velocityAngular = _velocityAngular*time*e2;
 
-		VectorQuantity dPos = _velocity * time;
-		moveBy(dPos);
-		clearForce();
+		float dPos = _velocityAngular*time;
+		rotate(dPos);
+
+		rotated = true;
+		_forceAngular = 0;
 	}
-
-}
-
-void GameObject::move(const Coordinate& pos)
-{
-	if (pos != _centerOfMass)
+	else
 	{
-		float dx = pos.getX() - _centerOfMass.getX();
-		float dy = pos.getY() - _centerOfMass.getY();
-
-		for (auto coord : _vertices)
-		{
-			coord->setX(coord->getX() + dx);
-			coord->setY(coord->getY() + dy);
-		}
-
-		_centerOfMass.setX(_centerOfMass.getX() + dx);
-		_centerOfMass.setY(_centerOfMass.getY() + dy);
-		setPosition(_centerOfMass.getX() + dx, _centerOfMass.getY() + dy);
+		_velocityAngular = 0;
 	}
+
+	return rotated;
 }
 
-void GameObject::moveBy(const VectorQuantity& d)
+bool GameObject::animate(const float& time)
 {
-	float dx = d._coordinate.getX();
-	float dy = d._coordinate.getY();
+	if (_glued == true)
+		throw object_is_glued_and_cannot_move{};
+	bool move = animateLinear(time);
+	bool rotate = animateAngular(time);
 
-	float x = _centerOfMass.getX() + dx;
-	float y = _centerOfMass.getY() + dy;
+	if (move || rotate)
+		return true;
 
-	move(Coordinate{x,y});
+	return false;
 }
-
-void GameObject::clearForce()
-{
-	_summedForce._coordinate.setX(0);
-	_summedForce._coordinate.setY(0);
-}
-

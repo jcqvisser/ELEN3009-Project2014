@@ -1,43 +1,56 @@
 /*
  * GameObject.h
  *
- *  Created on: 07 Sep 2014
+ *  Created on: 17 Sep 2014
  *      Author: Jacques
  */
 
 #ifndef GAMEOBJECT_H_
 #define GAMEOBJECT_H_
-#include "GameFundamentals.h"
-#include <SFML/Graphics.hpp>
+#include "Triangle.h"
 
-//Exception Classes
-class cannot_apply_force_to_Game_Object_with_no_vertices{};
+class object_is_glued_and_cannot_move{};
 
-class GameObject : public sf::Sprite
-{
+class GameObject {
 public:
-	GameObject(){};
+	GameObject(float mass);
 	virtual ~GameObject(){};
-	void applyForce(const VectorQuantity& force); // TODO implement this
-	void addVertex(const std::shared_ptr<Vertex>& vert); //copy a vertex into the  vertices vector
-	void printVertices(); // prints the coordinates and mass of all the vertices
-	void glue(); //TODO implement this
-	void unglue(); //TODO implement this
-	void move(const Coordinate& pos);
-	void moveBy(const VectorQuantity& d);
-	void animate(float time);
-	void clearForce();
-	Vertex _centerOfMass{};
-	bool _glued = false; //represents the object's ability to move
-	float _frictionCoeff = 0.7;
-	float _frictionForceMagnitude = 0;
-	float _dragCoeff = 1;
-	VectorQuantity _velocity{Coordinate{0,0}};
-	VectorQuantity _summedForce{Coordinate{0,0}};
-	std::vector<std::shared_ptr<Vertex>> _vertices; // order that vertices are listed define edges.
 
+	Coordinate getCenter() const;
+
+	void addTriangle(const shared_ptr<Triangle>& tri);
+
+	void glue();
+	void unglue();
+
+	void applyForceLinear(const Coordinate& force);
+	void applyForceAngular(const float& force);
+	bool animate(const float& time);
+
+private:
+	void move(const Coordinate& change);
+	void rotate(const float& angle);
+	bool animateLinear(const float& time);
+	bool animateAngular(const float& time);
+
+	float _mass;
+	Coordinate _centerOfMass{0, 0};
+	bool _glued = false;
+	float _coeffOfRestitution = 0.5;
+	vector<shared_ptr<Triangle>> _triangles;
+
+	Coordinate _forward{0, 1};
+	Coordinate _velocityLinear{0, 0};
+	float _vThresholdLinear{0};
+	Coordinate _forceLinear{0, 0};
+	float _dragCoeffLinear = 1;
+	float _forceLinearThreshold = 0.1;
+
+	float _velocityAngular = 0.0;
+	float _forceAngular = 0.0;
+	float _vThresholdAngular{0};
+	float _dragCoeffAngular = 5;
+	float _forceAngularThreshold = 0.1;
 };
-
-
 
 #endif /* GAMEOBJECT_H_ */
