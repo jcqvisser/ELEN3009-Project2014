@@ -16,6 +16,16 @@ Coordinate GameObject::getCenter() const
 	return _centerOfMass;
 }
 
+Coordinate GameObject::getVelocity() const
+{
+	return _velocityLinear;
+}
+
+float GameObject::getMass() const
+{
+	return _mass;
+}
+
 void GameObject::addTriangle(const shared_ptr<Triangle>& tri)
 {
 	_triangles.push_back(tri);
@@ -37,6 +47,11 @@ void GameObject::applyForceLinear(const Coordinate& force)
 		throw object_is_glued_and_cannot_move{};
 	_forceLinear += force;
 
+}
+
+void GameObject::applyImpulseLinear(const Coordinate& impulse)
+{
+	_velocityLinear += impulse;
 }
 
 void GameObject::applyForceAngular(const float& force)
@@ -148,5 +163,53 @@ bool GameObject::animate(const float& time)
 	if (move || rotate)
 		return true;
 
+	return false;
+}
+
+Coordinate GameObject::avgCoordInside(const GameObject& gO)
+{
+	float xn=0;
+	float yn=0;
+	int count = 0;
+
+	auto tris = gO._triangles;
+
+	vector<shared_ptr<Coordinate>> temp;
+	for (auto tri : _triangles)
+	{
+		temp = tri->coordsInside(tris);
+		for (auto coord : temp)
+		{
+			xn += coord->x();
+			yn += coord->y();
+			count++;
+		}
+	}
+
+	xn /= count;
+	yn /= count;
+	return Coordinate{xn, yn};
+}
+
+Line GameObject::intersectingLine(const Line& penetratingLine)
+{
+	for (auto tri : _triangles)
+	{
+		for (int n = 0; n < 3; n++)
+		{
+			if (tri->getLine(n).intersects(penetratingLine))
+			{
+				return Line{tri->getLine(n)};
+			}
+		}
+	}
+	throw No_Line_Intersects{};
+}
+
+bool GameObject::hasInside(const shared_ptr<GameObject>& gO)
+{
+	for (auto tri1 : _triangles)
+		if (tri1->hasInside(gO->_triangles))
+			return true;
 	return false;
 }

@@ -8,8 +8,10 @@
 #ifndef GAMEOBJECT_H_
 #define GAMEOBJECT_H_
 #include "Triangle.h"
+#include <iterator>
 
 class object_is_glued_and_cannot_move{};
+class No_Line_Intersects{};
 
 class GameObject {
 public:
@@ -17,6 +19,8 @@ public:
 	virtual ~GameObject(){};
 
 	Coordinate getCenter() const;
+	Coordinate getVelocity() const;
+	float getMass() const;
 
 	void addTriangle(const shared_ptr<Triangle>& tri);
 
@@ -24,10 +28,17 @@ public:
 	void unglue();
 
 	void applyForceLinear(const Coordinate& force);
+	void applyImpulseLinear(const Coordinate& impulse);
 	void applyForceAngular(const float& force);
 	bool animate(const float& time);
 
+	bool hasInside(const shared_ptr<GameObject>& gO);
+	Coordinate avgCoordInside(const GameObject& gO);
+	Line intersectingLine(const Line& penetratingLine);
+
 private:
+	vector<shared_ptr<Triangle>> _triangles;
+
 	void move(const Coordinate& change);
 	void rotate(const float& angle);
 	bool animateLinear(const float& time);
@@ -36,8 +47,6 @@ private:
 	float _mass;
 	Coordinate _centerOfMass{0, 0};
 	bool _glued = false;
-	float _coeffOfRestitution = 0.5;
-	vector<shared_ptr<Triangle>> _triangles;
 
 	Coordinate _forward{0, 1};
 	Coordinate _velocityLinear{0, 0};

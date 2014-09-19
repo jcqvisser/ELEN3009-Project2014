@@ -10,6 +10,7 @@
 
 #include <cmath>
 #define PI 3.1415926536
+#define INF 2000
 
 class Coordinate
 {

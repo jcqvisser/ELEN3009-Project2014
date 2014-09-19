@@ -31,10 +31,9 @@ shared_ptr<Coordinate> Triangle::getCoordinate(const int coord) const
 	return _coordinates[coord];
 }
 
-bool Triangle::isInside(const shared_ptr<Coordinate>& coord) const
+bool Triangle::hasInside(const shared_ptr<Coordinate>& coord) const
 {
 	int len = _coordinates.size();
-
 	for (int i = 0; i != len; i++)
 	{
 		auto opposingCoord = _coordinates[i];
@@ -47,29 +46,31 @@ bool Triangle::isInside(const shared_ptr<Coordinate>& coord) const
 	return true;
 }
 
-int Triangle::coordsInside(const vector<shared_ptr<Coordinate>>& coords) const
+vector<shared_ptr<Coordinate>> Triangle::coordsInside(const vector<shared_ptr<Coordinate>>& coords) const
 {
-	int inside = 0;
+	vector<shared_ptr<Coordinate>> coordsInside;
 
 	for(auto coord : coords)
 	{
-		if(isInside(coord))
-			inside++;
+		if(hasInside(coord))
+			coordsInside.push_back(coord);
 	}
-
-	return inside;
+	return coordsInside;
 }
 
-int Triangle::coordsInside(const vector<shared_ptr<Triangle>> triangles) const
+vector<shared_ptr<Coordinate>> Triangle::coordsInside(const vector<shared_ptr<Triangle>> triangles) const
 {
-	int inside = 0;
+	vector<shared_ptr<Coordinate>> coordsInside;
 
 	for (auto tri : triangles)
 	{
-		inside += this->coordsInside(tri->_coordinates);
+		auto inside = this->coordsInside(tri->_coordinates);
+		for(auto coord : inside)
+		{
+			coordsInside.push_back(coord);
+		}
 	}
-
-	return inside;
+	return coordsInside;
 }
 
 void Triangle::rotate(const float angle, const Coordinate& center)
@@ -86,4 +87,29 @@ void Triangle::move(const Coordinate change)
 	{
 		(*coord)+=change;
 	}
+}
+
+Line Triangle::getLine(const int LineNo)
+{
+	return Line{_coordinates[LineNo%3], _coordinates[(LineNo+1)%3]};
+}
+
+bool Triangle::hasInside(const vector<shared_ptr<Coordinate>>& coords) const
+{
+	for(auto coord : coords)
+	{
+		if(hasInside(coord))
+			return true;
+	}
+	return false;
+}
+
+bool Triangle::hasInside(const vector<shared_ptr<Triangle>> triangles) const
+{
+	for (auto tri : triangles)
+	{
+		if (hasInside(tri->_coordinates))
+			return true;
+	}
+	return false;
 }
