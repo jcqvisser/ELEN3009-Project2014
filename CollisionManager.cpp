@@ -15,6 +15,11 @@ CollisionManager::~CollisionManager() {
 	// TODO Auto-generated destructor stub
 }
 
+void CollisionManager::setGameObjecs(const vector<shared_ptr<GameObject>>& gameObjects)
+{
+	_gameObjects = gameObjects;
+}
+
 void CollisionManager::findCollisions()
 {
 	for (unsigned go1 = 0; go1 != _gameObjects.size()-1; go1++)

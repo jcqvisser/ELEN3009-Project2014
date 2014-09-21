@@ -235,3 +235,8 @@ void GameObject::clearForce()
 	_forceLinear = Coordinate{0,0};
 	_forceAngular = 0;
 }
+
+float GameObject::getRotation() const
+{
+	return _forward.angle();
+}

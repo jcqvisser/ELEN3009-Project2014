@@ -23,6 +23,7 @@ public:
 	Coordinate getVelocity() const;
 	Coordinate getForward() const;
 	float getMass() const;
+	float getRotation() const;
 
 	void addTriangle(const shared_ptr<Triangle>& tri);
 

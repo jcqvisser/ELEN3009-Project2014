@@ -11,8 +11,10 @@
 
 class CollisionManager {
 public:
+	CollisionManager(){};
 	CollisionManager(vector<shared_ptr<GameObject>> gameObjects);
 	virtual ~CollisionManager();
+	void setGameObjecs(const vector<shared_ptr<GameObject>>& gameObjects);
 	void findCollisions();
 	void ResolveCollisions();
 	int numCollisions();
