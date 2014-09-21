@@ -1,32 +1,25 @@
 /*
  * CollisionManager.h
  *
- *  Created on: 18 Sep 2014
+ *  Created on: 21 Sep 2014
  *      Author: Jacques
  */
 
 #ifndef COLLISIONMANAGER_H_
 #define COLLISIONMANAGER_H_
 #include "Collision.h"
-#include <iterator>
-
-class Objects_did_not_collide{};
 
 class CollisionManager {
 public:
-	CollisionManager();
+	CollisionManager(vector<shared_ptr<GameObject>> gameObjects);
 	virtual ~CollisionManager();
+	void findCollisions();
+	void ResolveCollisions();
+	int numCollisions();
 
-
-	Collision hasCollided(
-			const shared_ptr<GameObject>& collider,
-			const shared_ptr<GameObject>& collidee) const;
-	void resolveCollision(Collision& col); // TODO
-	void findCollisions(
-			const vector<shared_ptr<GameObject>>& objects);
-	void resolveAllCollisions();
-
-	vector<shared_ptr<Collision>> _collisions;
+private:
+	vector<shared_ptr<GameObject>> _gameObjects;
+	vector<Collision> _collisions;
 };
 
 #endif /* COLLISIONMANAGER_H_ */

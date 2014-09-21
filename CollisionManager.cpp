@@ -1,65 +1,46 @@
 /*
  * CollisionManager.cpp
  *
- *  Created on: 18 Sep 2014
+ *  Created on: 21 Sep 2014
  *      Author: Jacques
  */
 
 #include "CollisionManager.h"
 
-CollisionManager::CollisionManager() {
-	// TODO Auto-generated constructor stud
-}
+CollisionManager::CollisionManager(vector<shared_ptr<GameObject>> gameObjects) :
+	_gameObjects(gameObjects)
+{}
 
 CollisionManager::~CollisionManager() {
-	// TODO Auto-generated destructor stud
+	// TODO Auto-generated destructor stub
 }
 
-
-Collision CollisionManager::hasCollided(
-		const shared_ptr<GameObject>& collider,
-		const shared_ptr<GameObject>& collidee) const
+void CollisionManager::findCollisions()
 {
-	if (collidee->hasInside(collider))
-		return Collision{collider, collidee};
-
-	throw Objects_did_not_collide{};
-}
-
-void CollisionManager::resolveCollision(Collision& col)
-{
-// TODO apply appropriate impulses to objects
-}
-
-void CollisionManager::findCollisions(
-		const vector<shared_ptr<GameObject>>& objects)
-{
-	_collisions.clear();
-
-	for (auto obj0 = objects.begin(); obj0 != objects.end(); ++obj0)
+	for (unsigned go1 = 0; go1 != _gameObjects.size()-1; go1++)
 	{
-		for (auto obj1 = obj0 + 1; obj1 != objects.end(); ++obj1)
+		for (unsigned go2 = go1+1; go2 != _gameObjects.size(); go2++)
 		{
-			try
+			if (_gameObjects[go1]->hasInside(_gameObjects[go2]) ||
+				_gameObjects[go2]->hasInside(_gameObjects[go1]))
 			{
-				_collisions.push_back(shared_ptr<Collision>{new Collision{*obj0, *obj1}});
-			}
-			catch(Objects_did_not_collide&)
-			{
-				//do nothing
+				Collision col{_gameObjects[go1], _gameObjects[go2]};
+				_collisions.push_back(col);
 			}
 		}
 	}
-
-	if (_collisions.size() == 0)
-		throw Objects_did_not_collide{};
 }
 
-void CollisionManager::resolveAllCollisions()
+void CollisionManager::ResolveCollisions()
 {
-	for (auto collision : _collisions)
+	for (auto col : _collisions)
 	{
-		resolveCollision(*collision);
+		col.resolve();
 	}
-	_collisions.clear();
 }
+
+int CollisionManager::numCollisions()
+{
+	return _collisions.size();
+}
+

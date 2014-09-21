@@ -7,7 +7,7 @@
 //============================================================================
 
 #include <iostream>
-#include "GameObject.h"
+#include "CollisionManager.h"
 using namespace std;
 
 #include <gtest/gtest.h>
@@ -202,6 +202,42 @@ TEST(Line, isBelowLineFalse)
 	EXPECT_FALSE(lin.isBelow(tC2));
 }
 
+TEST(Line, intersects)
+{
+	shared_ptr<Coordinate> c0{new Coordinate{0,0}};
+	shared_ptr<Coordinate> c1{new Coordinate{5,0}};
+	Line lin0{c0,c1};
+
+	shared_ptr<Coordinate> c2{new Coordinate{2,-1}};
+	shared_ptr<Coordinate> c3{new Coordinate{2,1}};
+	Line lin1{c2,c3};
+
+	EXPECT_TRUE(lin1.intersects(lin0));
+	EXPECT_TRUE(lin0.intersects(lin1));
+}
+
+TEST(Line, Equality)
+{
+	shared_ptr<Coordinate> c0{new Coordinate{0,0}};
+	shared_ptr<Coordinate> c1{new Coordinate{5,0}};
+	Line lin0{c0,c1};
+
+	shared_ptr<Coordinate> c2{new Coordinate{0,0}};
+	shared_ptr<Coordinate> c3{new Coordinate{5,0}};
+	Line lin1{c2,c3};
+
+	EXPECT_EQ(lin1, lin0);
+}
+
+TEST(Line, Normal)
+{
+	shared_ptr<Coordinate> c0{new Coordinate{0,0}};
+	shared_ptr<Coordinate> c1{new Coordinate{5,0}};
+	Line lin0{c0,c1};
+
+	Coordinate norm = lin0.getNormal();
+	norm.print();
+}
 
 //------------------------------------------------------------------------------
 //				Triangle
@@ -335,55 +371,134 @@ TEST(GameObject, addTriangle)
 	testGO.addTriangle(testTri);
 }
 
-//TEST(GameObject, Move)
-//{
-//	Coordinate c0{0,0};
-//	Coordinate c1{5,5};
-//	Coordinate c2{0,5};
-//
-//	shared_ptr<Coordinate> tC0{new Coordinate{c0}};
-//	shared_ptr<Coordinate> tC1{new Coordinate{c1}};
-//	shared_ptr<Coordinate> tC2{new Coordinate{c2}};
-//	shared_ptr<Triangle> testTri{new Triangle{tC0, tC1, tC2}};
-//
-//	GameObject tGO{1};
-//	tGO.addTriangle(testTri);
-//
-//	Coordinate dPos{1,1};
-//	tGO.move(dPos);
-//
-//	EXPECT_EQ(c0 + dPos, *(tGO._triangles[0]->getCoordinate(0)));
-//	EXPECT_EQ(c1 + dPos, *(tGO._triangles[0]->getCoordinate(1)));
-//	EXPECT_EQ(c2 + dPos, *(tGO._triangles[0]->getCoordinate(2)));
-//}
+TEST(GameObject, animateLinearForce)
+{
+	shared_ptr<Coordinate> tC0{new Coordinate{0,0}};
+	shared_ptr<Coordinate> tC1{new Coordinate{1,1}};
+	shared_ptr<Coordinate> tC2{new Coordinate{0,1}};
+	shared_ptr<Triangle> testTri{new Triangle{tC0, tC1, tC2}};
+	GameObject testGO{1};
+	testGO.addTriangle(testTri);
 
-//TEST(GameObject, Rotate)
-//{
-//	float angle{3};
-//
-//	Coordinate c0{0,0};
-//	Coordinate c1{5,5};
-//	Coordinate c2{0,5};
-//	std::shared_ptr<Coordinate> t0C0{new Coordinate{c0}};
-//	std::shared_ptr<Coordinate> t0C1{new Coordinate{c1}};
-//	std::shared_ptr<Coordinate> t0C2{new Coordinate{c2}};
-//	std::shared_ptr<Triangle> t0{new Triangle{t0C0, t0C1, t0C2}};
-//
-//	GameObject tGO{1};
-//	tGO.addTriangle(t0);
-//	Coordinate center{tGO.getCenter()};
-//
-//	tGO.rotate(angle);
-//	c0.rotate(angle, center);
-//	c1.rotate(angle, center);
-//	c2.rotate(angle, center);
-//
-//	EXPECT_EQ(c0, *(tGO._triangles[0]->getCoordinate(0)));
-//	EXPECT_EQ(c1, *(tGO._triangles[0]->getCoordinate(1)));
-//	EXPECT_EQ(c2, *(tGO._triangles[0]->getCoordinate(2)));
-//}
+	shared_ptr<Coordinate> tC4{new Coordinate{0,0}};
+	shared_ptr<Coordinate> tC5{new Coordinate{1,1}};
+	shared_ptr<Coordinate> tC6{new Coordinate{0,1}};
+	shared_ptr<Triangle> testTri1{new Triangle{tC4, tC5, tC6}};
+	GameObject testGO1{1};
+	testGO1.addTriangle(testTri1);
+
+	Coordinate force{1,0};
+	testGO.applyForceLinear(force);
+
+	testGO.animate(1);
+
+	EXPECT_FALSE(testGO.getCenter() == testGO1.getCenter());
+}
+
+TEST(GameObject, animateAngular)
+{
+	shared_ptr<Coordinate> tC0{new Coordinate{0,0}};
+	shared_ptr<Coordinate> tC1{new Coordinate{1,1}};
+	shared_ptr<Coordinate> tC2{new Coordinate{0,1}};
+	shared_ptr<Triangle> testTri{new Triangle{tC0, tC1, tC2}};
+	GameObject testGO{1};
+	testGO.addTriangle(testTri);
+
+	shared_ptr<Coordinate> tC4{new Coordinate{0,0}};
+	shared_ptr<Coordinate> tC5{new Coordinate{1,1}};
+	shared_ptr<Coordinate> tC6{new Coordinate{0,1}};
+	shared_ptr<Triangle> testTri1{new Triangle{tC4, tC5, tC6}};
+	GameObject testGO1{1};
+	testGO1.addTriangle(testTri1);
+
+	float force = 1;
+	testGO.applyForceAngular(force);
+
+	testGO.animate(1);
+
+	EXPECT_FALSE(testGO.getForward() == testGO1.getForward());
+}
+
+TEST(GameObject, IntersectingLine)
+{
+	shared_ptr<Coordinate> tC0{new Coordinate{0,0}};
+	shared_ptr<Coordinate> tC1{new Coordinate{1,1}};
+	shared_ptr<Coordinate> tC2{new Coordinate{1,0.1}};
+	shared_ptr<Triangle> testTri{new Triangle{tC0, tC1, tC2}};
+	GameObject testGO{1};
+	testGO.addTriangle(testTri);
+
+	shared_ptr<Coordinate> tC3{new Coordinate{0.5,0.25}};
+	shared_ptr<Coordinate> tC4{new Coordinate{0.5,-10}};
+	Line testLine{tC3, tC4};
+
+	Line lin0{tC0, tC2};
+	auto lin1 = testGO.intersectingLine(testLine);
+
+	EXPECT_EQ(lin0, lin1);
+}
+
+//------------------------------------------------------------------------------
+//					Collision
+//------------------------------------------------------------------------------
+
+TEST(Collision, Construction)
+{
+	shared_ptr<Coordinate> tC0{new Coordinate{0,0}};
+	shared_ptr<Coordinate> tC1{new Coordinate{2,0}};
+	shared_ptr<Coordinate> tC2{new Coordinate{1,2}};
+	shared_ptr<Triangle> testTri{new Triangle{tC0, tC1, tC2}};
+	shared_ptr<GameObject> testGO{new GameObject{1}};
+	testGO->addTriangle(testTri);
+
+	shared_ptr<Coordinate> tC4{new Coordinate{0,-1}};
+	shared_ptr<Coordinate> tC5{new Coordinate{2,-1}};
+	shared_ptr<Coordinate> tC6{new Coordinate{1,1}};
+	shared_ptr<Triangle> testTri1{new Triangle{tC4, tC5, tC6}};
+	shared_ptr<GameObject> testGO1{new GameObject{1}};
+	testGO1->addTriangle(testTri1);
+
+	Coordinate velocity(0,1);
+	testGO1->applyImpulseLinear(velocity);
+
+	Collision col{testGO, testGO1};
+}
 
 
 
 
+//------------------------------------------------------------------------------
+//			CollisionManager
+//------------------------------------------------------------------------------
+
+TEST(Collision, objectsCollided_NoCollisions)
+{
+	shared_ptr<Coordinate> tC0{new Coordinate{0,0}};
+	shared_ptr<Coordinate> tC1{new Coordinate{2,0}};
+	shared_ptr<Coordinate> tC2{new Coordinate{0,1}};
+	shared_ptr<Triangle> testTri{new Triangle{tC0, tC1, tC2}};
+	shared_ptr<GameObject> testGO{new GameObject{1}};
+	testGO->addTriangle(testTri);
+
+	shared_ptr<Coordinate> tC4{new Coordinate{0,-1}};
+	shared_ptr<Coordinate> tC5{new Coordinate{2,-1}};
+	shared_ptr<Coordinate> tC6{new Coordinate{1,1}};
+	shared_ptr<Triangle> testTri1{new Triangle{tC4, tC5, tC6}};
+	shared_ptr<GameObject> testGO1{new GameObject{1}};
+	testGO1->addTriangle(testTri1);
+
+	Coordinate force{0,1};
+	testGO1->applyImpulseLinear(force);
+
+	vector<shared_ptr<GameObject>> GOs;
+	GOs.push_back(testGO);
+	GOs.push_back(testGO1);
+
+	CollisionManager CM{GOs};
+
+	CM.findCollisions();
+
+	EXPECT_EQ(0, CM.numCollisions());
+
+}
 

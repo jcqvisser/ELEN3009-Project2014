@@ -9,8 +9,10 @@
 #define COORDINATE_H_
 
 #include <cmath>
+#include <iostream>
 #define PI 3.1415926536
 #define INF 2000
+#define NOTHING 0.001
 
 class Coordinate
 {
@@ -25,6 +27,7 @@ public:
 	float magSquared() const;
 	float x() const;
 	float y() const;
+	void print() const;
 
 	Coordinate operator+(const Coordinate& coord) const;
 	Coordinate operator-(const Coordinate& coord) const;
@@ -42,6 +45,7 @@ public:
 	bool operator==(const float& rhs) const;
 
 	void rotate(const float angle, const Coordinate& center);
+	void rotate(const float angle);
 private:
 	float _x;
 	float _y;

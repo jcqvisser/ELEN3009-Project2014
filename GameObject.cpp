@@ -21,6 +21,11 @@ Coordinate GameObject::getVelocity() const
 	return _velocityLinear;
 }
 
+Coordinate GameObject::getForward() const
+{
+	return _forward;
+}
+
 float GameObject::getMass() const
 {
 	return _mass;
@@ -67,7 +72,7 @@ void GameObject::rotate(const float& angle)
 		throw object_is_glued_and_cannot_move{};
 	for (auto triangle : _triangles)
 		triangle->rotate(angle, _centerOfMass);
-	_forward.rotate(angle, _centerOfMass);
+	_forward.rotate(angle);
 }
 
 void GameObject::move(const Coordinate& change)
@@ -76,6 +81,7 @@ void GameObject::move(const Coordinate& change)
 		throw object_is_glued_and_cannot_move{};
 	for (auto triangle : _triangles)
 		triangle->move(change);
+	_centerOfMass += change;
 }
 
 bool GameObject::animateLinear(const float& time)
@@ -94,7 +100,6 @@ bool GameObject::animateLinear(const float& time)
 		Coordinate dPos = _velocityLinear*time;
 		move(dPos);
 		moved = true;
-		_forceLinear = Coordinate{};
 	}
 	else if (_velocityLinear > _vThresholdLinear)
 	{
@@ -104,7 +109,6 @@ bool GameObject::animateLinear(const float& time)
 		Coordinate dPos = _velocityLinear*time;
 		move(dPos);
 		moved = true;
-		_forceLinear = Coordinate{};
 	}
 	else
 	{
@@ -132,7 +136,6 @@ bool GameObject::animateAngular(const float& time)
 		rotate(dPos);
 
 		rotated = true;
-		_forceAngular = 0;
 	}
 	else if (_velocityAngular > _vThresholdAngular)
 	{
@@ -143,7 +146,6 @@ bool GameObject::animateAngular(const float& time)
 		rotate(dPos);
 
 		rotated = true;
-		_forceAngular = 0;
 	}
 	else
 	{
@@ -163,6 +165,7 @@ bool GameObject::animate(const float& time)
 	if (move || rotate)
 		return true;
 
+	clearForce();
 	return false;
 }
 
@@ -186,6 +189,8 @@ Coordinate GameObject::avgCoordInside(const GameObject& gO)
 		}
 	}
 
+	if (count == 0)
+		throw No_Coordinates_Inside{};
 	xn /= count;
 	yn /= count;
 	return Coordinate{xn, yn};
@@ -203,6 +208,7 @@ Line GameObject::intersectingLine(const Line& penetratingLine)
 			}
 		}
 	}
+	cout << endl <<  "No Line Intersects" << endl;
 	throw No_Line_Intersects{};
 }
 
@@ -212,4 +218,20 @@ bool GameObject::hasInside(const shared_ptr<GameObject>& gO)
 		if (tri1->hasInside(gO->_triangles))
 			return true;
 	return false;
+}
+
+void GameObject::setDragCoeffLinear(const float& dC)
+{
+	_dragCoeffLinear = dC;
+}
+
+void GameObject::setDragCoeffAngular(const float& dC)
+{
+	_dragCoeffAngular = dC;
+}
+
+void GameObject::clearForce()
+{
+	_forceLinear = Coordinate{0,0};
+	_forceAngular = 0;
 }

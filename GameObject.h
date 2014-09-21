@@ -12,6 +12,7 @@
 
 class object_is_glued_and_cannot_move{};
 class No_Line_Intersects{};
+class No_Coordinates_Inside{};
 
 class GameObject {
 public:
@@ -20,6 +21,7 @@ public:
 
 	Coordinate getCenter() const;
 	Coordinate getVelocity() const;
+	Coordinate getForward() const;
 	float getMass() const;
 
 	void addTriangle(const shared_ptr<Triangle>& tri);
@@ -31,12 +33,16 @@ public:
 	void applyImpulseLinear(const Coordinate& impulse);
 	void applyForceAngular(const float& force);
 	bool animate(const float& time);
+	virtual void clearForce();
 
 	bool hasInside(const shared_ptr<GameObject>& gO);
 	Coordinate avgCoordInside(const GameObject& gO);
 	Line intersectingLine(const Line& penetratingLine);
 
-private:
+	void setDragCoeffLinear(const float& dC);
+	void setDragCoeffAngular(const float& dC);
+
+protected:
 	vector<shared_ptr<Triangle>> _triangles;
 
 	void move(const Coordinate& change);

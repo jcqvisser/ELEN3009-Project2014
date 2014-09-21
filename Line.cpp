@@ -21,6 +21,23 @@ Line::Line(const Line& lin) : //Note this is iportant for th report, copy constr
 	_coordinate2(lin._coordinate2)
 { }
 
+bool Line::operator==(const Line& rhs) const
+{
+	Line lin = rhs;
+	Coordinate c11 = *_coordinate1;
+	Coordinate c21 = *(lin._coordinate1);
+
+	Coordinate c12 = *_coordinate2;
+	Coordinate c22 = *(lin._coordinate2);
+
+	if (c11 == c21 && c12 == c22)
+		return true;
+	if(c11 == c22 && c12 == c21)
+		return true;
+
+	return false;
+
+}
 
 float Line::lengthSquared() const
 {
@@ -79,15 +96,41 @@ bool Line::isBelow(const std::shared_ptr<Coordinate>& coord) const
 
 float Line::isBetween(const float& pt0, const float& bound1, const float& bound2) const
 {
-	if (pt0 <= bound2 && pt0 >= bound1)
+	if (pt0 < bound2 && pt0 > bound1)
 		return true;
-	else if ((pt0 >= bound2 && pt0 <= bound1))
+	else if ((pt0 > bound2 && pt0 < bound1))
 		return true;
 	return false;
 }
 
-bool Line::intersects(const Line& line)
+bool Line::intersects(const Line& line) const
 {
+
+	float x1l1 = _coordinate1->x();
+	float x2l1 = _coordinate2->x();
+	float y1l1 = _coordinate1->y();
+	float y2l1 = _coordinate2->y();
+
+	float x1l2 = line._coordinate1->x();
+	float x2l2 = line._coordinate2->x();
+	float y1l2 = line._coordinate1->y();
+	float y2l2 = line._coordinate2->y();
+
+	if (x1l1 == x2l1)
+	{
+		float y0 = line.getYVal(x1l1);
+		if (isBetween(y0, y1l1, y2l1))
+			return true;
+	}
+
+
+	if (x1l2 == x2l2)
+	{
+		float y0 = getYVal(x1l2);
+		if (isBetween(y0, y1l2, y2l2))
+			return true;
+	}
+
 	float m0 = getSlope();
 	float c0 = getYIntercept();
 
@@ -95,11 +138,22 @@ bool Line::intersects(const Line& line)
 	float c1 = line.getYIntercept();
 
 	float x2 = (c0-c1)/(m1-m0);
+	float y2 = getYVal(x2);
 
-	if (  isBetween(x2, _coordinate1->x(), _coordinate2->x()) &&
-		 isBetween(x2, line._coordinate1->x(), line._coordinate2->x()) )
+	if (isBetween(x2, x1l1, x2l1) &&
+		isBetween(x2, x1l2, x2l2))
+		if (isBetween(y2, y1l1, y2l1) &&
+			isBetween(y2, y1l2, y2l2))
+			return true;
+
+	return false;
+}
+
+bool Line::isOnLine(const Coordinate& coord) const
+{
+	float y0 = getYVal(coord.x());
+	if (y0 == coord.y())
 		return true;
-
 	return false;
 }
 
@@ -109,7 +163,7 @@ Coordinate Line::getNormal()
 	//subtr endpoints
 	//divide my mag
 	Coordinate normal{};
-	_coordinate2->rotate(PI/2, *(_coordinate1));
+	_coordinate2->rotate(-PI/2, *(_coordinate1));
 	if (_coordinate1->magSquared() > _coordinate2->magSquared())
 		normal = *_coordinate1 - *_coordinate2;
 	else if (_coordinate1->magSquared() < _coordinate2->magSquared())
@@ -117,4 +171,10 @@ Coordinate Line::getNormal()
 
 	normal = normal/normal.magnitude();
 	return normal;
+}
+
+void Line::print() const
+{
+	_coordinate1->print();
+	_coordinate2->print();
 }

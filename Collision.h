@@ -9,22 +9,32 @@
 #define COLLISION_H_
 #include "GameObject.h"
 
+class No_Collision{};
+class Neither_of_these_are_moving_WTF{};
+
 class Collision {
 public:
+	Collision(){};
+	Collision(const Collision& col);
 	Collision(
-			shared_ptr<GameObject> collider,
-			shared_ptr<GameObject> collidee);
+			const shared_ptr<GameObject>& obj1,
+			const shared_ptr<GameObject>& obj2);
 	virtual ~Collision();
-	void findCollisionEdge();
+	void printCollisionEdge() const;
+	void resolve();
 
-	//ASSUMPTION: each coord will only cross one edge
 	shared_ptr<GameObject> _collider;
 	shared_ptr<GameObject> _collidee;
 
-	Coordinate _approach{};
-	shared_ptr<Line> _collisionEdge;
+	Coordinate _approachVelocity{};
+	Line _collisionEdge;
 
-
+private:
+	void findCollisionEdge();
+	void findCollision(
+			shared_ptr<GameObject> obj1,
+			shared_ptr<GameObject> obj2);
+	void findApproachVelocity();
 
 };
 

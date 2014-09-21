@@ -36,6 +36,12 @@ float Coordinate::magSquared() const
 float Coordinate::magnitude() const
 {	return sqrt(magSquared());}
 
+void Coordinate::print() const
+{
+	std::cout << std::endl << x() << " " << y() << std::endl;
+
+}
+
 void Coordinate::setX(float x)
 {	_x = x;}
 
@@ -133,11 +139,17 @@ bool Coordinate::operator==(const float& rhs) const
 void Coordinate::rotate(const float angle, const Coordinate& center)
 {
 	this->operator-=(center);
+	rotate(angle);
+	this->operator +=(center);
+}
+
+void Coordinate::rotate(const float angle)
+{
 	Coordinate col1{(float) cos(angle), (float) sin(angle)};
 	Coordinate col2{(float) -sin(angle), (float) cos(angle)};
 	float x0 = (*this)*col1;
 	float y0 = (*this)*col2;
 	setX(x0);
 	setY(y0);
-	this->operator +=(center);
 }
+
