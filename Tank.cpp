@@ -11,18 +11,18 @@ Tank::Tank() :
 	GameObject(TANKMASS)
 {
 	shared_ptr<Coordinate> c0{new Coordinate{0,0}};
-	shared_ptr<Coordinate> c1{new Coordinate{0,50}};
-	shared_ptr<Coordinate> c2{new Coordinate{25,25}};
+	shared_ptr<Coordinate> c1{new Coordinate{50,0}};
+	shared_ptr<Coordinate> c2{new Coordinate{25,50}};
 	shared_ptr<Triangle> t0{new Triangle{c0,c1,c2}};
 
 	//tweak these values
 	addTriangle(t0);
 	unglue();
-	setDragCoeffLinear(0.5);
-	setDragCoeffAngular(0.5);
-	_enginePowerFwd = 10;
-	_enginePowerRev = 5;
-	_turningPower = 2;
+	setDragCoeffLinear(1);
+	setDragCoeffAngular(1);
+	_enginePowerFwd = 200;
+	_enginePowerRev = -5;
+	_turningPower = 0.05;
 }
 
 Tank::~Tank() {
@@ -47,5 +47,10 @@ void Tank::turnRight()
 void Tank::turnLeft()
 {
 	applyForceAngular(_turningPower);
+}
+
+void Tank::react(const Coordinate& rhs)
+{
+	applyImpulseLinear(rhs);
 }
 

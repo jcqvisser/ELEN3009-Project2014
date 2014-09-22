@@ -1,67 +1,64 @@
 /*
  * GameLogic.cpp
  *
- *  Created on: 21 Sep 2014
+ *  Created on: 22 Sep 2014
  *      Author: Jacques
  */
 
 #include "GameLogic.h"
 
-void GameLogic::setSfmlGameObjects(const vector<shared_ptr<SfmlGameSprite>>& sfmlGameObjects)
+GameLogic::GameLogic(const shared_ptr<SGSTank>& player1,
+		const shared_ptr<SGSTank>& player2) :
+	_player1(player1),
+	_player2(player2)
 {
-	_sfmlGameObjects = sfmlGameObjects;
-	for(auto obj : _sfmlGameObjects)
-	{
-		_gameObjects.push_back(obj->_object);
-	}
-	_collMan.setGameObjecs(_gameObjects);
+	shared_ptr<GameObject> p1 = _player1->_object;
+	shared_ptr<GameObject> p2 = _player2->_object;
+
+	vector<shared_ptr<GameObject>> temp;
+	temp.push_back(p1);
+	temp.push_back(p2);
+
+	_collMan.setGameObjecs(temp);
 }
 
-void GameLogic::setPlayers(const shared_ptr<SGSTank>& player1, const shared_ptr<SGSTank> player2)
+GameLogic::~GameLogic() {}
+
+void GameLogic::step()
 {
-	_player1 = player1->_object;
-	_player2 = player2->_object;
+	controllerInput();
+	_collMan.findCollisions();
+	_collMan.ResolveCollisions();
+	_collMan.purgeCollisions();
+	_player1->animate(0.1);
+	_player2->animate(0.1);
+	_player1->Update();
+	_player2->Update();
 }
 
-GameLogic::~GameLogic() {
-	// TODO Auto-generated destructor stud
-}
-
-void GameLogic::controlInput()
+void GameLogic::controllerInput()
 {
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
-		_player1->driveForward();
+		_player1->_object->driveForward();
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
-		_player1->driveReverse();
+		_player1->_object->driveReverse();
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
-		_player1->turnRight();
+		_player1->_object->turnRight();
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
-		_player1->turnLeft();
-}
+		_player1->_object->turnLeft();
 
-void GameLogic::animate(const float& stepTime)
-{
-	for (auto obj : _gameObjects)
-	{
-		obj->animate(stepTime);
-	}
-}
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
+		_player2->_object->driveForward();
 
-void GameLogic::step(float const& stepTime)
-{
-	controlInput();
-	_collMan.findCollisions();
-	if (_collMan.numCollisions() > 0)
-	{
-		_collMan.ResolveCollisions();
-	}
-	animate(stepTime);
-	for (auto SFObj : _sfmlGameObjects)
-	{
-		SFObj->Update();
-	}
-}
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
+		_player2->_object->driveReverse();
 
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+		_player2->_object->turnRight();
+
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+		_player2->_object->turnLeft();
+}

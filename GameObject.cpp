@@ -11,7 +11,7 @@ GameObject::GameObject(float mass) :
 	_mass(mass)
 {}
 
-Coordinate GameObject::getCenter() const
+Coordinate GameObject::getCenter()
 {
 	return _centerOfMass;
 }
@@ -31,13 +31,18 @@ float GameObject::getMass() const
 	return _mass;
 }
 
-void GameObject::addTriangle(const shared_ptr<Triangle>& tri)
+void GameObject::addTriangle(shared_ptr<Triangle>& tri)
 {
-	_triangles.push_back(tri);
-	for (int i = 0; i < 3; i++)
-	{
-		_centerOfMass += *(tri->getCoordinate(i));
-	}
+	_triangles.push_back(*tri);
+
+	_centerOfMass = Coordinate{0,0};
+
+	for (auto tri : _triangles)
+		for (auto coord : tri._coordinates)
+		{
+			_centerOfMass += *coord;
+		}
+	_centerOfMass = _centerOfMass/(_triangles.size()*3);
 }
 
 void GameObject::glue()
@@ -71,7 +76,7 @@ void GameObject::rotate(const float& angle)
 	if (_glued == true)
 		throw object_is_glued_and_cannot_move{};
 	for (auto triangle : _triangles)
-		triangle->rotate(angle, _centerOfMass);
+		triangle.rotate(angle, _centerOfMass);
 	_forward.rotate(angle);
 }
 
@@ -80,7 +85,7 @@ void GameObject::move(const Coordinate& change)
 	if (_glued == true)
 		throw object_is_glued_and_cannot_move{};
 	for (auto triangle : _triangles)
-		triangle->move(change);
+		triangle.move(change);
 	_centerOfMass += change;
 }
 
@@ -104,7 +109,7 @@ bool GameObject::animateLinear(const float& time)
 	else if (_velocityLinear > _vThresholdLinear)
 	{
 		float e2 = exp(-_dragCoeffLinear/_mass*time);
-		_velocityLinear = _velocityLinear*time*e2;
+		_velocityLinear = _velocityLinear*e2;
 
 		Coordinate dPos = _velocityLinear*time;
 		move(dPos);
@@ -125,32 +130,7 @@ bool GameObject::animateAngular(const float& time)
 
 	bool rotated = false;
 
-	if (_forceAngular > _forceAngularThreshold)
-	{
-		float a = _forceAngular/_dragCoeffAngular;
-		float e2 = exp(-_dragCoeffAngular/_mass*time);
-		float e1 = 1-e2;
-		_velocityAngular = a*e1 + _velocityAngular*time*e2;
-
-		float dPos = _velocityAngular*time;
-		rotate(dPos);
-
-		rotated = true;
-	}
-	else if (_velocityAngular > _vThresholdAngular)
-	{
-		float e2 = exp(-_dragCoeffAngular/_mass*time);
-		_velocityAngular = _velocityAngular*time*e2;
-
-		float dPos = _velocityAngular*time;
-		rotate(dPos);
-
-		rotated = true;
-	}
-	else
-	{
-		_velocityAngular = 0;
-	}
+	rotate(time*_forceAngular);
 
 	return rotated;
 }
@@ -159,11 +139,9 @@ bool GameObject::animate(const float& time)
 {
 	if (_glued == true)
 		throw object_is_glued_and_cannot_move{};
-	bool move = animateLinear(time);
-	bool rotate = animateAngular(time);
 
-	if (move || rotate)
-		return true;
+	animateLinear(time);
+	animateAngular(time);
 
 	clearForce();
 	return false;
@@ -180,7 +158,7 @@ Coordinate GameObject::avgCoordInside(const GameObject& gO)
 	vector<shared_ptr<Coordinate>> temp;
 	for (auto tri : _triangles)
 	{
-		temp = tri->coordsInside(tris);
+		temp = tri.coordsInside(tris);
 		for (auto coord : temp)
 		{
 			xn += coord->x();
@@ -202,9 +180,9 @@ Line GameObject::intersectingLine(const Line& penetratingLine)
 	{
 		for (int n = 0; n < 3; n++)
 		{
-			if (tri->getLine(n).intersects(penetratingLine))
+			if (tri.getLine(n).intersects(penetratingLine))
 			{
-				return Line{tri->getLine(n)};
+				return Line{tri.getLine(n)};
 			}
 		}
 	}
@@ -214,8 +192,9 @@ Line GameObject::intersectingLine(const Line& penetratingLine)
 
 bool GameObject::hasInside(const shared_ptr<GameObject>& gO)
 {
+	//auto a = _triangles[0];
 	for (auto tri1 : _triangles)
-		if (tri1->hasInside(gO->_triangles))
+		if (tri1.hasInside(gO->_triangles))
 			return true;
 	return false;
 }
@@ -239,4 +218,10 @@ void GameObject::clearForce()
 float GameObject::getRotation() const
 {
 	return _forward.angle();
+}
+
+void GameObject::setPosition(const Coordinate& pos)
+{
+	auto dPos = pos -getCenter();
+	move(dPos);
 }

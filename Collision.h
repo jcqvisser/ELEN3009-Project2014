@@ -9,8 +9,8 @@
 #define COLLISION_H_
 #include "GameObject.h"
 
-class No_Collision{};
-class Neither_of_these_are_moving_WTF{};
+class No_Collision : public Collision_Exception {};
+class object_Rotated_Into_Collision : public Collision_Exception {};
 
 class Collision {
 public:
@@ -29,7 +29,7 @@ public:
 	Coordinate _approachVelocity{};
 	Line _collisionEdge;
 
-private:
+//private:
 	void findCollisionEdge();
 	void findCollision(
 			shared_ptr<GameObject> obj1,

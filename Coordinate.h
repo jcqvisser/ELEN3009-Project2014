@@ -14,6 +14,8 @@
 #define INF 2000
 #define NOTHING 0.001
 
+class Collision_Exception{};
+
 class Coordinate
 {
 public:
@@ -46,7 +48,7 @@ public:
 
 	void rotate(const float angle, const Coordinate& center);
 	void rotate(const float angle);
-private:
+
 	float _x;
 	float _y;
 	void setX(float x);

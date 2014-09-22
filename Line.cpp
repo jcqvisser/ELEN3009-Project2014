@@ -163,11 +163,14 @@ Coordinate Line::getNormal()
 	//subtr endpoints
 	//divide my mag
 	Coordinate normal{};
-	_coordinate2->rotate(-PI/2, *(_coordinate1));
-	if (_coordinate1->magSquared() > _coordinate2->magSquared())
-		normal = *_coordinate1 - *_coordinate2;
-	else if (_coordinate1->magSquared() < _coordinate2->magSquared())
-		normal = *_coordinate2 - *_coordinate1;
+	Coordinate c2{_coordinate2->x(), _coordinate2->y()};
+	Coordinate c1{_coordinate1->x(), _coordinate1->y()};
+
+	c2.rotate(-PI/2, c1);
+	if (c1.magSquared() > c2.magSquared())
+		normal = c1 - c2;
+	else if (c1.magSquared() < c2.magSquared())
+		normal = c2 - c1;
 
 	normal = normal/normal.magnitude();
 	return normal;

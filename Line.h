@@ -28,7 +28,7 @@ public:
 	std::shared_ptr<Coordinate> _coordinate2;
 
 	void print() const;
-protected:
+//protected:
 	float getYVal(float xVal) const;
 	float getSlope() const;
 	float getYIntercept() const;

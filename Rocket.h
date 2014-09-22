@@ -15,7 +15,7 @@ public:
 	Rocket();
 	virtual ~Rocket();
 
-private:
+//private:
 	virtual void clearForce();
 	float _rocketPower;
 };

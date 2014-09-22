@@ -19,13 +19,13 @@ public:
 	GameObject(float mass);
 	virtual ~GameObject(){};
 
-	Coordinate getCenter() const;
+	Coordinate getCenter();
 	Coordinate getVelocity() const;
 	Coordinate getForward() const;
 	float getMass() const;
 	float getRotation() const;
 
-	void addTriangle(const shared_ptr<Triangle>& tri);
+	void addTriangle(shared_ptr<Triangle>& tri);
 
 	void glue();
 	void unglue();
@@ -42,9 +42,12 @@ public:
 
 	void setDragCoeffLinear(const float& dC);
 	void setDragCoeffAngular(const float& dC);
+	void setPosition(const Coordinate& pos);
 
-protected:
-	vector<shared_ptr<Triangle>> _triangles;
+	virtual void react(const Coordinate& rhs) {};
+
+//protected:
+	vector<Triangle> _triangles;
 
 	void move(const Coordinate& change);
 	void rotate(const float& angle);
@@ -67,6 +70,8 @@ protected:
 	float _vThresholdAngular{0};
 	float _dragCoeffAngular = 5;
 	float _forceAngularThreshold = 0.1;
+
+	float _health = 100;
 };
 
 #endif /* GAMEOBJECT_H_ */

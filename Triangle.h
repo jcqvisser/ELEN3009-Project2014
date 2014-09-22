@@ -23,14 +23,14 @@ public:
 	virtual ~Triangle();
 	bool hasInside(const shared_ptr<Coordinate>& coord) const;
 	bool hasInside(const vector<shared_ptr<Coordinate>>& coords) const;
-	bool hasInside(const vector<shared_ptr<Triangle>> triangles) const;
+	bool hasInside(const vector<Triangle> triangles) const;
 	vector<shared_ptr<Coordinate>> coordsInside(const vector<shared_ptr<Coordinate>>& coords) const;
-	vector<shared_ptr<Coordinate>> coordsInside(const vector<shared_ptr<Triangle>> triangles) const;
+	vector<shared_ptr<Coordinate>> coordsInside(const vector<Triangle> triangles) const;
 	shared_ptr<Coordinate> getCoordinate(const int coord) const;
 	void rotate(const float angle, const Coordinate& center);
 	void move(const Coordinate change);
 	Line getLine(const int LineNo);
-protected:
+//protected:
 	vector<shared_ptr<Coordinate>> _coordinates;
 };
 

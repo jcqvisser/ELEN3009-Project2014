@@ -8,7 +8,7 @@
 #ifndef TANK_H_
 #define TANK_H_
 #include "CollisionManager.h"
-#define TANKMASS 10
+#define TANKMASS 20
 
 class Tank : public GameObject
 {
@@ -20,6 +20,8 @@ public:
 	void driveReverse();
 	void turnRight();
 	void turnLeft();
+
+	virtual void react(const Coordinate&);
 private:
 	float _enginePowerFwd;
 	float _enginePowerRev;

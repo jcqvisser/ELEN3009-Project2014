@@ -17,12 +17,12 @@ Coordinate::Coordinate(float x, float y) :
 { }
 
 Coordinate::Coordinate(const Coordinate& pos) :
-		_x(pos.x()),
-		_y(pos.y())
+		_x(pos._x),
+		_y(pos._y)
 { }
 
-float Coordinate::x()const
-{	return _x;}
+float Coordinate::x() const
+{	return this->_x;}
 
 float Coordinate::y() const
 {	return _y;}

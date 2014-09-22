@@ -13,11 +13,3 @@ SfmlGameSprite::SfmlGameSprite()
 SfmlGameSprite::~SfmlGameSprite() {
 	// TODO Auto-generated destructor stub
 }
-
-void SfmlGameSprite::Update()
-{
-	setPosition(_object->getCenter().x(), _object->getCenter().y());
-	setRotation(_object->getRotation());
-}
-
-

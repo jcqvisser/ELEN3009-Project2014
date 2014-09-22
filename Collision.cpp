@@ -26,7 +26,15 @@ Collision::Collision(
 {
 	findCollision(obj1, obj2);
 	findApproachVelocity();
-	findCollisionEdge();
+	try
+	{
+		findCollisionEdge();
+	}
+	catch(No_Collision&)
+	{
+		throw No_Collision{};
+	}
+
 }
 
 void Collision::findCollision(
@@ -59,7 +67,7 @@ void Collision::findCollisionEdge()
 		Line penetratingLine{ penetrator0, penetrator1};
 		_collisionEdge = _collidee->intersectingLine(penetratingLine);
 	}
-	catch (No_Coordinates_Inside&)
+	catch (No_Line_Intersects&)
 	{
 		throw No_Collision{};
 	}
@@ -68,7 +76,7 @@ void Collision::findApproachVelocity()
 {
 	_approachVelocity = _collider->getVelocity() - _collidee->getVelocity();
 	if (_approachVelocity < NOTHING)
-		throw Neither_of_these_are_moving_WTF{}; //this should never happen
+		throw object_Rotated_Into_Collision{};
 }
 
 void Collision::resolve()
@@ -83,17 +91,13 @@ void Collision::resolve()
 
 	float totalMass = _collider->getMass() + _collidee->getMass();
 
-	//direction is stated in direction that collider is traveling
-	float normAngle = normal.angle();
-	float colliderAngle = _collider->getVelocity().angle();
-	if (abs(normAngle - colliderAngle) > PI/2)
-		normal.rotate(PI);
+	normal.rotate(PI);
 
-	Coordinate ColliderImpulse = normal*(momentum*_collidee->getMass()/totalMass);
-	Coordinate CollideeImpulse = normal*(momentum*_collider->getMass()/totalMass);
+	Coordinate ColliderImpulse = normal*(momentum*_collidee->getMass()/totalMass)*1;
+	Coordinate CollideeImpulse = normal*(-momentum*_collider->getMass()/totalMass)*1;
 
-	_collidee->applyImpulseLinear(CollideeImpulse);
-	_collider->applyImpulseLinear(ColliderImpulse);
+	_collidee->react(CollideeImpulse);
+	_collider->react(ColliderImpulse);
 }
 
 void Collision::printCollisionEdge() const

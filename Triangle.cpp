@@ -58,13 +58,13 @@ vector<shared_ptr<Coordinate>> Triangle::coordsInside(const vector<shared_ptr<Co
 	return coordsInside;
 }
 
-vector<shared_ptr<Coordinate>> Triangle::coordsInside(const vector<shared_ptr<Triangle>> triangles) const
+vector<shared_ptr<Coordinate>> Triangle::coordsInside(const vector<Triangle> triangles) const
 {
 	vector<shared_ptr<Coordinate>> coordsInside;
 
 	for (auto tri : triangles)
 	{
-		auto inside = this->coordsInside(tri->_coordinates);
+		auto inside = this->coordsInside(tri._coordinates);
 		for(auto coord : inside)
 		{
 			coordsInside.push_back(coord);
@@ -104,11 +104,11 @@ bool Triangle::hasInside(const vector<shared_ptr<Coordinate>>& coords) const
 	return false;
 }
 
-bool Triangle::hasInside(const vector<shared_ptr<Triangle>> triangles) const
+bool Triangle::hasInside(const vector<Triangle> triangles) const
 {
 	for (auto tri : triangles)
 	{
-		if (hasInside(tri->_coordinates))
+		if (hasInside(tri._coordinates))
 			return true;
 	}
 	return false;
