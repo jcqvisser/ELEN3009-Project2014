@@ -1,8 +1,6 @@
 /*
  * SGSCrate.h
  *
- *  Created on: 23 Sep 2014
- *      Author: Jacques
  */
 
 #ifndef SGSCRATE_H_
@@ -21,6 +19,7 @@ public:
 
     sf::Texture _texture;
     shared_ptr<Crate> _object{new Crate{}};
+
 };
 
-#endif /* SGSCRATE_H_ */
+#endif /* SGSTANK_H_ */

@@ -1,8 +1,6 @@
 /*
  * CollisionManager.h
  *
- *  Created on: 21 Sep 2014
- *      Author: Jacques
  */
 
 #ifndef COLLISIONMANAGER_H_

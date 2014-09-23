@@ -1,8 +1,6 @@
 /*
  * SfmlGameSprite.h
  *
- *  Created on: 21 Sep 2014
- *      Author: Jacques
  */
 
 #ifndef SFMLGAMESPRITE_H_

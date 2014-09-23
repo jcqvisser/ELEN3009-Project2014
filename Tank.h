@@ -1,8 +1,6 @@
 /*
  * Tank.h
  *
- *  Created on: 21 Sep 2014
- *      Author: Jacques
  */
 
 #ifndef TANK_H_

@@ -1,8 +1,6 @@
 /*
  * Rocket.h
  *
- *  Created on: 21 Sep 2014
- *      Author: Jacques
  */
 
 #ifndef ROCKET_H_

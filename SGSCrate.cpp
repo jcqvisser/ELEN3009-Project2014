@@ -1,8 +1,6 @@
 /*
  * SGSCrate.cpp
  *
- *  Created on: 23 Sep 2014
- *      Author: Jacques
  */
 
 #include "SGSCrate.h"
@@ -37,4 +35,3 @@ void SGSCrate::animate(const float time)
 {
 	_object->animate(time);
 }
-

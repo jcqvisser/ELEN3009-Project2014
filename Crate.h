@@ -1,14 +1,12 @@
 /*
  * Crate.h
  *
- *  Created on: 23 Sep 2014
- *      Author: Jacques
  */
 
 #ifndef CRATE_H_
 #define CRATE_H_
 #include "CollisionManager.h"
-#define CRATEMASS 10
+#define CRATEMASS 20
 
 class Crate : public GameObject
 {
@@ -16,6 +14,8 @@ public:
 	Crate();
 	virtual ~Crate();
 	virtual void react(const Coordinate&);
+private:
+
 };
 
-#endif /* CRATE_H_ */
+#endif /* TANK_H_ */

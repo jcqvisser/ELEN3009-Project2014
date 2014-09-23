@@ -1,8 +1,6 @@
 /*
  * GameLogic.h
  *
- *  Created on: 22 Sep 2014
- *      Author: Jacques
  */
 
 
@@ -27,14 +25,16 @@ public:
 	void controllerInput();
 
 	void checkPlayerDeath();
-	void loadLevelLayout(const int level);
+	//void loadLevelLayout(const int level);
 
 	shared_ptr<SGSTank> _player1{new SGSTank{}};
 	shared_ptr<SGSTank> _player2{new SGSTank{}};
 
 	vector<shared_ptr<SGSRocket>> _rockets;
 
-	vector<shared_ptr<SGSCrate>> _crates;
+	shared_ptr<SGSCrate> _crate1{new SGSCrate{}};
+
+	//vector<shared_ptr<SGSCrate>> _crates;
 
 	CollisionManager _collMan;
 	sf::Clock clock{};

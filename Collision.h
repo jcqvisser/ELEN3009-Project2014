@@ -1,8 +1,6 @@
 /*
  * Collision.h
  *
- *  Created on: 19 Sep 2014
- *      Author: Jacques
  */
 
 #ifndef COLLISION_H_

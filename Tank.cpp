@@ -1,8 +1,6 @@
 /*
  * Tank.cpp
  *
- *  Created on: 21 Sep 2014
- *      Author: Jacques
  */
 
 #include "Tank.h"

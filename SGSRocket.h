@@ -1,8 +1,6 @@
 /*
  * SGSRocket.h
  *
- *  Created on: 23 Sep 2014
- *      Author: Jacques
  */
 
 #ifndef SGSROCKET_H_

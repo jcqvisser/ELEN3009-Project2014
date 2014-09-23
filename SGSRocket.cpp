@@ -1,8 +1,6 @@
 /*
  * SGSRocket.cpp
  *
- *  Created on: 23 Sep 2014
- *      Author: Jacques
  */
 
 #include "SGSRocket.h"

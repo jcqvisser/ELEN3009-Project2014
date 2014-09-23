@@ -1,8 +1,6 @@
 /*
  * GameLogic.cpp
  *
- *  Created on: 22 Sep 2014
- *      Author: Jacques
  */
 
 #include "GameLogic.h"
@@ -13,15 +11,17 @@ GameLogic::GameLogic()
 	_player2->changePosition(300,100);
 	_player2->Update();
 
+	_crate1->changePosition(300,300);
 
 	shared_ptr<GameObject> p1 = _player1->_object;
 	shared_ptr<GameObject> p2 = _player2->_object;
 
+	shared_ptr<GameObject> c1 = _crate1->_object;
+
 	vector<shared_ptr<GameObject>> temp;
 	temp.push_back(p1);
 	temp.push_back(p2);
-
-	_collMan.setGameObjecs(temp);
+	temp.push_back(c1);
 }
 
 GameLogic::~GameLogic() {}
@@ -35,13 +35,16 @@ void GameLogic::step()
 	_collMan.purgeCollisions();
 	_player1->animate(0.1);
 	_player2->animate(0.1);
+	_crate1->animate(0.1);
 	_player1->Update();
 	_player2->Update();
+	_crate1->Update();
 	for (auto rocket : _rockets)
 	{
 		rocket->animate(0.1);
 		rocket->Update();
 	}
+
 }
 
 void GameLogic::controllerInput()
@@ -58,6 +61,20 @@ void GameLogic::controllerInput()
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
 		_player1->_object->turnLeft();
+
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::L))
+	{
+		if (clock.getElapsedTime() - p1FireTime >= FireTime)
+		{
+			shared_ptr<SGSRocket> rocket{new SGSRocket{}};
+			Coordinate origin{_player1->_object->getCenter()};
+			origin = origin + _player1->_object->_forward*50.0;
+			rocket->changePosition(origin.x(), origin.y());
+			rocket->setDirection(-_player1->_object->_forward.angle() + PI);
+			_rockets.push_back(rocket);
+			p1FireTime = clock.getElapsedTime();
+		}
+	}
 
 	//---P2
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
@@ -93,8 +110,6 @@ void GameLogic::coreLoop()
 	float vres = 700;
     sf::RenderWindow window(sf::VideoMode(hres, vres), "Tanks!");
 
-    loadLevelLayout(1);
-    updateCollisionManager();
     while (window.isOpen())
         {
             sf::Event event;
@@ -108,13 +123,10 @@ void GameLogic::coreLoop()
             window.clear();
             window.draw(*_player1);
             window.draw(*_player2);
+            window.draw(*_crate1);
             for (auto rocket : _rockets)
             {
             	window.draw(*rocket);
-            }
-            for (auto crate : _crates)
-            {
-            	window.draw(*crate);
             }
             window.display();
         }
@@ -134,11 +146,7 @@ void GameLogic::updateCollisionManager()
     {
     	tempGOs.push_back(rocket->_object);
     }
-
-    for (auto crate : _crates)
-    {
-    	tempGOs.push_back(crate->_object);
-    }
+    tempGOs.push_back(_crate1->_object);
 
     _collMan.setGameObjecs(tempGOs);
 }
@@ -167,23 +175,23 @@ void GameLogic::checkPlayerDeath()
 	}
 }
 
-void GameLogic::loadLevelLayout(const int level)
-{
-	if (level == 1)
-	{
-		shared_ptr<SGSCrate> crate0{new SGSCrate{}};
-		crate0->changePosition(300,300);
-		shared_ptr<SGSCrate> crate1{new SGSCrate{}};
-		crate1->changePosition(400,400);
-		shared_ptr<SGSCrate> crate2{new SGSCrate{}};
-		crate2->changePosition(500,400);
-		shared_ptr<SGSCrate> crate3{new SGSCrate{}};
-		crate3->changePosition(700,400);
-
-		_crates.push_back(crate0);
-		_crates.push_back(crate1);
-		_crates.push_back(crate2);
-		_crates.push_back(crate3);
-
-	}
-}
+//void GameLogic::loadLevelLayout(const int level)
+//{
+//	if (level == 1)
+//	{
+//		shared_ptr<SGSCrate> crate0{new SGSCrate{}};
+//		crate0->changePosition(300,300);
+//		shared_ptr<SGSCrate> crate1{new SGSCrate{}};
+//		crate1->changePosition(400,400);
+//		shared_ptr<SGSCrate> crate2{new SGSCrate{}};
+//		crate2->changePosition(500,400);
+//		shared_ptr<SGSCrate> crate3{new SGSCrate{}};
+//		crate3->changePosition(700,400);
+//
+//		_crates.push_back(crate0);
+//		_crates.push_back(crate1);
+//		_crates.push_back(crate2);
+//		_crates.push_back(crate3);
+//	}
+//    //updateCollisionManager();
+//}
