@@ -67,3 +67,8 @@ void CollisionManager::purgeCollisions()
 	_collisions.clear();
 }
 
+void CollisionManager::purgeObjects()
+{
+	_gameObjects.clear();
+}
+

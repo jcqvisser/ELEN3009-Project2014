@@ -8,12 +8,16 @@
 #ifndef ROCKET_H_
 #define ROCKET_H_
 #include "CollisionManager.h"
-#define ROCKETMASS 0.1
+#define ROCKETMASS 1
+
 class Rocket : public GameObject
 {
 public:
 	Rocket();
 	virtual ~Rocket();
+	void propel();
+	virtual void react(const Coordinate&);
+	void setDirection(const float angle);
 
 //private:
 	virtual void clearForce();

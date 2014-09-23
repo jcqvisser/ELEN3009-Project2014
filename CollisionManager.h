@@ -19,6 +19,7 @@ public:
 	void ResolveCollisions();
 	int numCollisions();
 	void purgeCollisions();
+	void purgeObjects();
 
 private:
 	vector<shared_ptr<GameObject>> _gameObjects;

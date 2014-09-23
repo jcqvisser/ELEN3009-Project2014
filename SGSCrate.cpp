@@ -1,39 +1,40 @@
 /*
- * SGSTank.cpp
+ * SGSCrate.cpp
  *
- *  Created on: 21 Sep 2014
+ *  Created on: 23 Sep 2014
  *      Author: Jacques
  */
 
-#include "SGSTank.h"
+#include "SGSCrate.h"
 
-SGSTank::SGSTank()
+SGSCrate::SGSCrate()
 {
 	_texture.setSmooth(true);
-	_texture.loadFromFile("Tank.png", sf::IntRect(0, 0, 50, 50));
-	setOrigin(25,25);
+	_texture.loadFromFile("Crate.png", sf::IntRect(0, 0, 60, 60));
+	setOrigin(30,30);
 	setTexture(_texture);
 }
 
-SGSTank::~SGSTank() {
+SGSCrate::~SGSCrate() {
 	// TODO Auto-generated destructor stub
 }
 
-void SGSTank::Update()
+void SGSCrate::Update()
 {
 	Coordinate center = _object->getCenter();
 	setPosition(center.x(), center.y());
 	setRotation(_object->getRotation()*180/PI+90);
 }
 
-void SGSTank::changePosition(float x, float y)
+void SGSCrate::changePosition(float x, float y)
 {
 	Coordinate newPos{x,y};
 	_object->setPosition(newPos);
 	setPosition(x,y);
 }
 
-void SGSTank::animate(const float time)
+void SGSCrate::animate(const float time)
 {
 	_object->animate(time);
 }
+

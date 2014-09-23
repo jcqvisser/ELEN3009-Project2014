@@ -13,3 +13,4 @@ SfmlGameSprite::SfmlGameSprite()
 SfmlGameSprite::~SfmlGameSprite() {
 	// TODO Auto-generated destructor stub
 }
+

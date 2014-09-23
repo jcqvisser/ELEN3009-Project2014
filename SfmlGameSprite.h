@@ -9,6 +9,8 @@
 #define SFMLGAMESPRITE_H_
 #include <SFML/Graphics.hpp>
 #include "Tank.h"
+#include "Rocket.h"
+#include "Crate.h"
 
 class SfmlGameSprite : public sf::Sprite
 {

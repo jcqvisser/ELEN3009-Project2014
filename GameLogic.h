@@ -9,23 +9,39 @@
 #ifndef GAMELOGIC_H_
 #define GAMELOGIC_H_
 #include "SGSTank.h"
-#include "SGSMapBorder.h"
+#include "SGSRocket.h"
+#include "SGSCrate.h"
 #include <SFML/Graphics.hpp>
 #include <SFML/Window/Keyboard.hpp>
 
+#define MAXROCKETS 50
+
 class GameLogic {
 public:
-	GameLogic(const shared_ptr<SGSTank>& player1, const shared_ptr<SGSTank>& player2);
+	GameLogic();
 	virtual ~GameLogic();
-	void setBorders(const vector<shared_ptr<SGSMapBorder>> mb);
+	void coreLoop();
+	void updateCollisionManager();
 
 	void step();
 	void controllerInput();
 
-	shared_ptr<SGSTank> _player1;
-	shared_ptr<SGSTank> _player2;
+	void checkPlayerDeath();
+	void loadLevelLayout(const int level);
+
+	shared_ptr<SGSTank> _player1{new SGSTank{}};
+	shared_ptr<SGSTank> _player2{new SGSTank{}};
+
+	vector<shared_ptr<SGSRocket>> _rockets;
+
+	vector<shared_ptr<SGSCrate>> _crates;
 
 	CollisionManager _collMan;
+	sf::Clock clock{};
+
+	sf::Time p1FireTime = clock.getElapsedTime();
+	sf::Time p2FireTime = clock.getElapsedTime();
+	sf::Time FireTime = sf::seconds(0.25f);
 };
 
 #endif /* GAMELOGIC_H_ */
