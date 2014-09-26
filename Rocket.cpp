@@ -8,9 +8,9 @@
 Rocket::Rocket() :
 	GameObject(ROCKETMASS)
 {
-	shared_ptr<Coordinate> c0{new Coordinate{0,0}};
-	shared_ptr<Coordinate> c1{new Coordinate{10,0}};
-	shared_ptr<Coordinate> c2{new Coordinate{5,20}};
+	shared_ptr<Coordinate> c0{new Coordinate{0,0.001}};
+	shared_ptr<Coordinate> c1{new Coordinate{5.001,0}};
+	shared_ptr<Coordinate> c2{new Coordinate{2.5,20.001}};
 	shared_ptr<Triangle> t0{new Triangle{c0,c1,c2}};
 
 	//tweak these values
@@ -39,11 +39,13 @@ void Rocket::propel()
 
 void Rocket::react(const Coordinate& bounce)
 {
+	applyImpulseLinear(bounce);
+
 	float newAngle = bounce.angle();
 	float oldAngle = _forward.angle();
-	float dAngle = newAngle - oldAngle;
+	float dAngle = oldAngle - newAngle;
 
-	rotate(dAngle);
+	setDirection(dAngle);
 }
 
 void Rocket::setDirection(const float angle)
