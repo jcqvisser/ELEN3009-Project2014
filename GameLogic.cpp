@@ -140,13 +140,32 @@ void GameLogic::coreLoop()
 			crate1box[2].position = sf::Vector2f(_crate1->_object->_triangles[0].getCoordinate(2)->x(), _crate1->_object->_triangles[0].getCoordinate(2)->y());
 			crate1box[3].position = sf::Vector2f(_crate1->_object->_triangles[0].getCoordinate(0)->x(), _crate1->_object->_triangles[0].getCoordinate(0)->y());
 
+			sf::VertexArray triangle(sf::Triangles, 3);
+			triangle[0].position = sf::Vector2f(0, 0);
+			triangle[1].position = sf::Vector2f(hres, 0);
+			triangle[2].position = sf::Vector2f(hres, vres);
+			triangle[0].color = sf::Color::White;
+			triangle[1].color = sf::Color::White;
+			triangle[2].color = sf::Color::White;
+
+			sf::VertexArray triangle1(sf::Triangles, 3);
+			triangle1[0].position = sf::Vector2f(0, 0);
+			triangle1[1].position = sf::Vector2f(0, vres);
+			triangle1[2].position = sf::Vector2f(hres, vres);
+			triangle1[0].color = sf::Color::White;
+			triangle1[1].color = sf::Color::White;
+			triangle1[2].color = sf::Color::White;
+
             window.clear();
+            window.draw(triangle);
+            window.draw(triangle1);
             window.draw(*_player1);
             window.draw(*_player2);
             window.draw(*_crate1);
             window.draw(p1box);
             window.draw(p2box);
             window.draw(crate1box);
+
             for (auto rocket : _rockets)
             {
             	window.draw(*rocket);
@@ -181,15 +200,16 @@ void GameLogic::checkPlayerDeath()
 		if (_player1->_object->hasInside(rocket->_object))
 		{
 			_player1->_texture.loadFromFile("explosion.png", sf::IntRect(0, 0, 100,100));
+			_player1->setTexture(_player1->_texture, true);
 			_player1->setOrigin(50,50);
-			_player1->setTexture(_player1->_texture);
 			return;
 		}
 
 		if (_player2->_object->hasInside(rocket->_object))
 		{
-			_player2->_texture.loadFromFile("explosion.png", sf::IntRect(0,0,100,100));
-			_player2->setTexture(_player2->_texture);
+			_player2->_texture.loadFromFile("explosion.png", sf::IntRect(0, 0, 100,100));
+
+			_player2->setTexture(_player2->_texture, true);
 			_player2->setOrigin(50,50);
 			return;
 		}

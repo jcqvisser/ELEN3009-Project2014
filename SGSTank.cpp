@@ -8,7 +8,7 @@
 SGSTank::SGSTank()
 {
 	_texture.setSmooth(true);
-	_texture.loadFromFile("Tank.png", sf::IntRect(0, 0, 50, 50));
+	_texture.loadFromFile("Tank.png");
 	setOrigin(25,25);
 	setTexture(_texture);
 }
