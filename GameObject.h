@@ -55,7 +55,7 @@ public:
 	bool animateLinear(const float& time);
 	bool animateAngular(const float& time);
 
-	float _mass;
+	float _mass = 1;
 	Coordinate _centerOfMass{0, 0};
 	bool _glued = false;
 

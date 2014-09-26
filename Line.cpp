@@ -58,6 +58,12 @@ float Line::getSlope() const
 	float x2 = _coordinate2->x();
 	float y2 = _coordinate2->y();
 
+	if (x1 == x2)
+	{
+		std::cout << "inf slope" << std::endl;
+		throw Infinite_Slope{};
+	}
+
 	return ((y1-y2)/(x1-x2));
 }
 
@@ -66,20 +72,39 @@ float Line::getYIntercept() const
 	float x1 = _coordinate1->x();
 	float y1 = _coordinate1->y();
 
-	float m = getSlope();
-	float c = y1 - (m*x1);
+	try
+	{
+		float m = getSlope();
+		float c = y1 - (m*x1);
+		return c;
+	}
+	catch(Infinite_Slope&)
+	{
+		float m = INF;
+		float c = y1 - (m*x1);
+		return c;
+	}
 
-	return c;
+
 }
 
 float Line::getYVal(float xVal) const
 {
-	float m = getSlope();
-	float c = getYIntercept();
+	try
+	{
+		float m = getSlope();
+		float c = getYIntercept();
+		float y1 = m*xVal + c;
+		return y1;
+	}
+	catch(Infinite_Slope&)
+	{
+		float m = INF;
+		float c = getYIntercept();
+		float y1 = m*xVal + c;
+		return y1;
+	}
 
-	float y1 = m*xVal + c;
-
-	return y1;
 }
 
 bool Line::isBelow(const std::shared_ptr<Coordinate>& coord) const
@@ -116,7 +141,30 @@ Coordinate Line::intersectionPt(const Line& line) const
 	float y1l2 = line._coordinate1->y();
 	float y2l2 = line._coordinate2->y();
 
-	if (x1l1 == x2l1)
+	try
+	{
+		float m1 = getSlope();
+		float c1 = getYIntercept();
+		try
+		{
+			float m2 = line.getSlope();
+			float c2 = line.getYIntercept();
+			float x0 = (c1-c2)/(m2-m1);
+			float y0 = getYVal(x0);
+			if (isBetween(x0, x1l1, x2l1) &&
+				isBetween(x0, x1l2, x2l2))
+				if (isBetween(y0, y1l1, y2l1) &&
+					isBetween(y0, y1l2, y2l2))
+					return Coordinate{x0,y0};
+		}
+		catch (Infinite_Slope&)
+		{
+			float y0 = getYVal(x1l2);
+			if (isBetween(y0, y1l2, y2l2))
+				return Coordinate{x1l2, y0};
+		}
+	}
+	catch(Infinite_Slope&)
 	{
 		float y0 = line.getYVal(x1l1);
 		if (isBetween(y0, y1l1, y2l1))
@@ -124,32 +172,39 @@ Coordinate Line::intersectionPt(const Line& line) const
 	}
 
 
-	if (x1l2 == x2l2)
-	{
-		float y0 = getYVal(x1l2);
-		if (isBetween(y0, y1l2, y2l2))
-			return Coordinate{x1l2, y0};
-	}
-
-	if (x1l2 == x2l2 && x1l1 == x2l1)
-	{
-		throw Lines_Do_Not_Intersect{};
-	}
-
-	float m0 = getSlope();
-	float c0 = getYIntercept();
-
-	float m1 = line.getSlope();
-	float c1 = line.getYIntercept();
-
-	float x2 = (c0-c1)/(m1-m0);
-	float y2 = getYVal(x2);
-
-	if (isBetween(x2, x1l1, x2l1) &&
-		isBetween(x2, x1l2, x2l2))
-		if (isBetween(y2, y1l1, y2l1) &&
-			isBetween(y2, y1l2, y2l2))
-			return Coordinate{x2,y2};
+//	if (x1l1 == x2l1)
+//	{
+//		float y0 = line.getYVal(x1l1);
+//		if (isBetween(y0, y1l1, y2l1))
+//			return Coordinate{x1l1, y0};
+//	}
+//
+//	if (x1l2 == x2l2)
+//	{
+//		float y0 = getYVal(x1l2);
+//		if (isBetween(y0, y1l2, y2l2))
+//			return Coordinate{x1l2, y0};
+//	}
+//
+//	if (x1l2 == x2l2 && x1l1 == x2l1)
+//	{
+//		throw Lines_Do_Not_Intersect{};
+//	}
+//
+//	float m0 = getSlope();
+//	float c0 = getYIntercept();
+//
+//	float m1 = line.getSlope();
+//	float c1 = line.getYIntercept();
+//
+//	float x2 = (c0-c1)/(m1-m0);
+//	float y2 = getYVal(x2);
+//
+//	if (isBetween(x2, x1l1, x2l1) &&
+//		isBetween(x2, x1l2, x2l2))
+//		if (isBetween(y2, y1l1, y2l1) &&
+//			isBetween(y2, y1l2, y2l2))
+//			return Coordinate{x2,y2};
 
 	throw Lines_Do_Not_Intersect{};
 }
@@ -178,9 +233,6 @@ bool Line::isOnLine(const Coordinate& coord) const
 
 Coordinate Line::getNormal()
 {
-	//rotate by pi/2
-	//subtr endpoints
-	//divide my mag
 	Coordinate normal{};
 	Coordinate c2{_coordinate2->x(), _coordinate2->y()};
 	Coordinate c1{_coordinate1->x(), _coordinate1->y()};

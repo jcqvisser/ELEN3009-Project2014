@@ -12,6 +12,7 @@
 #include <memory>
 
 class Lines_Do_Not_Intersect{};
+class Infinite_Slope{};
 
 class Line {
 public:

@@ -11,7 +11,7 @@
 #include <cmath>
 #include <iostream>
 #define PI 3.1415926536
-#define INF 2000
+#define INF 200000
 #define NOTHING 0.001
 
 class Collision_Exception{};

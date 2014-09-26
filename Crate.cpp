@@ -8,8 +8,8 @@
 Crate::Crate() :
 	GameObject(CRATEMASS)
 {
-	shared_ptr<Coordinate> c0{new Coordinate{0,0}};
-	shared_ptr<Coordinate> c1{new Coordinate{59,0}};
+	shared_ptr<Coordinate> c0{new Coordinate{0,0.0001}};
+	shared_ptr<Coordinate> c1{new Coordinate{59.00001,0}};
 	shared_ptr<Coordinate> c2{new Coordinate{59,59}};
 	shared_ptr<Triangle> t0{new Triangle{c0,c1,c2}};
 
@@ -22,7 +22,7 @@ Crate::Crate() :
 	addTriangle(t0);
 //	addTriangle(t1);
 	unglue();
-	setDragCoeffLinear(1);
+	setDragCoeffLinear(5);
 	setDragCoeffAngular(1);
 }
 
@@ -32,7 +32,7 @@ Crate::~Crate() {
 
 void Crate::react(const Coordinate& rhs)
 {
-	//applyImpulseLinear(rhs);
-	//clearForce();
+	applyImpulseLinear(rhs);
+	clearForce();
 }
 

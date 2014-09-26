@@ -24,6 +24,12 @@ void CollisionManager::setGameObjecs(const vector<shared_ptr<GameObject>>& gameO
 
 void CollisionManager::findCollisions()
 {
+
+	// remove this
+	if (_gameObjects.size() > 30)
+	{
+		cout << "WTF" << endl;
+	}
 	for (unsigned go1 = 0; go1 < _gameObjects.size()-1; go1++)
 	{
 		for (unsigned go2 = go1+1; go2 < _gameObjects.size(); go2++)
@@ -38,7 +44,6 @@ void CollisionManager::findCollisions()
 				}
 				catch(No_Collision&)
 				{
-					//that which seperates the objects
 					cout << "issue01_01 something" << endl;
 				}
 				catch(object_Rotated_Into_Collision&)

@@ -103,14 +103,19 @@ void Collision::resolve()
 	_collidee->react(CollideeImpulse);
 	_collider->react(ColliderImpulse);
 
-	while (_collidee->hasInside(_collisionPt))
+	Coordinate stepBack{_approachVelocity};
+	if (_approachVelocity.magSquared() <= NOTHING)
 	{
-		_collidee->move(_approachVelocity*0.5*_stepTime);
+		stepBack = (_collidee->getCenter() - _collider->getCenter()) * NOTHING;
 	}
 
-	while (_collider->hasInside(_collisionPt))
+	while (_collidee->hasInside(_collider))
 	{
-		_collidee->move(_approachVelocity*(-0.5)*_stepTime);
+		_collidee->move(stepBack*0.5*_stepTime);
+	}
+	while (_collider->hasInside(_collidee))
+	{
+		_collidee->move(stepBack*(-0.5)*_stepTime);
 	}
 }
 
