@@ -25,7 +25,8 @@ public:
 	void controllerInput();
 
 	void checkPlayerDeath();
-	//void loadLevelLayout(const int level);
+
+	float _stepTime = 0.1;
 
 	shared_ptr<SGSTank> _player1{new SGSTank{}};
 	shared_ptr<SGSTank> _player2{new SGSTank{}};
@@ -36,7 +37,7 @@ public:
 
 	//vector<shared_ptr<SGSCrate>> _crates;
 
-	CollisionManager _collMan;
+	CollisionManager _collMan{_stepTime};
 	sf::Clock clock{};
 
 	sf::Time p1FireTime = clock.getElapsedTime();

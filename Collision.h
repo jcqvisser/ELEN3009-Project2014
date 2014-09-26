@@ -16,7 +16,8 @@ public:
 	Collision(const Collision& col);
 	Collision(
 			const shared_ptr<GameObject>& obj1,
-			const shared_ptr<GameObject>& obj2);
+			const shared_ptr<GameObject>& obj2,
+			const float& stepTime);
 	virtual ~Collision();
 	void printCollisionEdge() const;
 	void resolve();
@@ -26,6 +27,7 @@ public:
 
 	Coordinate _approachVelocity{};
 	Line _collisionEdge;
+	Coordinate _collisionPt;
 
 //private:
 	void findCollisionEdge();
@@ -33,6 +35,7 @@ public:
 			shared_ptr<GameObject> obj1,
 			shared_ptr<GameObject> obj2);
 	void findApproachVelocity();
+	float _stepTime = 0.1;
 
 };
 

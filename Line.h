@@ -11,6 +11,8 @@
 #include <iostream>
 #include <memory>
 
+class Lines_Do_Not_Intersect{};
+
 class Line {
 public:
 	virtual ~Line();
@@ -21,7 +23,8 @@ public:
 	float lengthSquared() const;
 	float length() const;
 	bool isBelow(const std::shared_ptr<Coordinate>& coord) const;
-	bool intersects(const Line& line)const ;
+	bool intersects(const Line& line) const ;
+	Coordinate intersectionPt(const Line& ln) const;
 	bool isOnLine(const Coordinate& coord) const;
 	Coordinate getNormal();
 	std::shared_ptr<Coordinate> _coordinate1;

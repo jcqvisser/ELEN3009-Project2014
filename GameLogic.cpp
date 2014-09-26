@@ -7,6 +7,7 @@
 
 GameLogic::GameLogic()
 {
+	//all this must be done by a level loading function
 	_player1->Update();
 	_player2->changePosition(300,100);
 	_player2->Update();
@@ -33,9 +34,9 @@ void GameLogic::step()
 	_collMan.findCollisions();
 	_collMan.ResolveCollisions();
 	_collMan.purgeCollisions();
-	_player1->animate(0.1);
-	_player2->animate(0.1);
-	_crate1->animate(0.1);
+	_player1->animate(_stepTime);
+	_player2->animate(_stepTime);
+	_crate1->animate(_stepTime);
 	_player1->Update();
 	_player2->Update();
 	_crate1->Update();
@@ -120,10 +121,32 @@ void GameLogic::coreLoop()
             }
             checkPlayerDeath();
             step();
+
+            sf::VertexArray p1box(sf::LinesStrip, 4);
+            p1box[0].position = sf::Vector2f(_player1->_object->_triangles[0].getCoordinate(0)->x(), _player1->_object->_triangles[0].getCoordinate(0)->y());
+            p1box[1].position = sf::Vector2f(_player1->_object->_triangles[0].getCoordinate(1)->x(), _player1->_object->_triangles[0].getCoordinate(1)->y());
+            p1box[2].position = sf::Vector2f(_player1->_object->_triangles[0].getCoordinate(2)->x(), _player1->_object->_triangles[0].getCoordinate(2)->y());
+            p1box[3].position = sf::Vector2f(_player1->_object->_triangles[0].getCoordinate(0)->x(), _player1->_object->_triangles[0].getCoordinate(0)->y());
+
+            sf::VertexArray p2box(sf::LinesStrip, 4);
+			p2box[0].position = sf::Vector2f(_player2->_object->_triangles[0].getCoordinate(0)->x(), _player2->_object->_triangles[0].getCoordinate(0)->y());
+			p2box[1].position = sf::Vector2f(_player2->_object->_triangles[0].getCoordinate(1)->x(), _player2->_object->_triangles[0].getCoordinate(1)->y());
+			p2box[2].position = sf::Vector2f(_player2->_object->_triangles[0].getCoordinate(2)->x(), _player2->_object->_triangles[0].getCoordinate(2)->y());
+			p2box[3].position = sf::Vector2f(_player2->_object->_triangles[0].getCoordinate(0)->x(), _player2->_object->_triangles[0].getCoordinate(0)->y());
+
+			sf::VertexArray crate1box(sf::LinesStrip, 4);
+			crate1box[0].position = sf::Vector2f(_crate1->_object->_triangles[0].getCoordinate(0)->x(), _crate1->_object->_triangles[0].getCoordinate(0)->y());
+			crate1box[1].position = sf::Vector2f(_crate1->_object->_triangles[0].getCoordinate(1)->x(), _crate1->_object->_triangles[0].getCoordinate(1)->y());
+			crate1box[2].position = sf::Vector2f(_crate1->_object->_triangles[0].getCoordinate(2)->x(), _crate1->_object->_triangles[0].getCoordinate(2)->y());
+			crate1box[3].position = sf::Vector2f(_crate1->_object->_triangles[0].getCoordinate(0)->x(), _crate1->_object->_triangles[0].getCoordinate(0)->y());
+
             window.clear();
             window.draw(*_player1);
             window.draw(*_player2);
             window.draw(*_crate1);
+            window.draw(p1box);
+            window.draw(p2box);
+            window.draw(crate1box);
             for (auto rocket : _rockets)
             {
             	window.draw(*rocket);
@@ -174,24 +197,3 @@ void GameLogic::checkPlayerDeath()
 
 	}
 }
-
-//void GameLogic::loadLevelLayout(const int level)
-//{
-//	if (level == 1)
-//	{
-//		shared_ptr<SGSCrate> crate0{new SGSCrate{}};
-//		crate0->changePosition(300,300);
-//		shared_ptr<SGSCrate> crate1{new SGSCrate{}};
-//		crate1->changePosition(400,400);
-//		shared_ptr<SGSCrate> crate2{new SGSCrate{}};
-//		crate2->changePosition(500,400);
-//		shared_ptr<SGSCrate> crate3{new SGSCrate{}};
-//		crate3->changePosition(700,400);
-//
-//		_crates.push_back(crate0);
-//		_crates.push_back(crate1);
-//		_crates.push_back(crate2);
-//		_crates.push_back(crate3);
-//	}
-//    //updateCollisionManager();
-//}

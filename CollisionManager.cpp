@@ -9,6 +9,10 @@ CollisionManager::CollisionManager(vector<shared_ptr<GameObject>> gameObjects) :
 	_gameObjects(gameObjects)
 {}
 
+CollisionManager::CollisionManager(const float& stepTime) :
+		_stepTime(stepTime)
+{}
+
 CollisionManager::~CollisionManager() {
 	// TODO Auto-generated destructor stub
 }
@@ -29,7 +33,7 @@ void CollisionManager::findCollisions()
 			{
 				try
 				{
-					Collision col{_gameObjects[go1], _gameObjects[go2]};
+					Collision col{_gameObjects[go1], _gameObjects[go2], _stepTime};
 					_collisions.push_back(col);
 				}
 				catch(No_Collision&)

@@ -192,10 +192,20 @@ Line GameObject::intersectingLine(const Line& penetratingLine)
 
 bool GameObject::hasInside(const shared_ptr<GameObject>& gO)
 {
-	//auto a = _triangles[0];
 	for (auto tri1 : _triangles)
 		if (tri1.hasInside(gO->_triangles))
 			return true;
+	return false;
+}
+
+bool GameObject::hasInside(const Coordinate& coord) const
+{
+	auto coordPtr = make_shared<Coordinate>(coord);
+	for (auto tri : _triangles)
+	{
+		if (tri.hasInside(coordPtr))
+			return true;
+	}
 	return false;
 }
 

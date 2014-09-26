@@ -103,7 +103,7 @@ float Line::isBetween(const float& pt0, const float& bound1, const float& bound2
 	return false;
 }
 
-bool Line::intersects(const Line& line) const
+Coordinate Line::intersectionPt(const Line& line) const
 {
 
 	float x1l1 = _coordinate1->x();
@@ -120,7 +120,7 @@ bool Line::intersects(const Line& line) const
 	{
 		float y0 = line.getYVal(x1l1);
 		if (isBetween(y0, y1l1, y2l1))
-			return true;
+			return Coordinate{x1l1, y0};
 	}
 
 
@@ -128,7 +128,12 @@ bool Line::intersects(const Line& line) const
 	{
 		float y0 = getYVal(x1l2);
 		if (isBetween(y0, y1l2, y2l2))
-			return true;
+			return Coordinate{x1l2, y0};
+	}
+
+	if (x1l2 == x2l2 && x1l1 == x2l1)
+	{
+		throw Lines_Do_Not_Intersect{};
 	}
 
 	float m0 = getSlope();
@@ -144,9 +149,23 @@ bool Line::intersects(const Line& line) const
 		isBetween(x2, x1l2, x2l2))
 		if (isBetween(y2, y1l1, y2l1) &&
 			isBetween(y2, y1l2, y2l2))
-			return true;
+			return Coordinate{x2,y2};
 
-	return false;
+	throw Lines_Do_Not_Intersect{};
+}
+
+bool Line::intersects(const Line& line) const
+{
+	try
+	{
+		intersectionPt(line);
+	}
+	catch(Lines_Do_Not_Intersect&)
+	{
+		return false;
+	}
+
+	return true;
 }
 
 bool Line::isOnLine(const Coordinate& coord) const

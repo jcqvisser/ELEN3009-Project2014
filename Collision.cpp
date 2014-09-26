@@ -22,8 +22,10 @@ Collision::~Collision() {
 
 Collision::Collision(
 		const shared_ptr<GameObject>& obj1,
-		const shared_ptr<GameObject>& obj2)
+		const shared_ptr<GameObject>& obj2,
+		const float& stepTime)
 {
+	_stepTime = stepTime;
 	findCollision(obj1, obj2);
 	findApproachVelocity();
 	try
@@ -66,6 +68,8 @@ void Collision::findCollisionEdge()
 
 		Line penetratingLine{ penetrator0, penetrator1};
 		_collisionEdge = _collidee->intersectingLine(penetratingLine);
+		_collisionPt = _collisionEdge.intersectionPt(penetratingLine);
+
 	}
 	catch (No_Line_Intersects&)
 	{
@@ -93,11 +97,21 @@ void Collision::resolve()
 
 	normal.rotate(PI);
 
-	Coordinate ColliderImpulse = normal*(momentum*_collidee->getMass()/totalMass)*1;
-	Coordinate CollideeImpulse = normal*(-momentum*_collider->getMass()/totalMass)*1;
+	Coordinate ColliderImpulse = normal*(momentum*_collidee->getMass()/totalMass);
+	Coordinate CollideeImpulse = normal*(-momentum*_collider->getMass()/totalMass);
 
 	_collidee->react(CollideeImpulse);
 	_collider->react(ColliderImpulse);
+
+	while (_collidee->hasInside(_collisionPt))
+	{
+		_collidee->move(_approachVelocity*0.5*_stepTime);
+	}
+
+	while (_collider->hasInside(_collisionPt))
+	{
+		_collidee->move(_approachVelocity*(-0.5)*_stepTime);
+	}
 }
 
 void Collision::printCollisionEdge() const

@@ -10,6 +10,7 @@
 class CollisionManager {
 public:
 	CollisionManager(){};
+	CollisionManager(const float& stepTime);
 	CollisionManager(vector<shared_ptr<GameObject>> gameObjects);
 	virtual ~CollisionManager();
 	void setGameObjecs(const vector<shared_ptr<GameObject>>& gameObjects);
@@ -22,6 +23,7 @@ public:
 private:
 	vector<shared_ptr<GameObject>> _gameObjects;
 	vector<Collision> _collisions;
+	float _stepTime = 0.1;
 };
 
 #endif /* COLLISIONMANAGER_H_ */

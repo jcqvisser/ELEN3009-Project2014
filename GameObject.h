@@ -37,6 +37,7 @@ public:
 	virtual void clearForce();
 
 	bool hasInside(const shared_ptr<GameObject>& gO);
+	bool hasInside(const Coordinate& coord) const;
 	Coordinate avgCoordInside(const GameObject& gO);
 	Line intersectingLine(const Line& penetratingLine);
 
