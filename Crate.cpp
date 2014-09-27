@@ -21,13 +21,11 @@ Crate::Crate() :
 	//tweak these values
 	addTriangle(t0);
 //	addTriangle(t1);
-	unglue();
-	setDragCoeffLinear(5);
-	setDragCoeffAngular(1);
+	setDragCoeff(1);
 }
 
 Crate::~Crate() {
-	// TODO Auto-generated destructor stub
+	// TODO Auto-generated destructor stud
 }
 
 void Crate::react(const Coordinate& rhs)

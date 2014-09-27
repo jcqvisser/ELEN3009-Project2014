@@ -15,9 +15,7 @@ Rocket::Rocket() :
 
 	//tweak these values
 	addTriangle(t0);
-	unglue();
-	setDragCoeffLinear(1);
-	setDragCoeffAngular(1);
+	setDragCoeff(1);
 	_rocketPower = 50;
 
 
@@ -28,7 +26,6 @@ Rocket::~Rocket(){ }
 void Rocket::clearForce()
 {
 	_forceLinear = Coordinate{0,0};
-	_forceAngular = 0;
 	_forceLinear += _forward * _rocketPower;
 }
 

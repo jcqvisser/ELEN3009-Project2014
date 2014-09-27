@@ -395,29 +395,7 @@ TEST(GameObject, animateLinearForce)
 	EXPECT_FALSE(testGO.getCenter() == testGO1.getCenter());
 }
 
-TEST(GameObject, animateAngular)
-{
-	shared_ptr<Coordinate> tC0{new Coordinate{0,0}};
-	shared_ptr<Coordinate> tC1{new Coordinate{1,1}};
-	shared_ptr<Coordinate> tC2{new Coordinate{0,1}};
-	shared_ptr<Triangle> testTri{new Triangle{tC0, tC1, tC2}};
-	GameObject testGO{1};
-	testGO.addTriangle(testTri);
 
-	shared_ptr<Coordinate> tC4{new Coordinate{0,0}};
-	shared_ptr<Coordinate> tC5{new Coordinate{1,1}};
-	shared_ptr<Coordinate> tC6{new Coordinate{0,1}};
-	shared_ptr<Triangle> testTri1{new Triangle{tC4, tC5, tC6}};
-	GameObject testGO1{1};
-	testGO1.addTriangle(testTri1);
-
-	float force = 1;
-	testGO.applyForceAngular(force);
-
-	testGO.animate(1);
-
-	EXPECT_FALSE(testGO.getForward() == testGO1.getForward());
-}
 
 TEST(GameObject, IntersectingLine)
 {

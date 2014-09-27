@@ -45,16 +45,11 @@ void GameObject::addTriangle(shared_ptr<Triangle>& tri)
 	_centerOfMass = _centerOfMass/(_triangles.size()*3);
 }
 
-void GameObject::glue()
-{	_glued = true;}
 
-void GameObject::unglue()
-{	_glued = false;}
 
 void GameObject::applyForceLinear(const Coordinate& force)
 {
-	if (_glued == true)
-		throw object_is_glued_and_cannot_move{};
+
 	_forceLinear += force;
 
 }
@@ -64,17 +59,8 @@ void GameObject::applyImpulseLinear(const Coordinate& impulse)
 	_velocityLinear += impulse;
 }
 
-void GameObject::applyForceAngular(const float& force)
-{
-	if (_glued == true)
-		throw object_is_glued_and_cannot_move{};
-	_forceAngular += force;
-}
-
 void GameObject::rotate(const float& angle)
 {
-	if (_glued == true)
-		throw object_is_glued_and_cannot_move{};
 	for (auto triangle : _triangles)
 		triangle.rotate(angle, _centerOfMass);
 	_forward.rotate(angle);
@@ -82,8 +68,6 @@ void GameObject::rotate(const float& angle)
 
 void GameObject::move(const Coordinate& change)
 {
-	if (_glued == true)
-		throw object_is_glued_and_cannot_move{};
 	for (auto triangle : _triangles)
 		triangle.move(change);
 	_centerOfMass += change;
@@ -91,14 +75,12 @@ void GameObject::move(const Coordinate& change)
 
 bool GameObject::animateLinear(const float& time)
 {
-	if (_glued == true)
-		throw object_is_glued_and_cannot_move{};
 	bool moved = false;
 
-	if (_forceLinear > _forceLinearThreshold)
+	if (_forceLinear.magSquared() > 0)
 	{
-		Coordinate a = _forceLinear/_dragCoeffLinear;
-		float e2 = exp(-_dragCoeffLinear/_mass*time);
+		Coordinate a = _forceLinear/_dragCoeff;
+		float e2 = exp(-_dragCoeff/_mass*time);
 		float e1 = 1-e2;
 		_velocityLinear = a*e1 + _velocityLinear*time*e2;
 
@@ -106,9 +88,9 @@ bool GameObject::animateLinear(const float& time)
 		move(dPos);
 		moved = true;
 	}
-	else if (_velocityLinear > _vThresholdLinear)
+	else if (_velocityLinear.magSquared() > 0)
 	{
-		float e2 = exp(-_dragCoeffLinear/_mass*time);
+		float e2 = exp(-_dragCoeff/_mass*time);
 		_velocityLinear = _velocityLinear*e2;
 
 		Coordinate dPos = _velocityLinear*time;
@@ -123,26 +105,10 @@ bool GameObject::animateLinear(const float& time)
 	return moved;
 }
 
-bool GameObject::animateAngular(const float& time)
-{
-	if (_glued == true)
-		throw object_is_glued_and_cannot_move{};
-
-	bool rotated = false;
-
-	rotate(time*_forceAngular);
-
-	return rotated;
-}
-
 bool GameObject::animate(const float& time)
 {
-	if (_glued == true)
-		throw object_is_glued_and_cannot_move{};
-
 	animateLinear(time);
-	animateAngular(time);
-
+	rotate(_forceAngular*time);
 	clearForce();
 	return false;
 }
@@ -209,14 +175,9 @@ bool GameObject::hasInside(const Coordinate& coord) const
 	return false;
 }
 
-void GameObject::setDragCoeffLinear(const float& dC)
+void GameObject::setDragCoeff(const float& dC)
 {
-	_dragCoeffLinear = dC;
-}
-
-void GameObject::setDragCoeffAngular(const float& dC)
-{
-	_dragCoeffAngular = dC;
+	_dragCoeff = dC;
 }
 
 void GameObject::clearForce()
@@ -234,4 +195,14 @@ void GameObject::setPosition(const Coordinate& pos)
 {
 	auto dPos = pos -getCenter();
 	move(dPos);
+}
+
+vector<Triangle> GameObject::getTriangles() const
+{
+	return _triangles;
+}
+
+void GameObject::applyForceAngular(const float& force)
+{
+	_forceAngular += force;
 }

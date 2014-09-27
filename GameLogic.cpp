@@ -69,9 +69,9 @@ void GameLogic::controllerInput()
 		{
 			shared_ptr<SGSRocket> rocket{new SGSRocket{}};
 			Coordinate origin{_player1->_object->getCenter()};
-			origin = origin + _player1->_object->_forward*50.0;
+			origin = origin + _player1->_object->getForward()*50.0;
 			rocket->changePosition(origin.x(), origin.y());
-			rocket->setDirection(-_player1->_object->_forward.angle() + PI);
+			rocket->setDirection(-_player1->_object->getForward().angle() + PI);
 			_rockets.push_back(rocket);
 			p1FireTime = clock.getElapsedTime();
 		}
@@ -96,9 +96,9 @@ void GameLogic::controllerInput()
 		{
 			shared_ptr<SGSRocket> rocket{new SGSRocket{}};
 			Coordinate origin{_player2->_object->getCenter()};
-			origin = origin + _player2->_object->_forward*50.0;
+			origin = origin + _player2->_object->getForward()*50.0;
 			rocket->changePosition(origin.x(), origin.y());
-			rocket->setDirection(-_player2->_object->_forward.angle() + PI);
+			rocket->setDirection(-_player2->_object->getForward().angle() + PI);
 			_rockets.push_back(rocket);
 			p2FireTime = clock.getElapsedTime();
 		}
@@ -123,22 +123,22 @@ void GameLogic::coreLoop()
             step();
 
             sf::VertexArray p1box(sf::LinesStrip, 4);
-            p1box[0].position = sf::Vector2f(_player1->_object->_triangles[0].getCoordinate(0)->x(), _player1->_object->_triangles[0].getCoordinate(0)->y());
-            p1box[1].position = sf::Vector2f(_player1->_object->_triangles[0].getCoordinate(1)->x(), _player1->_object->_triangles[0].getCoordinate(1)->y());
-            p1box[2].position = sf::Vector2f(_player1->_object->_triangles[0].getCoordinate(2)->x(), _player1->_object->_triangles[0].getCoordinate(2)->y());
-            p1box[3].position = sf::Vector2f(_player1->_object->_triangles[0].getCoordinate(0)->x(), _player1->_object->_triangles[0].getCoordinate(0)->y());
+            p1box[0].position = sf::Vector2f(_player1->_object->getTriangles()[0].getCoordinate(0)->x(), _player1->_object->getTriangles()[0].getCoordinate(0)->y());
+            p1box[1].position = sf::Vector2f(_player1->_object->getTriangles()[0].getCoordinate(1)->x(), _player1->_object->getTriangles()[0].getCoordinate(1)->y());
+            p1box[2].position = sf::Vector2f(_player1->_object->getTriangles()[0].getCoordinate(2)->x(), _player1->_object->getTriangles()[0].getCoordinate(2)->y());
+            p1box[3].position = sf::Vector2f(_player1->_object->getTriangles()[0].getCoordinate(0)->x(), _player1->_object->getTriangles()[0].getCoordinate(0)->y());
 
             sf::VertexArray p2box(sf::LinesStrip, 4);
-			p2box[0].position = sf::Vector2f(_player2->_object->_triangles[0].getCoordinate(0)->x(), _player2->_object->_triangles[0].getCoordinate(0)->y());
-			p2box[1].position = sf::Vector2f(_player2->_object->_triangles[0].getCoordinate(1)->x(), _player2->_object->_triangles[0].getCoordinate(1)->y());
-			p2box[2].position = sf::Vector2f(_player2->_object->_triangles[0].getCoordinate(2)->x(), _player2->_object->_triangles[0].getCoordinate(2)->y());
-			p2box[3].position = sf::Vector2f(_player2->_object->_triangles[0].getCoordinate(0)->x(), _player2->_object->_triangles[0].getCoordinate(0)->y());
+			p2box[0].position = sf::Vector2f(_player2->_object->getTriangles()[0].getCoordinate(0)->x(), _player2->_object->getTriangles()[0].getCoordinate(0)->y());
+			p2box[1].position = sf::Vector2f(_player2->_object->getTriangles()[0].getCoordinate(1)->x(), _player2->_object->getTriangles()[0].getCoordinate(1)->y());
+			p2box[2].position = sf::Vector2f(_player2->_object->getTriangles()[0].getCoordinate(2)->x(), _player2->_object->getTriangles()[0].getCoordinate(2)->y());
+			p2box[3].position = sf::Vector2f(_player2->_object->getTriangles()[0].getCoordinate(0)->x(), _player2->_object->getTriangles()[0].getCoordinate(0)->y());
 
 			sf::VertexArray crate1box(sf::LinesStrip, 4);
-			crate1box[0].position = sf::Vector2f(_crate1->_object->_triangles[0].getCoordinate(0)->x(), _crate1->_object->_triangles[0].getCoordinate(0)->y());
-			crate1box[1].position = sf::Vector2f(_crate1->_object->_triangles[0].getCoordinate(1)->x(), _crate1->_object->_triangles[0].getCoordinate(1)->y());
-			crate1box[2].position = sf::Vector2f(_crate1->_object->_triangles[0].getCoordinate(2)->x(), _crate1->_object->_triangles[0].getCoordinate(2)->y());
-			crate1box[3].position = sf::Vector2f(_crate1->_object->_triangles[0].getCoordinate(0)->x(), _crate1->_object->_triangles[0].getCoordinate(0)->y());
+			crate1box[0].position = sf::Vector2f(_crate1->_object->getTriangles()[0].getCoordinate(0)->x(), _crate1->_object->getTriangles()[0].getCoordinate(0)->y());
+			crate1box[1].position = sf::Vector2f(_crate1->_object->getTriangles()[0].getCoordinate(1)->x(), _crate1->_object->getTriangles()[0].getCoordinate(1)->y());
+			crate1box[2].position = sf::Vector2f(_crate1->_object->getTriangles()[0].getCoordinate(2)->x(), _crate1->_object->getTriangles()[0].getCoordinate(2)->y());
+			crate1box[3].position = sf::Vector2f(_crate1->_object->getTriangles()[0].getCoordinate(0)->x(), _crate1->_object->getTriangles()[0].getCoordinate(0)->y());
 
             window.clear();
             window.draw(*_player1);
@@ -182,14 +182,14 @@ void GameLogic::checkPlayerDeath()
 		{
 			_player1->_texture.loadFromFile("explosion.png", sf::IntRect(0, 0, 100,100));
 			_player1->setOrigin(50,50);
-			_player1->setTexture(_player1->_texture);
+			_player1->setTexture(_player1->_texture, true);
 			return;
 		}
 
 		if (_player2->_object->hasInside(rocket->_object))
 		{
 			_player2->_texture.loadFromFile("explosion.png", sf::IntRect(0,0,100,100));
-			_player2->setTexture(_player2->_texture);
+			_player2->setTexture(_player2->_texture, true);
 			_player2->setOrigin(50,50);
 			return;
 		}

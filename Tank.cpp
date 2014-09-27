@@ -15,9 +15,7 @@ Tank::Tank() :
 
 	//tweak these values
 	addTriangle(t0);
-	unglue();
-	setDragCoeffLinear(1);
-	setDragCoeffAngular(1);
+	setDragCoeff(1);
 	_enginePowerFwd = 200;
 	_enginePowerRev = -5;
 	_turningPower = 0.05;

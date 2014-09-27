@@ -5,17 +5,11 @@
 
 #include "CollisionManager.h"
 
-CollisionManager::CollisionManager(vector<shared_ptr<GameObject>> gameObjects) :
-	_gameObjects(gameObjects)
-{}
-
 CollisionManager::CollisionManager(const float& stepTime) :
 		_stepTime(stepTime)
 {}
 
-CollisionManager::~CollisionManager() {
-	// TODO Auto-generated destructor stub
-}
+CollisionManager::~CollisionManager() { }
 
 void CollisionManager::setGameObjecs(const vector<shared_ptr<GameObject>>& gameObjects)
 {
@@ -24,12 +18,6 @@ void CollisionManager::setGameObjecs(const vector<shared_ptr<GameObject>>& gameO
 
 void CollisionManager::findCollisions()
 {
-
-	// remove this
-	if (_gameObjects.size() > 30)
-	{
-		cout << "WTF" << endl;
-	}
 	for (unsigned go1 = 0; go1 < _gameObjects.size()-1; go1++)
 	{
 		for (unsigned go2 = go1+1; go2 < _gameObjects.size(); go2++)

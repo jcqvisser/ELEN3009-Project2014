@@ -11,7 +11,6 @@ class CollisionManager {
 public:
 	CollisionManager(){};
 	CollisionManager(const float& stepTime);
-	CollisionManager(vector<shared_ptr<GameObject>> gameObjects);
 	virtual ~CollisionManager();
 	void setGameObjecs(const vector<shared_ptr<GameObject>>& gameObjects);
 	void findCollisions();

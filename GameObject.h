@@ -22,55 +22,43 @@ public:
 	Coordinate getCenter();
 	Coordinate getVelocity() const;
 	Coordinate getForward() const;
+	vector<Triangle> getTriangles() const;
 	float getMass() const;
 	float getRotation() const;
 
+	void setDragCoeff(const float& dC);
+	void setPosition(const Coordinate& pos);
+	void clearForce();
+
 	void addTriangle(shared_ptr<Triangle>& tri);
 
-	void glue();
-	void unglue();
-
+	void move(const Coordinate& change);
 	void applyForceLinear(const Coordinate& force);
-	void applyImpulseLinear(const Coordinate& impulse);
 	void applyForceAngular(const float& force);
+	void applyImpulseLinear(const Coordinate& impulse);
+	virtual void react(const Coordinate& rhs) {};
 	bool animate(const float& time);
-	virtual void clearForce();
 
 	bool hasInside(const shared_ptr<GameObject>& gO);
 	bool hasInside(const Coordinate& coord) const;
 	Coordinate avgCoordInside(const GameObject& gO);
 	Line intersectingLine(const Line& penetratingLine);
 
-	void setDragCoeffLinear(const float& dC);
-	void setDragCoeffAngular(const float& dC);
-	void setPosition(const Coordinate& pos);
-
-	virtual void react(const Coordinate& rhs) {};
-
-//protected:
+protected:
 	vector<Triangle> _triangles;
 
-	void move(const Coordinate& change);
 	void rotate(const float& angle);
 	bool animateLinear(const float& time);
-	bool animateAngular(const float& time);
 
 	float _mass = 1;
 	Coordinate _centerOfMass{0, 0};
-	bool _glued = false;
 
 	Coordinate _forward{0, 1};
 	Coordinate _velocityLinear{0, 0};
-	float _vThresholdLinear{0};
 	Coordinate _forceLinear{0, 0};
-	float _dragCoeffLinear = 1;
-	float _forceLinearThreshold = 0.1;
+	float _dragCoeff = 1;
 
-	float _velocityAngular = 0.0;
-	float _forceAngular = 0.0;
-	float _vThresholdAngular{0};
-	float _dragCoeffAngular = 5;
-	float _forceAngularThreshold = 0.1;
+	float _forceAngular = 0;
 
 	float _health = 100;
 };
