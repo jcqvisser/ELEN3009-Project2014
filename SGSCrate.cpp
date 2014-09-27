@@ -9,8 +9,8 @@ SGSCrate::SGSCrate()
 {
 	_texture.setSmooth(true);
 	_texture.loadFromFile("Crate.png", sf::IntRect(0, 0, 60, 60));
-	setOrigin(30,30);
-	setTexture(_texture);
+	setTexture(_texture, true);
+	setOrigin(20,40);
 }
 
 SGSCrate::~SGSCrate() {}

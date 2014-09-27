@@ -18,7 +18,7 @@ public:
 	virtual ~SfmlGameSprite();
 	virtual void Update() = 0;
 	virtual void changePosition(const float x, const float y) = 0;
-	virtual void animate(const float time) = 0;
+	virtual void animate(const float time) = 0; //remove this
 
 	shared_ptr<GameObject>_object;
 };

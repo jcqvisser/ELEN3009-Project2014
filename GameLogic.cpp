@@ -12,12 +12,9 @@ GameLogic::GameLogic()
 	_player2->changePosition(300,100);
 	_player2->Update();
 
-	_crate1->changePosition(300,300);
 
-	shared_ptr<GameObject> p1 = _player1->_object;
-	shared_ptr<GameObject> p2 = _player2->_object;
-
-	shared_ptr<GameObject> c1 = _crate1->_object;
+	_immovableCrates.push_back(shared_ptr<SGSImmovableCrate>{new SGSImmovableCrate{}});
+	_immovableCrates[0]->changePosition(500,500);
 }
 
 GameLogic::~GameLogic() {}
@@ -31,14 +28,17 @@ void GameLogic::step()
 	_collMan.purgeCollisions();
 	_player1->animate(_stepTime);
 	_player2->animate(_stepTime);
-	_crate1->animate(_stepTime);
 	_player1->Update();
 	_player2->Update();
-	_crate1->Update();
 	for (auto rocket : _rockets)
 	{
-		rocket->animate(0.1);
+		rocket->animate(_stepTime);
 		rocket->Update();
+	}
+	for (auto crate : _immovableCrates)
+	{
+		crate->animate(_stepTime);
+		crate->Update();
 	}
 
 }
@@ -129,22 +129,18 @@ void GameLogic::coreLoop()
 			p2box[2].position = sf::Vector2f(_player2->_object->getTriangles()[0].getCoordinate(2)->x(), _player2->_object->getTriangles()[0].getCoordinate(2)->y());
 			p2box[3].position = sf::Vector2f(_player2->_object->getTriangles()[0].getCoordinate(0)->x(), _player2->_object->getTriangles()[0].getCoordinate(0)->y());
 
-			sf::VertexArray crate1box(sf::LinesStrip, 4);
-			crate1box[0].position = sf::Vector2f(_crate1->_object->getTriangles()[0].getCoordinate(0)->x(), _crate1->_object->getTriangles()[0].getCoordinate(0)->y());
-			crate1box[1].position = sf::Vector2f(_crate1->_object->getTriangles()[0].getCoordinate(1)->x(), _crate1->_object->getTriangles()[0].getCoordinate(1)->y());
-			crate1box[2].position = sf::Vector2f(_crate1->_object->getTriangles()[0].getCoordinate(2)->x(), _crate1->_object->getTriangles()[0].getCoordinate(2)->y());
-			crate1box[3].position = sf::Vector2f(_crate1->_object->getTriangles()[0].getCoordinate(0)->x(), _crate1->_object->getTriangles()[0].getCoordinate(0)->y());
-
             window.clear();
             window.draw(*_player1);
             window.draw(*_player2);
-            window.draw(*_crate1);
             window.draw(p1box);
             window.draw(p2box);
-            window.draw(crate1box);
             for (auto rocket : _rockets)
             {
             	window.draw(*rocket);
+            }
+            for (auto crate : _immovableCrates)
+            {
+            	window.draw(*crate);
             }
             window.display();
         }
@@ -164,8 +160,10 @@ void GameLogic::updateCollisionManager()
     {
     	tempGOs.push_back(rocket->_object);
     }
-    tempGOs.push_back(_crate1->_object);
-
+    for (auto crate : _immovableCrates)
+    {
+    	tempGOs.push_back(crate->_object);
+    }
     _collMan.setGameObjecs(tempGOs);
 }
 
@@ -188,7 +186,5 @@ void GameLogic::checkPlayerDeath()
 			_player2->setOrigin(50,50);
 			return;
 		}
-
-
 	}
 }

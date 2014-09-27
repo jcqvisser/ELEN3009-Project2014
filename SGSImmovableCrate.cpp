@@ -11,7 +11,7 @@ SGSImmovableCrate::SGSImmovableCrate()
 {
 	_texture.setSmooth(true);
 	_texture.loadFromFile("Crate.png", sf::IntRect(0, 0, 60, 60));
-	setOrigin(30,30);
+	setOrigin(20,40);
 	setTexture(_texture);
 }
 
@@ -34,5 +34,4 @@ void SGSImmovableCrate::changePosition(float x, float y)
 void SGSImmovableCrate::animate(const float time)
 {
 	//_object->animate(time);
-	//cout << "object is immovable!" << endl;
 }

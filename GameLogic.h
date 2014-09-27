@@ -33,8 +33,7 @@ public:
 	shared_ptr<SGSTank> _player2{new SGSTank{}};
 
 	vector<shared_ptr<SGSRocket>> _rockets;
-
-	shared_ptr<SGSImmovableCrate> _crate1{new SGSImmovableCrate{}};
+	vector<shared_ptr<SGSImmovableCrate>> _immovableCrates;
 
 	CollisionManager _collMan{_stepTime};
 	sf::Clock clock{};

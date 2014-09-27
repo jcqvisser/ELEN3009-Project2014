@@ -9,8 +9,8 @@ Crate::Crate() :
 	GameObject(CRATEMASS)
 {
 	shared_ptr<Coordinate> c0{new Coordinate{0,0.0001}};
-	shared_ptr<Coordinate> c1{new Coordinate{59.00001,0}};
-	shared_ptr<Coordinate> c2{new Coordinate{59,59}};
+	shared_ptr<Coordinate> c1{new Coordinate{50.00001,0}};
+	shared_ptr<Coordinate> c2{new Coordinate{50,50}};
 	shared_ptr<Triangle> t0{new Triangle{c0,c1,c2}};
 
 //	shared_ptr<Coordinate> c3{new Coordinate{1,1}};
