@@ -8,8 +8,7 @@
 SGSRocket::SGSRocket()
 {
 	_texture.setSmooth(true);
-	_texture.loadFromFile("rocket.png", sf::IntRect(0,0, 10,33));
-	setOrigin(5,16.5);
+	_texture.loadFromFile("tank.png", sf::IntRect(0,0, 10,20));
 	setTexture(_texture);
 }
 
@@ -20,7 +19,7 @@ SGSRocket::~SGSRocket() {
 void SGSRocket::Update()
 {
 	Coordinate center = _object->getCenter();
-
+	setOrigin(25,25);
 	setPosition(center.x(), center.y());
 	setRotation(_object->getRotation()*180/PI+90);
 }
