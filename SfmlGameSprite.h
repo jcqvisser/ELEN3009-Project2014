@@ -9,6 +9,7 @@
 #include "Tank.h"
 #include "Rocket.h"
 #include "Crate.h"
+#include "ImmovableCrate.h"
 
 class SfmlGameSprite : public sf::Sprite
 {

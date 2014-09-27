@@ -13,9 +13,7 @@ SGSCrate::SGSCrate()
 	setTexture(_texture);
 }
 
-SGSCrate::~SGSCrate() {
-	// TODO Auto-generated destructor stub
-}
+SGSCrate::~SGSCrate() {}
 
 void SGSCrate::Update()
 {

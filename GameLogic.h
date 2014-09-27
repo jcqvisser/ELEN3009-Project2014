@@ -9,6 +9,7 @@
 #include "SGSTank.h"
 #include "SGSRocket.h"
 #include "SGSCrate.h"
+#include "SGSImmovableCrate.h"
 #include <SFML/Graphics.hpp>
 #include <SFML/Window/Keyboard.hpp>
 
@@ -33,9 +34,7 @@ public:
 
 	vector<shared_ptr<SGSRocket>> _rockets;
 
-	shared_ptr<SGSCrate> _crate1{new SGSCrate{}};
-
-	//vector<shared_ptr<SGSCrate>> _crates;
+	shared_ptr<SGSImmovableCrate> _crate1{new SGSImmovableCrate{}};
 
 	CollisionManager _collMan{_stepTime};
 	sf::Clock clock{};

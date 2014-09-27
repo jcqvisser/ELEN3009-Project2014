@@ -16,9 +16,7 @@ Collision::Collision(const Collision& col) :
 	_collisionEdge(col._collisionEdge)
 { }
 
-Collision::~Collision() {
-	// TODO Auto-generated destructor stud
-}
+Collision::~Collision() {}
 
 Collision::Collision(
 		const shared_ptr<GameObject>& obj1,
@@ -80,7 +78,10 @@ void Collision::findApproachVelocity()
 {
 	_approachVelocity = _collider->getVelocity() - _collidee->getVelocity();
 	if (_approachVelocity < NOTHING)
-		throw object_Rotated_Into_Collision{};
+	{
+		_approachVelocity = _collidee->getCenter() - _collider->getCenter();
+		_approachVelocity = _approachVelocity/_approachVelocity.magnitude()*NOTHING;
+	}
 }
 
 void Collision::resolve()

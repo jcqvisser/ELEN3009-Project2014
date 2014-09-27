@@ -19,7 +19,6 @@ public:
 
     sf::Texture _texture;
     shared_ptr<Crate> _object{new Crate{}};
-
 };
 
 #endif /* SGSTANK_H_ */
