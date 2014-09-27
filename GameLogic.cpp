@@ -18,11 +18,6 @@ GameLogic::GameLogic()
 	shared_ptr<GameObject> p2 = _player2->_object;
 
 	shared_ptr<GameObject> c1 = _crate1->_object;
-
-	vector<shared_ptr<GameObject>> temp;
-	temp.push_back(p1);
-	temp.push_back(p2);
-	temp.push_back(c1);
 }
 
 GameLogic::~GameLogic() {}

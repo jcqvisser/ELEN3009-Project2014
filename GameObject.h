@@ -22,6 +22,7 @@ public:
 	Coordinate getCenter();
 	Coordinate getVelocity() const;
 	Coordinate getForward() const;
+	Coordinate getForceLinear() const;
 	vector<Triangle> getTriangles() const;
 	float getMass() const;
 	float getRotation() const;

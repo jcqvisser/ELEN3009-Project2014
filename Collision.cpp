@@ -87,37 +87,51 @@ void Collision::findApproachVelocity()
 void Collision::resolve()
 {
 	Coordinate normal = _collisionEdge.getNormal();
+	Coordinate colliderVel = _collider->getVelocity();
+	Coordinate collideeVel = _collidee->getVelocity();
+	float colliderMass = _collider->getMass();
+	float collideeMass = _collidee->getMass();
+	float totalMass = collideeMass + colliderMass;
+
+	//Solve Clipping
+	if (colliderVel > 0)
+	{
+		//Solve clipping for Rotation
+		auto v1 = (_collider->getCenter() - _collidee->getCenter()) * 0.01;
+		_collider->move(v1*_stepTime);
+
+		//Solve Clipping for Linear Velocity
+		auto v = _collider->getVelocity();
+		_collider->move(v*-_stepTime);
+
+		//Newton's Second Law
+		auto f = _collider->getForceLinear();
+		_collider->applyForceLinear(normal*-(f*normal));
+	}
+	else if (collideeVel > 0)
+	{
+		//Solve Clipping for Rotation
+		auto v1 = (_collider->getCenter() - _collidee->getCenter()) * 0.01;
+		_collidee->move(v1*-_stepTime);
+
+		//Solve Clipping for Linear Velocity
+		auto v = _collidee->getVelocity();
+		_collidee->move(v*-_stepTime);
+
+		//Newton's Second Law
+		auto f = _collidee->getForceLinear();
+		_collidee->applyForceLinear(f*(-1));
+	}
+
 	float momentum =
-			_collidee->getMass()*
-				(_collidee->getVelocity()*normal) +
-			_collider->getMass()*
-				(_collider->getVelocity()*normal);
-	momentum = momentum*0.5;
+			collideeMass*(collideeVel*normal) +
+			colliderMass*(colliderVel*normal);
 
-	float totalMass = _collider->getMass() + _collidee->getMass();
+	Coordinate ColliderImpulse = normal*(collideeMass/totalMass)*-momentum*0.01;
+	Coordinate CollideeImpulse = normal*(colliderMass/totalMass)*momentum*0.01;
 
-	normal.rotate(PI);
-
-	Coordinate ColliderImpulse = normal*(momentum*_collidee->getMass()/totalMass);
-	Coordinate CollideeImpulse = normal*(-momentum*_collider->getMass()/totalMass);
-
-	_collidee->react(CollideeImpulse);
-	_collider->react(ColliderImpulse);
-
-	Coordinate stepBack{_approachVelocity};
-	if (_approachVelocity.magSquared() <= NOTHING)
-	{
-		stepBack = (_collidee->getCenter() - _collider->getCenter()) * NOTHING;
-	}
-
-	while (_collidee->hasInside(_collider))
-	{
-		_collidee->move(stepBack*0.5*_stepTime);
-	}
-	while (_collider->hasInside(_collidee))
-	{
-		_collidee->move(stepBack*(-0.5)*_stepTime);
-	}
+	//_collidee->react(CollideeImpulse);
+	//_collider->react(ColliderImpulse);
 }
 
 void Collision::printCollisionEdge() const

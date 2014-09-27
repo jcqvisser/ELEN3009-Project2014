@@ -47,6 +47,6 @@ void Tank::turnLeft()
 
 void Tank::react(const Coordinate& rhs)
 {
-	applyImpulseLinear(rhs);
+	//applyImpulseLinear(rhs); //gives strange behaviour
 }
 

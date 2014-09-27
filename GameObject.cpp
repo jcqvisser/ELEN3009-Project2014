@@ -206,3 +206,8 @@ void GameObject::applyForceAngular(const float& force)
 {
 	_forceAngular += force;
 }
+
+Coordinate GameObject::getForceLinear() const
+{
+	return _forceLinear;
+}
