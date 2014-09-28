@@ -16,7 +16,7 @@ Rocket::Rocket() :
 	//tweak these values
 	addTriangle(t0);
 	setDragCoeff(1);
-	_rocketPower = 50;
+	_rocketPower = 1000000;
 
 
 }

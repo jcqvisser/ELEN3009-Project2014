@@ -18,7 +18,8 @@ class Line {
 public:
 	virtual ~Line();
 	Line(){};
-	Line(const std::shared_ptr<Coordinate>& coord1, const std::shared_ptr<Coordinate>& coord2);
+	Line(const std::shared_ptr<Coordinate>& coord1,
+		 const std::shared_ptr<Coordinate>& coord2);
 	Line(const Line& lin);
 	bool operator==(const Line& rhs) const;
 	float lengthSquared() const;
@@ -28,6 +29,7 @@ public:
 	Coordinate intersectionPt(const Line& ln) const;
 	bool isOnLine(const Coordinate& coord) const;
 	Coordinate getNormal();
+
 	std::shared_ptr<Coordinate> _coordinate1;
 	std::shared_ptr<Coordinate> _coordinate2;
 

@@ -170,42 +170,6 @@ Coordinate Line::intersectionPt(const Line& line) const
 		if (isBetween(y0, y1l1, y2l1))
 			return Coordinate{x1l1, y0};
 	}
-
-
-//	if (x1l1 == x2l1)
-//	{
-//		float y0 = line.getYVal(x1l1);
-//		if (isBetween(y0, y1l1, y2l1))
-//			return Coordinate{x1l1, y0};
-//	}
-//
-//	if (x1l2 == x2l2)
-//	{
-//		float y0 = getYVal(x1l2);
-//		if (isBetween(y0, y1l2, y2l2))
-//			return Coordinate{x1l2, y0};
-//	}
-//
-//	if (x1l2 == x2l2 && x1l1 == x2l1)
-//	{
-//		throw Lines_Do_Not_Intersect{};
-//	}
-//
-//	float m0 = getSlope();
-//	float c0 = getYIntercept();
-//
-//	float m1 = line.getSlope();
-//	float c1 = line.getYIntercept();
-//
-//	float x2 = (c0-c1)/(m1-m0);
-//	float y2 = getYVal(x2);
-//
-//	if (isBetween(x2, x1l1, x2l1) &&
-//		isBetween(x2, x1l2, x2l2))
-//		if (isBetween(y2, y1l1, y2l1) &&
-//			isBetween(y2, y1l2, y2l2))
-//			return Coordinate{x2,y2};
-
 	throw Lines_Do_Not_Intersect{};
 }
 

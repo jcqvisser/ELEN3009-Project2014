@@ -15,10 +15,10 @@ Tank::Tank() :
 
 	//tweak these values
 	addTriangle(t0);
-	setDragCoeff(1);
-	_enginePowerFwd = 200;
-	_enginePowerRev = -5;
-	_turningPower = 0.05;
+	setDragCoeff(500);
+	_enginePowerFwd = 20000000;
+	_enginePowerRev = -1000000;
+	_turningPower = 3;
 }
 
 Tank::~Tank() {
@@ -47,6 +47,6 @@ void Tank::turnLeft()
 
 void Tank::react(const Coordinate& rhs)
 {
-	//applyImpulseLinear(rhs); //gives strange behaviour
+	applyImpulseLinear(rhs); //gives strange behaviour
 }
 

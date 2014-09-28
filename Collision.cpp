@@ -96,31 +96,27 @@ void Collision::resolve()
 	//Solve Clipping
 	if (colliderVel > 0)
 	{
+
 		//Solve clipping for Rotation
-		auto v1 = (_collider->getCenter() - _collidee->getCenter()) * 0.01;
+		auto v1 = normal;
 		_collider->move(v1*_stepTime);
 
-		//Solve Clipping for Linear Velocity
-		auto v = _collider->getVelocity();
-		_collider->move(v*-_stepTime);
-
-		//Newton's Second Law
+		//Newton's First Law
 		auto f = _collider->getForceLinear();
 		_collider->applyForceLinear(normal*-(f*normal));
+
 	}
 	else if (collideeVel > 0)
 	{
-		//Solve Clipping for Rotation
-		auto v1 = (_collider->getCenter() - _collidee->getCenter()) * 0.01;
-		_collidee->move(v1*-_stepTime);
 
-		//Solve Clipping for Linear Velocity
-		auto v = _collidee->getVelocity();
-		_collidee->move(v*-_stepTime);
+		//Solve clipping for Rotation
+		auto v1 = normal;
+		_collidee->move(v1*_stepTime);
 
-		//Newton's Second Law
+		//Newton's First Law
 		auto f = _collidee->getForceLinear();
-		_collidee->applyForceLinear(f*(-1));
+		_collidee->applyForceLinear(normal*-(f*normal));
+
 	}
 
 	float momentum =
@@ -130,8 +126,8 @@ void Collision::resolve()
 	Coordinate ColliderImpulse = normal*(collideeMass/totalMass)*-momentum*0.01;
 	Coordinate CollideeImpulse = normal*(colliderMass/totalMass)*momentum*0.01;
 
-	//_collidee->react(CollideeImpulse);
-	//_collider->react(ColliderImpulse);
+	_collidee->react(CollideeImpulse);
+	_collider->react(ColliderImpulse);
 }
 
 void Collision::printCollisionEdge() const
