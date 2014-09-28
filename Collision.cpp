@@ -66,8 +66,6 @@ void Collision::findCollisionEdge()
 
 		Line penetratingLine{ penetrator0, penetrator1};
 		_collisionEdge = _collidee->intersectingLine(penetratingLine);
-		_collisionPt = _collisionEdge.intersectionPt(penetratingLine);
-
 	}
 	catch (No_Line_Intersects&)
 	{
@@ -86,11 +84,24 @@ void Collision::findApproachVelocity()
 
 void Collision::resolve()
 {
+
 	//get normal and check that it points out of the object
 	Coordinate normal = _collisionEdge.getNormal();
-	shared_ptr<Coordinate> test1{new Coordinate{normal*1000 + _collisionPt}};
-	if (_collisionEdge.isBelow(test1) == _collisionEdge.isBelow(make_shared<Coordinate>(_collidee->getCenter())) )
-		normal = normal*(-1);
+	if (_collisionEdge.isBelow(make_shared<Coordinate>(_collidee->getCenter())))
+	{
+		if (normal.y() < 0)
+		{
+			normal = normal*(-1);
+		}
+	} else
+	{
+		if (normal.y() > 0)
+		{
+			normal = normal*(-1);
+		}
+	}
+
+
 
 	Coordinate colliderVel = _collider->getVelocity();
 	Coordinate collideeVel = _collidee->getVelocity();
@@ -105,10 +116,17 @@ void Collision::resolve()
 		//Solve clipping for Rotation
 		_collider->move(normal*_stepTime);
 
+//		cout <<"Normal:" << normal.x() << " " << normal.y() << endl;
+//		cout <<"ColPnt:" << _collisionPt.x() << " " << _collisionPt.y() << endl;
+//		cout <<"N+Clpt:" << normal.x() + _collisionPt.x() << " " << normal.y() + _collisionPt.y() << endl;
+//		cout <<"Center:" << _collidee->getCenter().x() << " " << _collidee->getCenter().y() << endl;
+//		cout <<"ColLn1:" << _collisionEdge._coordinate1->x() << " " << _collisionEdge._coordinate1->y() << endl;
+//		cout <<"ColLn2:" << _collisionEdge._coordinate2->x() << " " << _collisionEdge._coordinate2->y() << endl <<endl;
 
 		//Newton's First Law (effectively)
 		auto f = _collider->getForceLinear();
 		_collider->clearForce();
+
 
 	}
 	else if (collideeVel > 0)

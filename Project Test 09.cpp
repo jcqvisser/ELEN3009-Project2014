@@ -416,6 +416,27 @@ TEST(GameObject, IntersectingLine)
 	EXPECT_EQ(lin0, lin1);
 }
 
+TEST(GameObject, avgCoordInside)
+{
+	shared_ptr<Coordinate> tC0{new Coordinate{0,0}};
+	shared_ptr<Coordinate> tC1{new Coordinate{1,1}};
+	shared_ptr<Coordinate> tC2{new Coordinate{1,0}};
+	shared_ptr<Triangle> testTri{new Triangle{tC0, tC1, tC2}};
+	GameObject testGO{1};
+	testGO.addTriangle(testTri);
+
+	shared_ptr<Coordinate> tC3{new Coordinate{0.5,0.27}};
+	shared_ptr<Coordinate> tC4{new Coordinate{0.5,0.25}};
+	shared_ptr<Coordinate> tC5{new Coordinate{1,-1}};
+	shared_ptr<Triangle> testTri2{new Triangle{tC3, tC4, tC5}};
+	GameObject testGO1{1};
+	testGO1.addTriangle(testTri2);
+
+	Coordinate avgCoord = testGO.avgCoordInside(testGO1);
+	Coordinate coord{0.5,0.26};
+	EXPECT_EQ(coord, avgCoord);
+}
+
 //------------------------------------------------------------------------------
 //					Collision
 //------------------------------------------------------------------------------

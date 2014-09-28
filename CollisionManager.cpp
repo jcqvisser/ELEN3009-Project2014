@@ -32,12 +32,11 @@ void CollisionManager::findCollisions()
 				}
 				catch(No_Collision&)
 				{
-					cout << "issue01_01 something" << endl;
+					//Do Nothing
 				}
 				catch(object_Rotated_Into_Collision&)
 				{
 					//Do Nothing
-					cout << "issue01_02 : obj rotate into collision" << endl;
 				}
 			}
 		}

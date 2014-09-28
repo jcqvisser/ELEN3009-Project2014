@@ -143,8 +143,8 @@ void GameLogic::updateCollisionManager()
 	tempGOs.push_back(_player2->_object);
 	tempGOs.push_back(_topBound);
 	tempGOs.push_back(_bottomBound);
-	tempGOs.push_back(_leftBound);
 	tempGOs.push_back(_rightBound);
+	tempGOs.push_back(_leftBound);
 
     for (auto rocket : _rockets)
     {

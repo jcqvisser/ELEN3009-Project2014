@@ -135,8 +135,8 @@ Coordinate GameObject::avgCoordInside(const GameObject& gO)
 
 	if (count == 0)
 		throw No_Coordinates_Inside{};
-	xn /= count;
-	yn /= count;
+	xn = xn/count;
+	yn = yn/count;
 	return Coordinate{xn, yn};
 }
 
@@ -152,7 +152,6 @@ Line GameObject::intersectingLine(const Line& penetratingLine)
 			}
 		}
 	}
-	cout << endl <<  "No Line Intersects" << endl;
 	throw No_Line_Intersects{};
 }
 

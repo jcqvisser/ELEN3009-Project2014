@@ -60,7 +60,6 @@ float Line::getSlope() const
 
 	if (x1 == x2)
 	{
-		std::cout << "inf slope" << std::endl;
 		throw Infinite_Slope{};
 	}
 
@@ -141,6 +140,8 @@ Coordinate Line::intersectionPt(const Line& line) const
 	float y1l2 = line._coordinate1->y();
 	float y2l2 = line._coordinate2->y();
 
+
+
 	try
 	{
 		float m1 = getSlope();
@@ -155,13 +156,19 @@ Coordinate Line::intersectionPt(const Line& line) const
 				isBetween(x0, x1l2, x2l2))
 				if (isBetween(y0, y1l1, y2l1) &&
 					isBetween(y0, y1l2, y2l2))
+				{
 					return Coordinate{x0,y0};
+				}
+
 		}
 		catch (Infinite_Slope&)
 		{
 			float y0 = getYVal(x1l2);
 			if (isBetween(y0, y1l2, y2l2))
+			{
 				return Coordinate{x1l2, y0};
+			}
+
 		}
 	}
 	catch(Infinite_Slope&)
@@ -169,6 +176,7 @@ Coordinate Line::intersectionPt(const Line& line) const
 		float y0 = line.getYVal(x1l1);
 		if (isBetween(y0, y1l1, y2l1))
 			return Coordinate{x1l1, y0};
+
 	}
 	throw Lines_Do_Not_Intersect{};
 }

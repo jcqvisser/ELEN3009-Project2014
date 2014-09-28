@@ -27,7 +27,6 @@ public:
 
 	Coordinate _approachVelocity{};
 	Line _collisionEdge;
-	Coordinate _collisionPt;
 
 //private:
 	void findCollisionEdge();

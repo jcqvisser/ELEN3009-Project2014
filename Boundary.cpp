@@ -32,7 +32,7 @@ Boundary::Boundary(const int hres, const int vres, direction side) :
 	case EAST:
 		c0 = make_shared<Coordinate>(Coordinate{fhres - 1, -100});
 		c1 = make_shared<Coordinate>(Coordinate{fhres+1,fvres+100});
-		c2 = make_shared<Coordinate>(Coordinate{fhres+100,fvres});
+		c2 = make_shared<Coordinate>(Coordinate{fhres+100,fvres/2});
 		break;
 	case WEST:
 		c0 = make_shared<Coordinate>(Coordinate{0.1, -100});
