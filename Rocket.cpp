@@ -39,10 +39,7 @@ void Rocket::react(const Coordinate& bounce)
 	applyImpulseLinear(bounce);
 
 	float newAngle = bounce.angle();
-	float oldAngle = _forward.angle();
-	float dAngle = oldAngle - newAngle;
-
-	setDirection(dAngle);
+	setDirection(-newAngle);
 }
 
 void Rocket::setDirection(const float angle)

@@ -38,7 +38,10 @@ public:
 	vector<shared_ptr<SGSRocket>> _rockets;
 	vector<shared_ptr<SGSImmovableCrate>> _immovableCrates;
 
-	shared_ptr<Boundary> bound;
+	shared_ptr<Boundary> _topBound;
+	shared_ptr<Boundary> _bottomBound;
+	shared_ptr<Boundary> _leftBound;
+	shared_ptr<Boundary> _rightBound;
 
 	CollisionManager _collMan{_stepTime};
 	sf::Clock clock{};

@@ -86,7 +86,12 @@ void Collision::findApproachVelocity()
 
 void Collision::resolve()
 {
+	//get normal and check that it points out of the object
 	Coordinate normal = _collisionEdge.getNormal();
+	shared_ptr<Coordinate> test1{new Coordinate{normal*1000 + _collisionPt}};
+	if (_collisionEdge.isBelow(test1) == _collisionEdge.isBelow(make_shared<Coordinate>(_collidee->getCenter())) )
+		normal = normal*(-1);
+
 	Coordinate colliderVel = _collider->getVelocity();
 	Coordinate collideeVel = _collidee->getVelocity();
 	float colliderMass = _collider->getMass();
@@ -98,24 +103,23 @@ void Collision::resolve()
 	{
 
 		//Solve clipping for Rotation
-		auto v1 = normal;
-		_collider->move(v1*_stepTime);
+		_collider->move(normal*_stepTime);
 
-		//Newton's First Law
+
+		//Newton's First Law (effectively)
 		auto f = _collider->getForceLinear();
-		_collider->applyForceLinear(normal*-(f*normal));
+		_collider->clearForce();
 
 	}
 	else if (collideeVel > 0)
 	{
 
 		//Solve clipping for Rotation
-		auto v1 = normal;
-		_collidee->move(v1*_stepTime);
+		_collidee->move(normal*_stepTime);
 
-		//Newton's First Law
+		//Newton's First Law (effectively)
 		auto f = _collidee->getForceLinear();
-		_collidee->applyForceLinear(normal*-(f*normal));
+		_collidee->clearForce();
 
 	}
 

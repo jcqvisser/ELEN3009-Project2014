@@ -141,7 +141,10 @@ void GameLogic::updateCollisionManager()
 
 	tempGOs.push_back(_player1->_object);
 	tempGOs.push_back(_player2->_object);
-	tempGOs.push_back(bound);
+	tempGOs.push_back(_topBound);
+	tempGOs.push_back(_bottomBound);
+	tempGOs.push_back(_leftBound);
+	tempGOs.push_back(_rightBound);
 
     for (auto rocket : _rockets)
     {
@@ -188,5 +191,8 @@ void GameLogic::loadLevel()
 
 void GameLogic::loadBoundary(const int hres, const int vres)
 {
-	bound = shared_ptr<Boundary>{new Boundary{hres, vres}};
+	_topBound = shared_ptr<Boundary>{new Boundary{hres, vres, NORTH}};
+	_bottomBound = shared_ptr<Boundary>{new Boundary{hres, vres, SOUTH}};
+	_leftBound = shared_ptr<Boundary>{new Boundary{hres, vres, WEST}};
+	_rightBound = shared_ptr<Boundary>{new Boundary{hres, vres, EAST}};
 }

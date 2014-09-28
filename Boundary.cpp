@@ -7,23 +7,45 @@
 
 #include "Boundary.h"
 
-Boundary::Boundary(const int hres, const int vres) :
-	GameObject(10)
+Boundary::Boundary(const int hres, const int vres, direction side) :
+	GameObject(300)
 {
-	//top
-	shared_ptr<Coordinate> c0{new Coordinate{0.01, 0.01}};
-	shared_ptr<Coordinate> c1{new Coordinate{hres,0}};
-	shared_ptr<Coordinate> c2{new Coordinate{hres/2,-100}};
-	shared_ptr<Triangle> t0{new Triangle{c0,c1,c2}};
 
-	//bottom
-	shared_ptr<Coordinate> c3{new Coordinate{0.01, hres-400}};
-	shared_ptr<Coordinate> c4{new Coordinate{vres,hres+0.01-400}};
-	shared_ptr<Coordinate> c5{new Coordinate{vres,hres+10-400}};
-	shared_ptr<Triangle> t1{new Triangle{c3,c4,c5}};
+	float fhres = hres;
+	float fvres = vres;
 
+	shared_ptr<Coordinate> c0;
+	shared_ptr<Coordinate> c1;
+	shared_ptr<Coordinate> c2;
+	switch(side)
+	{
+	case NORTH:
+		c0 = make_shared<Coordinate>(Coordinate{-100, 0.01});
+		c1 = make_shared<Coordinate>(Coordinate{fhres+100,0});
+		c2 = make_shared<Coordinate>(Coordinate{fhres/2,-100});
+		break;
+	case SOUTH:
+		c0 = make_shared<Coordinate>(Coordinate{-100, fvres});
+		c1 = make_shared<Coordinate>(Coordinate{fhres-100,fvres+1});
+		c2 = make_shared<Coordinate>(Coordinate{fhres-101,fvres+100});
+		break;
+	case EAST:
+		c0 = make_shared<Coordinate>(Coordinate{fhres - 1, -100});
+		c1 = make_shared<Coordinate>(Coordinate{fhres+1,fvres+100});
+		c2 = make_shared<Coordinate>(Coordinate{fhres+100,fvres});
+		break;
+	case WEST:
+		c0 = make_shared<Coordinate>(Coordinate{0.1, -100});
+		c1 = make_shared<Coordinate>(Coordinate{0,fvres+100});
+		c2 = make_shared<Coordinate>(Coordinate{-300,fvres/2});
+		break;
+	default:
+		//should never happen
+		break;
+	}
+
+	shared_ptr<Triangle> t0{new Triangle{c0, c1, c2}};
 	addTriangle(t0);
-	addTriangle(t1);
 }
 
 Boundary::~Boundary() {
