@@ -62,6 +62,8 @@ protected:
 	float _forceAngular = 0;
 
 	float _health = 100;
+
+	float _remainingLifetime = 120;
 };
 
 #endif /* GAMEOBJECT_H_ */

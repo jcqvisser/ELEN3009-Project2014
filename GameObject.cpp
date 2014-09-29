@@ -110,6 +110,7 @@ bool GameObject::animate(const float& time)
 	animateLinear(time);
 	rotate(_forceAngular*time);
 	clearForce();
+	_remainingLifetime -= time;
 	return false;
 }
 

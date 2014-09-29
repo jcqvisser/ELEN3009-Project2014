@@ -20,10 +20,12 @@ void GameLogic::step(const float time)
 	_collMan.findCollisions();
 	_collMan.ResolveCollisions();
 	_collMan.purgeCollisions();
-	_player1->animate(_stepTime);
-	_player2->animate(_stepTime);
-	_player1->Update();
-	_player2->Update();
+
+	for (auto player : _players)
+	{
+		player->animate(_stepTime);
+		player->Update();
+	}
 	for (auto rocket : _rockets)
 	{
 		rocket->animate(_stepTime);
@@ -40,56 +42,58 @@ void GameLogic::step(const float time)
 void GameLogic::controllerInput()
 {
 	//----P1
+	shared_ptr<SGSTank> player1 = (*_players.begin());
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
-		_player1->_object->driveForward();
+		player1->_object->driveForward();
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
-		_player1->_object->driveReverse();
+		player1->_object->driveReverse();
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
-		_player1->_object->turnRight();
+		player1->_object->turnRight();
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
-		_player1->_object->turnLeft();
+		player1->_object->turnLeft();
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::L))
 	{
-		if (clock.getElapsedTime() - p1FireTime >= FireTime)
+		if (clock()/CLOCKS_PER_SEC - p1FireTime >= FireTime)
 		{
 			shared_ptr<SGSRocket> rocket{new SGSRocket{}};
-			Coordinate origin{_player1->_object->getCenter()};
-			origin = origin + _player1->_object->getForward()*50.0;
+			Coordinate origin{player1->_object->getCenter()};
+			origin = origin + player1->_object->getForward()*50.0;
 			rocket->changePosition(origin.x(), origin.y());
-			rocket->setDirection(-_player1->_object->getForward().angle() + PI);
+			rocket->setDirection(-player1->_object->getForward().angle() + PI);
 			_rockets.push_back(rocket);
-			p1FireTime = clock.getElapsedTime();
+			p1FireTime = clock()/CLOCKS_PER_SEC;
 		}
 	}
 
 	//---P2
+	shared_ptr<SGSTank> player2 = (*next(_players.begin()));
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
-		_player2->_object->driveForward();
+		player2->_object->driveForward();
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
-		_player2->_object->driveReverse();
+		player2->_object->driveReverse();
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
-		_player2->_object->turnRight();
+		player2->_object->turnRight();
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
-		_player2->_object->turnLeft();
+		player2->_object->turnLeft();
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::R))
 	{
-		if (clock.getElapsedTime() - p2FireTime >= FireTime)
+		if (clock()/CLOCKS_PER_SEC - p2FireTime >= FireTime)
 		{
 			shared_ptr<SGSRocket> rocket{new SGSRocket{}};
-			Coordinate origin{_player2->_object->getCenter()};
-			origin = origin + _player2->_object->getForward()*50.0;
+			Coordinate origin{player2->_object->getCenter()};
+			origin = origin + player2->_object->getForward()*50.0;
 			rocket->changePosition(origin.x(), origin.y());
-			rocket->setDirection(-_player2->_object->getForward().angle() + PI);
+			rocket->setDirection(-player2->_object->getForward().angle() + PI);
 			_rockets.push_back(rocket);
-			p2FireTime = clock.getElapsedTime();
+			p2FireTime = clock()/CLOCKS_PER_SEC;
 		}
 	}
 }
@@ -98,8 +102,6 @@ void GameLogic::coreLoop()
 {
 
     sf::RenderWindow window(sf::VideoMode(_hres, _vres), "Tanks!");
-    sf::Time t1 = clock.getElapsedTime();
-    sf::Time t2;
 
     while (window.isOpen())
         {
@@ -110,24 +112,19 @@ void GameLogic::coreLoop()
                     window.close();
             }
 
-            t2 = clock.getElapsedTime();
-            float t3 = t2.asSeconds() - t1.asSeconds();
             checkPlayerDeath();
-            step(t3);
-            t1 = t2;
+            step(0.002);
 
 
             window.clear();
-            window.draw(*_player1);
-            window.draw(*_player2);
+
+            for (auto player : _players)
+            	window.draw(*player);
             for (auto rocket : _rockets)
-            {
             	window.draw(*rocket);
-            }
             for (auto crate : _immovableCrates)
-            {
             	window.draw(*crate);
-            }
+
             window.display();
         }
 }
@@ -139,21 +136,18 @@ void GameLogic::updateCollisionManager()
 
 	vector<shared_ptr<GameObject>> tempGOs;
 
-	tempGOs.push_back(_player1->_object);
-	tempGOs.push_back(_player2->_object);
 	tempGOs.push_back(_topBound);
 	tempGOs.push_back(_bottomBound);
 	tempGOs.push_back(_rightBound);
 	tempGOs.push_back(_leftBound);
 
+	for (auto player : _players)
+		tempGOs.push_back(player->_object);
     for (auto rocket : _rockets)
-    {
     	tempGOs.push_back(rocket->_object);
-    }
     for (auto crate : _immovableCrates)
-    {
     	tempGOs.push_back(crate->_object);
-    }
+
     _collMan.setGameObjecs(tempGOs);
 }
 
@@ -161,30 +155,33 @@ void GameLogic::checkPlayerDeath()
 {
 	for(auto rocket : _rockets)
 	{
-		if (_player1->_object->hasInside(rocket->_object))
+		for (auto player : _players)
 		{
-			_player1->_texture.loadFromFile("explosion.png", sf::IntRect(0, 0, 100,100));
-			_player1->setOrigin(50,50);
-			_player1->setTexture(_player1->_texture, true);
-			return;
-		}
+			if (player->_object->hasInside(rocket->_object))
+			{
+				player->_texture.loadFromFile("explosion.png", sf::IntRect(0, 0, 100,100));;
+				player->setTexture(player->_texture, true);
+				player->setOrigin(50,50);
+				_rockets.remove(rocket); //TODO place explosion
+				return;
+			}
 
-		if (_player2->_object->hasInside(rocket->_object))
-		{
-			_player2->_texture.loadFromFile("explosion.png", sf::IntRect(0,0,100,100));
-			_player2->setTexture(_player2->_texture, true);
-			_player2->setOrigin(50,50);
-			return;
 		}
 	}
 }
 
 void GameLogic::loadLevel()
 {
-	_player1->changePosition(100,350);
-	_player2->changePosition(1200,350);
-	_player1->Update();
-	_player2->Update();
+	shared_ptr<SGSTank> p1{new SGSTank{}};
+	shared_ptr<SGSTank> p2{new SGSTank{}};
+
+	p1->changePosition(1200,350);
+	p1->Update();
+	p2->changePosition(100,350);
+	p2->Update();
+
+	_players.push_back(p1);
+	_players.push_back(p2);
 
 	loadBoundary(_hres, _vres);
 }

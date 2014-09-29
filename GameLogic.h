@@ -6,6 +6,8 @@
 
 #ifndef GAMELOGIC_H_
 #define GAMELOGIC_H_
+#include <list>
+#include <time.h>
 #include "SGSTank.h"
 #include "SGSRocket.h"
 #include "SGSCrate.h"
@@ -29,14 +31,12 @@ public:
 	void controllerInput();
 
 	void checkPlayerDeath();
+	void checkAllDeath();
 
-	float _stepTime = 0.01;
+	list<shared_ptr<SGSTank>> _players;
 
-	shared_ptr<SGSTank> _player1{new SGSTank{}};
-	shared_ptr<SGSTank> _player2{new SGSTank{}};
-
-	vector<shared_ptr<SGSRocket>> _rockets;
-	vector<shared_ptr<SGSImmovableCrate>> _immovableCrates;
+	list<shared_ptr<SGSRocket>> _rockets;
+	list<shared_ptr<SGSImmovableCrate>> _immovableCrates;
 
 	shared_ptr<Boundary> _topBound;
 	shared_ptr<Boundary> _bottomBound;
@@ -44,11 +44,12 @@ public:
 	shared_ptr<Boundary> _rightBound;
 
 	CollisionManager _collMan{_stepTime};
-	sf::Clock clock{};
 
-	sf::Time p1FireTime = clock.getElapsedTime();
-	sf::Time p2FireTime = clock.getElapsedTime();
-	sf::Time FireTime = sf::seconds(0.25f);
+
+	float p1FireTime = clock()/CLOCKS_PER_SEC;
+	float p2FireTime = clock()/CLOCKS_PER_SEC;
+	float FireTime = 0.25;
+	float _stepTime = 0.01;
 
 	int _hres = 1300;
 	int _vres = 700;
