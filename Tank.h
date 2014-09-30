@@ -9,10 +9,6 @@
 #include "CollisionManager.h"
 #define TANKMASS 300
 
-class Rocket_Fire_Frequency_too_High{};
-class Mine_Plant_frequency_too_High{};
-class Out_of_Mines{};
-
 class Tank : public GameObject
 {
 public:

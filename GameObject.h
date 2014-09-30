@@ -15,6 +15,10 @@ class object_is_glued_and_cannot_move{};
 class No_Line_Intersects{};
 class No_Coordinates_Inside{};
 
+class Rocket_Fire_Frequency_too_High{};
+class Mine_Plant_frequency_too_High{};
+class Out_of_Mines{};
+
 class GameObject {
 public:
 	GameObject(float mass);
