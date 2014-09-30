@@ -30,6 +30,7 @@ public:
 	Texture _rocketTexture;
 	Texture _explosionTexture01;
 	Texture _crateTexture;
+	Texture _mineTexture;
 
 	void step(const Time& stepTime=seconds(0.001));
 	void updateSprites();

@@ -10,6 +10,7 @@
 #include <time.h>
 #include "Tank.h"
 #include "Rocket.h"
+#include "Mine.h"
 #include "Crate.h"
 #include "ImmovableCrate.h"
 #include "Boundary.h"
@@ -23,7 +24,7 @@ enum playerControl
 	CLOCKWISE,
 	ANTI_CLOCKWISE,
 	FIRE_ROCKET,
-	DROP_MINE
+	PLANT_MINE
 };
 
 class GameLogic {
@@ -37,6 +38,7 @@ public:
 	void step(const float time);
 
 	void checkRocketDamage();
+	void checkMineDamage();
 	void checkTimedDeath();
 	void checkHealthDeath();
 	void playControl(const playerControl&, const int& player);
@@ -46,6 +48,7 @@ public:
 	list<shared_ptr<Rocket>> _rockets;
 	list<shared_ptr<ImmovableCrate>> _immovableCrates;
 	list<shared_ptr<Crate>> _crates;
+	list<shared_ptr<Mine>> _mines;
 	//do not add to collision manager:
 	list<shared_ptr<GameObject>> _explosion01s;
 

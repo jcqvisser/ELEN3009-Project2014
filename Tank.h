@@ -10,6 +10,8 @@
 #define TANKMASS 300
 
 class Rocket_Fire_Frequency_too_High{};
+class Mine_Plant_frequency_too_High{};
+class Out_of_Mines{};
 
 class Tank : public GameObject
 {
@@ -22,6 +24,7 @@ public:
 	void turnRight();
 	void turnLeft();
 	void fireRocket();
+	void plantMine();
 
 	virtual void react(const Coordinate&);
 private:
@@ -31,6 +34,10 @@ private:
 
 	float _lastRocketFireTime = 0;
 	float _rocketFirePeriod = 1.5;
+
+	float _lastMinePlantTime = 0;
+	float _minePlantPeriod = 0.5;
+	int _minesRemaining = 5;
 };
 
 #endif /* TANK_H_ */

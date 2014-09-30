@@ -15,6 +15,7 @@ GameLogic::~GameLogic() {}
 void GameLogic::step(const float time)
 {
 	checkRocketDamage();
+	checkMineDamage();
 	checkTimedDeath();
 
 	updateCollisionManager();
@@ -76,8 +77,25 @@ void GameLogic::playControl(const playerControl& control, const int& playerNo)
 			//really though, stop firing rockets for a bit.
 		}
 		break;
-	case DROP_MINE:
-		//TODO: implement this!
+	case PLANT_MINE:
+		try
+		{
+			(*player)->plantMine();
+			shared_ptr<Mine> mine{new Mine{}};
+			Coordinate origin{(*player)->getCenter()};
+			origin = origin + (*player)->getForward()*-50.0;
+			mine->setPosition(origin);
+			_mines.push_back(mine);
+
+		}
+		catch(Mine_Plant_frequency_too_High&)
+		{
+			//Do Nothing
+		}
+		catch(Out_of_Mines&)
+		{
+			//Do nothing
+		}
 		break;
 	default:
 		//This should not happen
@@ -105,13 +123,14 @@ void GameLogic::updateCollisionManager()
     	tempGOs.push_back(crate);
     for (auto crate : _crates)
         tempGOs.push_back(crate);
+    for (auto mine : _mines)
+    	tempGOs.push_back(mine);
 
     _collMan.setGameObjecs(tempGOs);
 }
 
 void GameLogic::checkRocketDamage()
 {
-	//maybe remove the returns?
 	for(auto rocket : _rockets)
 	{
 		for (auto player : _players)
@@ -136,6 +155,32 @@ void GameLogic::checkRocketDamage()
 				return;
 			}
 		}
+	}
+}
+
+void GameLogic::checkMineDamage()
+{
+	for (auto mine : _mines)
+	{
+		for (auto player : _players)
+			if (player->hasInside(mine))
+			{
+				player->damage(50);
+				if (player->getHealth() <=0)
+					player->kill();
+			}
+
+		for (auto crate : _crates)
+			if (crate->hasInside(mine))
+			{
+				crate->damage(50);
+				if (crate->getHealth() <=0)
+					crate->kill();
+			}
+
+		for (auto rocket : _rockets)
+			if (rocket->hasInside(mine))
+				rocket->kill();
 	}
 }
 
@@ -176,6 +221,15 @@ void GameLogic::checkHealthDeath()
 			_explosion01s.push_back(expl01);
 			_crates.remove(crate);
 		}
+
+	for (auto mine : _mines)
+		if (mine->getHealth() <= 0)
+		{
+			shared_ptr<GameObject> expl01{new GameObject{1}};
+			expl01->setPosition(mine->getCenter());
+			_explosion01s.push_back(expl01);
+			_mines.remove(mine);
+		}
 }
 
 void GameLogic::loadLevel()
@@ -210,6 +264,7 @@ int GameLogic::numObjects() const
 	total += _immovableCrates.size();
 	total += _crates.size();
 	total += _explosion01s.size();
+	total += _mines.size();
 
 	return total;
 }

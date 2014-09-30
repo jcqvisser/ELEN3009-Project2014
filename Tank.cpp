@@ -64,3 +64,25 @@ void Tank::fireRocket()
 	}
 }
 
+void Tank::plantMine()
+{
+	float time = clock();
+	time = time/CLOCKS_PER_SEC;
+	if (time >= _lastMinePlantTime + _minePlantPeriod)
+	{
+		if (_minesRemaining > 0)
+		{
+			_lastMinePlantTime = time;
+			_minesRemaining--;
+		}
+		else
+		{
+			throw Out_of_Mines{};
+		}
+	}
+	else
+	{
+		throw Mine_Plant_frequency_too_High{};
+	}
+}
+

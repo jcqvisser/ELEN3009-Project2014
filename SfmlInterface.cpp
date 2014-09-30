@@ -23,6 +23,9 @@ SfmlInterface::SfmlInterface(const float& hres, const float& vres) :
 
 	_crateTexture.setSmooth(true);
 	_crateTexture.loadFromFile("crate.png", sf::IntRect(0, 0, 60, 60));
+
+	_mineTexture.setSmooth(true);
+	_mineTexture.loadFromFile("mine.png", sf::IntRect(0, 0, 20,20));
 }
 
 SfmlInterface::~SfmlInterface() {}
@@ -66,6 +69,14 @@ void SfmlInterface::updateSprites()
 		_sprites[n].setTexture(_explosionTexture01,true);
 		n++;
 	}
+
+	for (auto mine : _gameLogic._mines)
+	{
+		_sprites[n].setPosition(mine->getCenter().x(), mine->getCenter().y());
+		_sprites[n].setOrigin(10,10);
+		_sprites[n].setTexture(_mineTexture,true);
+		n++;
+	}
 }
 
 void SfmlInterface::step(const sf::Time& stepTime)
@@ -97,6 +108,8 @@ void SfmlInterface::controllerInput()
 		_gameLogic.playControl(CLOCKWISE, 1);
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::L))
 			_gameLogic.playControl(FIRE_ROCKET, 1);
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::K))
+			_gameLogic.playControl(PLANT_MINE, 1);
 
 	//player2
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
@@ -109,6 +122,8 @@ void SfmlInterface::controllerInput()
 		_gameLogic.playControl(CLOCKWISE, 2);
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q))
 			_gameLogic.playControl(FIRE_ROCKET, 2);
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z))
+			_gameLogic.playControl(PLANT_MINE, 2);
 }
 
 //void SfmlInterface::loadTexture(Sprite& sprite,
