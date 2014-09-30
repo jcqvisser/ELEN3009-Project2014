@@ -31,6 +31,9 @@ void GameLogic::step(const float time)
 		crate->animate(time);
 	for (auto crate : _crates)
 		crate->animate(time);
+	for (auto turret : _turrets)
+		turret->animate(time);
+	turretAction();
 
 	checkHealthDeath();
 
@@ -61,40 +64,46 @@ void GameLogic::playControl(const playerControl& control, const int& playerNo)
 		(*player)->turnLeft();
 		break;
 	case FIRE_ROCKET:
-		try
+		if ((*player)->getHealth() > 0)
 		{
-			(*player)->fireRocket();
-			shared_ptr<Rocket> rocket{new Rocket{}};
-			Coordinate origin{(*player)->getCenter()};
-			origin = origin + (*player)->getForward()*50.0;
-			rocket->setPosition(origin);
-			rocket->setDirection(-(*player)->getForward().angle() + PI);
-			_rockets.push_back(rocket);
-		}
-		catch (Rocket_Fire_Frequency_too_High&)
-		{
-			//Do nothing.
-			//really though, stop firing rockets for a bit.
+			try
+			{
+				(*player)->fireRocket();
+				shared_ptr<Rocket> rocket{new Rocket{}};
+				Coordinate origin{(*player)->getCenter()};
+				origin = origin + (*player)->getForward()*50.0;
+				rocket->setPosition(origin);
+				rocket->setDirection(-(*player)->getForward().angle() + PI);
+				_rockets.push_back(rocket);
+			}
+			catch (Rocket_Fire_Frequency_too_High&)
+			{
+				//Do nothing.
+				//really though, stop firing rockets for a bit.
+			}
 		}
 		break;
 	case PLANT_MINE:
-		try
+		if ((*player)->getHealth() > 0)
 		{
-			(*player)->plantMine();
-			shared_ptr<Mine> mine{new Mine{}};
-			Coordinate origin{(*player)->getCenter()};
-			origin = origin + (*player)->getForward()*-50.0;
-			mine->setPosition(origin);
-			_mines.push_back(mine);
+			try
+			{
+				(*player)->plantMine();
+				shared_ptr<Mine> mine{new Mine{}};
+				Coordinate origin{(*player)->getCenter()};
+				origin = origin + (*player)->getForward()*-50.0;
+				mine->setPosition(origin);
+				_mines.push_back(mine);
 
-		}
-		catch(Mine_Plant_frequency_too_High&)
-		{
-			//Do Nothing
-		}
-		catch(Out_of_Mines&)
-		{
-			//Do nothing
+			}
+			catch(Mine_Plant_frequency_too_High&)
+			{
+				//Do Nothing
+			}
+			catch(Out_of_Mines&)
+			{
+				//Do nothing
+			}
 		}
 		break;
 	default:
@@ -125,6 +134,8 @@ void GameLogic::updateCollisionManager()
         tempGOs.push_back(crate);
     for (auto mine : _mines)
     	tempGOs.push_back(mine);
+    for (auto turret : _turrets)
+    	tempGOs.push_back(turret);
 
     _collMan.setGameObjecs(tempGOs);
 }
@@ -148,10 +159,18 @@ void GameLogic::checkRocketDamage()
 			{
 				crate->damage(34);
 				if (crate->getHealth() <= 0)
-				{
 					crate->kill();
-				}
-
+				return;
+			}
+		}
+		for (auto turret : _turrets)
+		{
+			if (turret->hasInside(rocket))
+			{
+				rocket->kill();
+				turret->damage(34);
+				if (turret->getHealth() <= 0)
+					turret->kill();
 				return;
 			}
 		}
@@ -245,6 +264,10 @@ void GameLogic::loadLevel()
 	c1->setPosition(Coordinate{500,500});
 	_crates.push_back(c1);
 
+	shared_ptr<Turret> t1(new Turret{});
+	t1->setPosition(Coordinate{700,350});
+	_turrets.push_back(t1);
+
 	loadBoundary(_hres, _vres);
 }
 
@@ -265,6 +288,41 @@ int GameLogic::numObjects() const
 	total += _crates.size();
 	total += _explosion01s.size();
 	total += _mines.size();
+	total += _turrets.size();
 
 	return total;
+}
+
+void GameLogic::turretAction()
+{
+	vector<Coordinate> targets;
+	for (auto player : _players)
+		targets.push_back(player->getCenter());
+
+	for (auto turret : _turrets)
+	{
+		turret->setTargets(targets);
+		if (turret->getHealth() <=0)
+			break;
+		if (turret->aim())
+		{
+			try
+			{
+				turret->fireRocket();
+				shared_ptr<Rocket> rocket{new Rocket{}};
+				Coordinate origin{turret->getCenter()};
+				origin = origin + turret->getForward()*50.0;
+				rocket->setPosition(origin);
+				rocket->setDirection(-turret->getForward().angle() + PI);
+				_rockets.push_back(rocket);
+			}
+			catch (Rocket_Fire_Frequency_too_High&)
+			{
+				//do nothing
+			}
+
+		}
+	}
+
+
 }

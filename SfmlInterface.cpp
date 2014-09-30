@@ -26,6 +26,12 @@ SfmlInterface::SfmlInterface(const float& hres, const float& vres) :
 
 	_mineTexture.setSmooth(true);
 	_mineTexture.loadFromFile("mine.png", sf::IntRect(0, 0, 20,20));
+
+	_turretTexture.setSmooth(true);
+	_turretTexture.loadFromFile("turret.png", sf::IntRect(0, 0, 50, 50));
+
+	_tankDeadTexture.setSmooth(true);
+	_tankDeadTexture.loadFromFile("tank_dead.png", sf::IntRect(0, 0, 50, 50));
 }
 
 SfmlInterface::~SfmlInterface() {}
@@ -39,8 +45,17 @@ void SfmlInterface::updateSprites()
 	{
 		_sprites[n].setPosition(tank->getCenter().x(), tank->getCenter().y());
 		_sprites[n].setRotation(tank->getRotation()*180/PI+90);
-		_sprites[n].setOrigin(25,25);
-		_sprites[n].setTexture(_tankTexture,true);
+		if (tank->getHealth() > 0)
+		{
+			_sprites[n].setOrigin(25,25);
+			_sprites[n].setTexture(_tankTexture,true);
+		}
+		else
+		{
+			_sprites[n].setOrigin(25,25);
+			_sprites[n].setTexture(_tankDeadTexture,true);
+		}
+
 		n++;
 	}
 
@@ -75,6 +90,15 @@ void SfmlInterface::updateSprites()
 		_sprites[n].setPosition(mine->getCenter().x(), mine->getCenter().y());
 		_sprites[n].setOrigin(10,10);
 		_sprites[n].setTexture(_mineTexture,true);
+		n++;
+	}
+
+	for (auto turret : _gameLogic._turrets)
+	{
+		_sprites[n].setPosition(turret->getCenter().x(), turret->getCenter().y());
+		_sprites[n].setOrigin(25,25);
+		_sprites[n].setRotation(turret->getRotation()*180/PI+90);
+		_sprites[n].setTexture(_turretTexture,true);
 		n++;
 	}
 }

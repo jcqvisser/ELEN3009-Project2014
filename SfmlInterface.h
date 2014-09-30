@@ -27,10 +27,12 @@ public:
 	vector<Sprite> _sprites{};
 
 	Texture _tankTexture;
+	Texture _tankDeadTexture;
 	Texture _rocketTexture;
 	Texture _explosionTexture01;
 	Texture _crateTexture;
 	Texture _mineTexture;
+	Texture _turretTexture;
 
 	void step(const Time& stepTime=seconds(0.001));
 	void updateSprites();

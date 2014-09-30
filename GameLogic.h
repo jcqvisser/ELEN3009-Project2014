@@ -13,6 +13,7 @@
 #include "Mine.h"
 #include "Crate.h"
 #include "ImmovableCrate.h"
+#include "Turret.h"
 #include "Boundary.h"
 
 class Player_Does_not_Exist{};
@@ -41,6 +42,7 @@ public:
 	void checkMineDamage();
 	void checkTimedDeath();
 	void checkHealthDeath();
+	void turretAction();
 	void playControl(const playerControl&, const int& player);
 	int numObjects() const;
 
@@ -49,6 +51,7 @@ public:
 	list<shared_ptr<ImmovableCrate>> _immovableCrates;
 	list<shared_ptr<Crate>> _crates;
 	list<shared_ptr<Mine>> _mines;
+	list<shared_ptr<Turret>> _turrets;
 	//do not add to collision manager:
 	list<shared_ptr<GameObject>> _explosion01s;
 
