@@ -8,15 +8,23 @@
 #define GAMELOGIC_H_
 #include <list>
 #include <time.h>
-#include "SGSTank.h"
-#include "SGSRocket.h"
-#include "SGSCrate.h"
-#include "SGSImmovableCrate.h"
+#include "Tank.h"
+#include "Rocket.h"
+#include "Crate.h"
+#include "ImmovableCrate.h"
 #include "Boundary.h"
-#include <SFML/Graphics.hpp>
-#include <SFML/Window/Keyboard.hpp>
 
-#define MAXROCKETS 50
+class Player_Does_not_Exist{};
+
+enum playerControl
+{
+	FORWARD,
+	REVERSE,
+	CLOCKWISE,
+	ANTI_CLOCKWISE,
+	FIRE_ROCKET,
+	DROP_MINE
+};
 
 class GameLogic {
 public:
@@ -24,32 +32,33 @@ public:
 	virtual ~GameLogic();
 	void loadLevel();
 	void loadBoundary(const int hres, const int vres);
-	void coreLoop();
 	void updateCollisionManager();
 
 	void step(const float time);
-	void controllerInput();
 
-	void checkPlayerDeath();
-	void checkAllDeath();
+	void checkRocketDamage();
+	void checkTimedDeath();
+	void checkHealthDeath();
+	void playControl(const playerControl&, const int& player);
+	int numObjects() const;
 
-	list<shared_ptr<SGSTank>> _players;
-
-	list<shared_ptr<SGSRocket>> _rockets;
-	list<shared_ptr<SGSImmovableCrate>> _immovableCrates;
+	list<shared_ptr<Tank>> _players;
+	list<shared_ptr<Rocket>> _rockets;
+	list<shared_ptr<ImmovableCrate>> _immovableCrates;
+	list<shared_ptr<Crate>> _crates;
+	//do not add to collision manager:
+	list<shared_ptr<GameObject>> _explosion01s;
 
 	shared_ptr<Boundary> _topBound;
 	shared_ptr<Boundary> _bottomBound;
 	shared_ptr<Boundary> _leftBound;
 	shared_ptr<Boundary> _rightBound;
 
-	CollisionManager _collMan{_stepTime};
-
+	CollisionManager _collMan{};
 
 	float p1FireTime = clock()/CLOCKS_PER_SEC;
 	float p2FireTime = clock()/CLOCKS_PER_SEC;
 	float FireTime = 0.25;
-	float _stepTime = 0.01;
 
 	int _hres = 1300;
 	int _vres = 700;

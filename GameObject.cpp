@@ -6,10 +6,13 @@
  */
 
 #include "GameObject.h"
+#include <time.h>
 
 GameObject::GameObject(float mass) :
 	_mass(mass)
-{}
+{
+	_birthTime = clock()/CLOCKS_PER_SEC;
+}
 
 Coordinate GameObject::getCenter()
 {
@@ -49,14 +52,20 @@ void GameObject::addTriangle(shared_ptr<Triangle>& tri)
 
 void GameObject::applyForceLinear(const Coordinate& force)
 {
-
-	_forceLinear += force;
+	if (_health > 0)
+		_forceLinear += force;
 
 }
 
 void GameObject::applyImpulseLinear(const Coordinate& impulse)
 {
 	_velocityLinear += impulse;
+}
+
+void GameObject::applyForceAngular(const float& force)
+{
+	if (_health > 0)
+		_forceAngular += force;
 }
 
 void GameObject::rotate(const float& angle)
@@ -110,7 +119,6 @@ bool GameObject::animate(const float& time)
 	animateLinear(time);
 	rotate(_forceAngular*time);
 	clearForce();
-	_remainingLifetime -= time;
 	return false;
 }
 
@@ -202,12 +210,40 @@ vector<Triangle> GameObject::getTriangles() const
 	return _triangles;
 }
 
-void GameObject::applyForceAngular(const float& force)
-{
-	_forceAngular += force;
-}
+
 
 Coordinate GameObject::getForceLinear() const
 {
 	return _forceLinear;
+}
+
+void GameObject::kill()
+{
+	_health = 0;
+	_timeOfDeath = clock()/CLOCKS_PER_SEC;
+}
+
+float GameObject::getHealth() const
+{
+	return _health;
+}
+
+float GameObject::getTimeOfDeath() const
+{
+	return _timeOfDeath;
+}
+
+void GameObject::damage(const float& dmg)
+{
+	_health -= dmg;
+}
+
+float GameObject::getBirthTime() const
+{
+	return _birthTime;
+}
+
+float GameObject::getLifeTime() const
+{
+	return _lifeTime;
 }

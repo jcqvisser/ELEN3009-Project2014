@@ -14,119 +14,75 @@ GameLogic::~GameLogic() {}
 
 void GameLogic::step(const float time)
 {
-	_stepTime = time;
-	controllerInput();
+	checkRocketDamage();
+	checkTimedDeath();
+
 	updateCollisionManager();
 	_collMan.findCollisions();
 	_collMan.ResolveCollisions();
 	_collMan.purgeCollisions();
 
 	for (auto player : _players)
-	{
-		player->animate(_stepTime);
-		player->Update();
-	}
+		player->animate(time);
 	for (auto rocket : _rockets)
-	{
-		rocket->animate(_stepTime);
-		rocket->Update();
-	}
+		rocket->animate(time);
 	for (auto crate : _immovableCrates)
-	{
-		crate->animate(_stepTime);
-		crate->Update();
-	}
+		crate->animate(time);
+	for (auto crate : _crates)
+		crate->animate(time);
+
+	checkHealthDeath();
 
 }
 
-void GameLogic::controllerInput()
+void GameLogic::playControl(const playerControl& control, const int& playerNo)
 {
-	//----P1
-	shared_ptr<SGSTank> player1 = (*_players.begin());
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
-		player1->_object->driveForward();
+	if (playerNo >= _players.size()+1 || playerNo < 1)
+		throw Player_Does_not_Exist{};
 
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
-		player1->_object->driveReverse();
+	auto player = _players.begin();
 
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
-		player1->_object->turnRight();
+	for (int n = 1; n < playerNo; ++n) //this is O(n), but it is okay, n stays very small (2 players)
+		player = next(player);
 
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
-		player1->_object->turnLeft();
-
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::L))
+	switch (control)
 	{
-		if (clock()/CLOCKS_PER_SEC - p1FireTime >= FireTime)
+	case FORWARD:
+		(*player)->driveForward();
+		break;
+	case REVERSE:
+		(*player)->driveReverse();
+		break;
+	case CLOCKWISE:
+		(*player)->turnRight();
+		break;
+	case ANTI_CLOCKWISE:
+		(*player)->turnLeft();
+		break;
+	case FIRE_ROCKET:
+		try
 		{
-			shared_ptr<SGSRocket> rocket{new SGSRocket{}};
-			Coordinate origin{player1->_object->getCenter()};
-			origin = origin + player1->_object->getForward()*50.0;
-			rocket->changePosition(origin.x(), origin.y());
-			rocket->setDirection(-player1->_object->getForward().angle() + PI);
+			(*player)->fireRocket();
+			shared_ptr<Rocket> rocket{new Rocket{}};
+			Coordinate origin{(*player)->getCenter()};
+			origin = origin + (*player)->getForward()*50.0;
+			rocket->setPosition(origin);
+			rocket->setDirection(-(*player)->getForward().angle() + PI);
 			_rockets.push_back(rocket);
-			p1FireTime = clock()/CLOCKS_PER_SEC;
 		}
-	}
-
-	//---P2
-	shared_ptr<SGSTank> player2 = (*next(_players.begin()));
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
-		player2->_object->driveForward();
-
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
-		player2->_object->driveReverse();
-
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
-		player2->_object->turnRight();
-
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
-		player2->_object->turnLeft();
-
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::R))
-	{
-		if (clock()/CLOCKS_PER_SEC - p2FireTime >= FireTime)
+		catch (Rocket_Fire_Frequency_too_High&)
 		{
-			shared_ptr<SGSRocket> rocket{new SGSRocket{}};
-			Coordinate origin{player2->_object->getCenter()};
-			origin = origin + player2->_object->getForward()*50.0;
-			rocket->changePosition(origin.x(), origin.y());
-			rocket->setDirection(-player2->_object->getForward().angle() + PI);
-			_rockets.push_back(rocket);
-			p2FireTime = clock()/CLOCKS_PER_SEC;
+			//Do nothing.
+			//really though, stop firing rockets for a bit.
 		}
+		break;
+	case DROP_MINE:
+		//TODO: implement this!
+		break;
+	default:
+		//This should not happen
+		break;
 	}
-}
-
-void GameLogic::coreLoop()
-{
-
-    sf::RenderWindow window(sf::VideoMode(_hres, _vres), "Tanks!");
-
-    while (window.isOpen())
-        {
-            sf::Event event;
-            while (window.pollEvent(event))
-            {
-                if (event.type == sf::Event::Closed)
-                    window.close();
-            }
-
-            checkPlayerDeath();
-            step(0.002);
-
-
-            window.clear();
-
-            for (auto player : _players)
-            	window.draw(*player);
-            for (auto rocket : _rockets)
-            	window.draw(*rocket);
-            for (auto crate : _immovableCrates)
-            	window.draw(*crate);
-
-            window.display();
-        }
 }
 
 void GameLogic::updateCollisionManager()
@@ -142,46 +98,98 @@ void GameLogic::updateCollisionManager()
 	tempGOs.push_back(_leftBound);
 
 	for (auto player : _players)
-		tempGOs.push_back(player->_object);
+		tempGOs.push_back(player);
     for (auto rocket : _rockets)
-    	tempGOs.push_back(rocket->_object);
+    	tempGOs.push_back(rocket);
     for (auto crate : _immovableCrates)
-    	tempGOs.push_back(crate->_object);
+    	tempGOs.push_back(crate);
+    for (auto crate : _crates)
+        tempGOs.push_back(crate);
 
     _collMan.setGameObjecs(tempGOs);
 }
 
-void GameLogic::checkPlayerDeath()
+void GameLogic::checkRocketDamage()
 {
+	//maybe remove the returns?
 	for(auto rocket : _rockets)
 	{
 		for (auto player : _players)
 		{
-			if (player->_object->hasInside(rocket->_object))
+			if (player->hasInside(rocket))
 			{
-				player->_texture.loadFromFile("explosion.png", sf::IntRect(0, 0, 100,100));;
-				player->setTexture(player->_texture, true);
-				player->setOrigin(50,50);
-				_rockets.remove(rocket); //TODO place explosion
+				player->kill();
+				rocket->kill();
 				return;
 			}
+		}
+		for (auto crate : _crates)
+		{
+			if (crate->hasInside(rocket))
+			{
+				crate->damage(34);
+				if (crate->getHealth() <= 0)
+				{
+					crate->kill();
+				}
 
+				return;
+			}
 		}
 	}
 }
 
+void GameLogic::checkTimedDeath()
+{
+	for (auto rocket : _rockets)
+	{
+		if (rocket->getBirthTime() + rocket->getLifeTime() < clock()/CLOCKS_PER_SEC ||
+			rocket->getHealth() <= 0)
+			rocket->kill();
+	}
+
+	for (auto expl01 : _explosion01s)
+	{
+		if (expl01->getBirthTime() + expl01->getLifeTime() < clock()/CLOCKS_PER_SEC ||
+			expl01->getHealth() <= 0)
+			_explosion01s.remove(expl01);
+	}
+}
+
+
+void GameLogic::checkHealthDeath()
+{
+	for (auto rocket : _rockets)
+		if (rocket->getHealth() <= 0)
+		{
+			shared_ptr<GameObject> expl01{new GameObject{1}};
+			expl01->setPosition(Coordinate{rocket->getCenter()});
+			_explosion01s.push_back(expl01);
+			_rockets.remove(rocket);
+		}
+
+	for (auto crate : _crates)
+		if (crate->getHealth() <= 0)
+		{
+			shared_ptr<GameObject> expl01{new GameObject{1}};
+			expl01->setPosition(crate->getCenter());
+			_explosion01s.push_back(expl01);
+			_crates.remove(crate);
+		}
+}
+
 void GameLogic::loadLevel()
 {
-	shared_ptr<SGSTank> p1{new SGSTank{}};
-	shared_ptr<SGSTank> p2{new SGSTank{}};
-
-	p1->changePosition(1200,350);
-	p1->Update();
-	p2->changePosition(100,350);
-	p2->Update();
-
+	shared_ptr<Tank> p1{new Tank{}};
+	shared_ptr<Tank> p2{new Tank{}};
+	p1->setPosition(Coordinate{1200,350});// TODO magic numbers
+	p2->setPosition(Coordinate{100,350});
 	_players.push_back(p1);
 	_players.push_back(p2);
+
+	shared_ptr<Crate> c1{new Crate{}};
+	c1->setPosition(Coordinate{500,500});
+	_crates.push_back(c1);
 
 	loadBoundary(_hres, _vres);
 }
@@ -192,4 +200,16 @@ void GameLogic::loadBoundary(const int hres, const int vres)
 	_bottomBound = shared_ptr<Boundary>{new Boundary{hres, vres, SOUTH}};
 	_leftBound = shared_ptr<Boundary>{new Boundary{hres, vres, WEST}};
 	_rightBound = shared_ptr<Boundary>{new Boundary{hres, vres, EAST}};
+}
+
+int GameLogic::numObjects() const
+{
+	int total = 0;
+	total += _players.size();
+	total += _rockets.size();
+	total += _immovableCrates.size();
+	total += _crates.size();
+	total += _explosion01s.size();
+
+	return total;
 }

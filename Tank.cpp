@@ -50,3 +50,17 @@ void Tank::react(const Coordinate& rhs)
 	applyImpulseLinear(rhs); //gives strange behaviour
 }
 
+void Tank::fireRocket()
+{
+	float time = clock();
+	time = time/CLOCKS_PER_SEC;
+	if (time >= _lastRocketFireTime + _rocketFirePeriod)
+	{
+		_lastRocketFireTime = time;
+	}
+	else
+	{
+		throw Rocket_Fire_Frequency_too_High{};
+	}
+}
+

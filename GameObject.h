@@ -8,6 +8,7 @@
 #ifndef GAMEOBJECT_H_
 #define GAMEOBJECT_H_
 #include "Triangle.h"
+#include <time.h>
 #include <iterator>
 
 class object_is_glued_and_cannot_move{};
@@ -19,6 +20,9 @@ public:
 	GameObject(float mass);
 	virtual ~GameObject(){};
 
+	void kill();
+	void damage(const float& dmg);
+
 	Coordinate getCenter();
 	Coordinate getVelocity() const;
 	Coordinate getForward() const;
@@ -26,10 +30,14 @@ public:
 	vector<Triangle> getTriangles() const;
 	float getMass() const;
 	float getRotation() const;
+	float getHealth() const;
+	float getTimeOfDeath() const;
+	float getBirthTime() const;
+	float getLifeTime() const;
 
 	void setDragCoeff(const float& dC);
 	void setPosition(const Coordinate& pos);
-	void clearForce();
+	virtual void clearForce();
 
 	void addTriangle(shared_ptr<Triangle>& tri);
 
@@ -63,7 +71,10 @@ protected:
 
 	float _health = 100;
 
-	float _remainingLifetime = 120;
+	float _birthTime = 0;
+	float _timeOfDeath = 0;
+	float _lifeTime = 0;
+
 };
 
 #endif /* GAMEOBJECT_H_ */

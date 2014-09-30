@@ -15,10 +15,9 @@ Rocket::Rocket() :
 
 	//tweak these values
 	addTriangle(t0);
-	setDragCoeff(1);
-	_rocketPower = 1000000;
-
-
+	setDragCoeff(10);
+	_rocketPower = 200000000;
+	_lifeTime = 1;
 }
 
 Rocket::~Rocket(){ }
@@ -26,7 +25,7 @@ Rocket::~Rocket(){ }
 void Rocket::clearForce()
 {
 	_forceLinear = Coordinate{0,0};
-	_forceLinear += _forward * _rocketPower;
+	propel();
 }
 
 void Rocket::propel()
@@ -40,6 +39,10 @@ void Rocket::react(const Coordinate& bounce)
 
 	float newAngle = bounce.angle();
 	setDirection(-newAngle);
+
+	_health -= 30;
+	if (_health < 0)
+		kill();
 }
 
 void Rocket::setDirection(const float angle)

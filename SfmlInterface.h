@@ -7,21 +7,36 @@
 
 #ifndef SFMLINTERFACE_H_
 #define SFMLINTERFACE_H_
-#include "SGSTank.h"
-#include "SGSRocket.h"
-#include "SGSCrate.h"
-#include "SGSImmovableCrate.h"
 #include "GameLogic.h"
 #include <SFML/Graphics.hpp>
 #include <SFML/Window/Keyboard.hpp>
 
+using namespace sf;
+using namespace std;
+
 class SfmlInterface {
 public:
-	SfmlInterface();
+	SfmlInterface(const float& hres=1300, const float& vres=700);
 	virtual ~SfmlInterface();
-private:
-	vector<shared_ptr<SfmlGameSprite>> _gameSprites;
+
+	float _hres;
+	float _vres;
+	sf::RenderWindow _window;
 	GameLogic _gameLogic{};
+
+	vector<Sprite> _sprites{};
+
+	Texture _tankTexture;
+	Texture _rocketTexture;
+	Texture _explosionTexture01;
+	Texture _crateTexture;
+
+	void step(const Time& stepTime=seconds(0.001));
+	void updateSprites();
+	void display();
+
+	void controllerInput();
+	Clock _clock{};
 };
 
 #endif /* SFMLINTERFACE_H_ */
