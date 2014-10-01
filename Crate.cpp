@@ -21,7 +21,7 @@ Crate::Crate() :
 	//tweak these values
 	addTriangle(t0);
 	addTriangle(t1);
-	setDragCoeff(1000);
+	setDragCoeff(75);
 }
 
 Crate::~Crate() {

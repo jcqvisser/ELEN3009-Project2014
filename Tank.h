@@ -7,7 +7,7 @@
 #define TANK_H_
 #include <time.h>
 #include "CollisionManager.h"
-#define TANKMASS 300
+#define TANKMASS 50
 
 class Tank : public GameObject
 {
@@ -29,11 +29,11 @@ private:
 	float _turningPower;
 
 	float _lastRocketFireTime = 0;
-	float _rocketFirePeriod = 1.5;
+	float _rocketFirePeriod = 0.5;
 
 	float _lastMinePlantTime = 0;
 	float _minePlantPeriod = 0.5;
-	int _minesRemaining = 5;
+	int _minesRemaining = 10;
 };
 
 #endif /* TANK_H_ */

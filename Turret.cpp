@@ -9,7 +9,7 @@
 
 
 Turret::Turret() :
-	GameObject(1)
+	GameObject(100)
 {
 	shared_ptr<Coordinate> c0{new Coordinate{0,0.0001}};
 	shared_ptr<Coordinate> c1{new Coordinate{50.0001,0}};
@@ -17,6 +17,7 @@ Turret::Turret() :
 	shared_ptr<Triangle> t0{new Triangle{c0,c1,c2}};
 	addTriangle(t0);
 	_health = 400;
+	_range = 500;
 }
 
 Turret::~Turret() {

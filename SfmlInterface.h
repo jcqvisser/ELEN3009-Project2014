@@ -34,7 +34,7 @@ public:
 	Texture _mineTexture;
 	Texture _turretTexture;
 
-	void step(const Time& stepTime=seconds(0.001));
+	void step(const Time& stepTime=seconds(0.03));
 	void updateSprites();
 	void display();
 

@@ -287,8 +287,12 @@ void GameLogic::loadLevel()
 	_crates.push_back(c1);
 
 	shared_ptr<Turret> t1(new Turret{});
-	t1->setPosition(Coordinate{700,350});
-	_turrets.push_back(t1);
+		t1->setPosition(Coordinate{650,150});
+		_turrets.push_back(t1);
+
+	shared_ptr<Turret> t2(new Turret{});
+		t2->setPosition(Coordinate{650,550});
+		_turrets.push_back(t2);
 
 	loadBoundary(_hres, _vres);
 }

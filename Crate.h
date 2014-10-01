@@ -6,7 +6,7 @@
 #ifndef CRATE_H_
 #define CRATE_H_
 #include "CollisionManager.h"
-#define CRATEMASS 100
+#define CRATEMASS 50
 
 class Crate : public GameObject
 {
