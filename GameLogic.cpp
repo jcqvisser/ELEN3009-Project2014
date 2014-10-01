@@ -187,6 +187,7 @@ void GameLogic::checkMineDamage()
 				player->damage(50);
 				if (player->getHealth() <=0)
 					player->kill();
+				mine->kill();
 			}
 
 		for (auto crate : _crates)
@@ -195,11 +196,15 @@ void GameLogic::checkMineDamage()
 				crate->damage(50);
 				if (crate->getHealth() <=0)
 					crate->kill();
+				mine->kill();
 			}
 
 		for (auto rocket : _rockets)
 			if (rocket->hasInside(mine))
+			{
 				rocket->kill();
+				mine->kill();
+			}
 	}
 }
 
@@ -207,48 +212,65 @@ void GameLogic::checkTimedDeath()
 {
 	for (auto rocket : _rockets)
 	{
-		if (rocket->getBirthTime() + rocket->getLifeTime() < clock()/CLOCKS_PER_SEC ||
-			rocket->getHealth() <= 0)
+		if (rocket->getBirthTime() + rocket->getLifeTime() < clock()/CLOCKS_PER_SEC)
 			rocket->kill();
 	}
 
-	for (auto expl01 : _explosion01s)
+	auto n = _explosion01s.begin();
+	while (n != _explosion01s.end())
 	{
-		if (expl01->getBirthTime() + expl01->getLifeTime() < clock()/CLOCKS_PER_SEC ||
-			expl01->getHealth() <= 0)
-			_explosion01s.remove(expl01);
+		if ((*n)->getBirthTime() + (*n)->getLifeTime() < clock()/CLOCKS_PER_SEC)
+			n = _explosion01s.erase(n);
+		else
+			++n;
 	}
+
 }
 
 
 void GameLogic::checkHealthDeath()
 {
-	for (auto rocket : _rockets)
-		if (rocket->getHealth() <= 0)
+	auto rocket = _rockets.begin();
+	while (rocket != _rockets.end())
+	{
+		if (isDead(*rocket))
 		{
 			shared_ptr<GameObject> expl01{new GameObject{1}};
-			expl01->setPosition(Coordinate{rocket->getCenter()});
+			expl01->setPosition(Coordinate{(*rocket)->getCenter()});
 			_explosion01s.push_back(expl01);
-			_rockets.remove(rocket);
+			rocket = _rockets.erase(rocket);
 		}
+		else
+			++rocket;
+	}
 
-	for (auto crate : _crates)
-		if (crate->getHealth() <= 0)
+	auto crate = _crates.begin();
+	while (crate != _crates.end())
+	{
+		if (isDead(*crate))
 		{
 			shared_ptr<GameObject> expl01{new GameObject{1}};
-			expl01->setPosition(crate->getCenter());
+			expl01->setPosition(Coordinate{(*crate)->getCenter()});
 			_explosion01s.push_back(expl01);
-			_crates.remove(crate);
+			crate = _crates.erase(crate);
 		}
+		else
+			++crate;
+	}
 
-	for (auto mine : _mines)
-		if (mine->getHealth() <= 0)
+	auto mine = _mines.begin();
+	while (mine != _mines.end())
+	{
+		if (isDead(*mine))
 		{
 			shared_ptr<GameObject> expl01{new GameObject{1}};
-			expl01->setPosition(mine->getCenter());
+			expl01->setPosition(Coordinate{(*mine)->getCenter()});
 			_explosion01s.push_back(expl01);
-			_mines.remove(mine);
+			mine = _mines.erase(mine);
 		}
+		else
+			++mine;
+	}
 }
 
 void GameLogic::loadLevel()
@@ -325,4 +347,11 @@ void GameLogic::turretAction()
 	}
 
 
+}
+
+bool GameLogic::isDead(const shared_ptr<GameObject>& a)
+{
+	if (a->getHealth() <= 0)
+		return true;
+	return false;
 }

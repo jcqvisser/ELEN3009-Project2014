@@ -89,6 +89,7 @@ void SfmlInterface::updateSprites()
 	{
 		_sprites[n].setPosition(mine->getCenter().x(), mine->getCenter().y());
 		_sprites[n].setOrigin(10,10);
+		_sprites[n].setRotation(0);
 		_sprites[n].setTexture(_mineTexture,true);
 		n++;
 	}
@@ -149,38 +150,5 @@ void SfmlInterface::controllerInput()
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z))
 			_gameLogic.playControl(PLANT_MINE, 2);
 }
-
-//void SfmlInterface::loadTexture(Sprite& sprite,
-//		const GameObject& GO,
-//		const Texture& tex,
-//		const float width,
-//		const float height)
-//{
-//	if (GO.getHealth() > 66.67)
-//	{
-//		//TODO: look up how to load only a part of a texture, like sprite sheet animation
-//		float x1 = width;
-//		float y0 = 0;
-//		float y1 = height
-//	}
-//	else if (GO.getHealth() > 33.33)
-//	{
-//		float x1 = width;
-//		float y0 = height;
-//		float y1 = height*2;
-//	}
-//	else if (GO.getHealth() > 0)
-//	{
-//		float x1 = width;
-//		float y0 = height*2;
-//		float y1 = height*3;
-//	}
-//	else if (GO.getHealth() <=0)
-//	{
-//		float x1 = width;
-//		float y0 = height*3;
-//		float y1 = height*4;
-//	}
-//}
 
 

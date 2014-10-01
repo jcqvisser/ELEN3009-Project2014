@@ -8,6 +8,7 @@
 #define GAMELOGIC_H_
 #include <list>
 #include <time.h>
+#include <algorithm>
 #include "Tank.h"
 #include "Rocket.h"
 #include "Mine.h"
@@ -45,6 +46,7 @@ public:
 	void turretAction();
 	void playControl(const playerControl&, const int& player);
 	int numObjects() const;
+	bool isDead(const shared_ptr<GameObject>&);
 
 	list<shared_ptr<Tank>> _players;
 	list<shared_ptr<Rocket>> _rockets;
