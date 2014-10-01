@@ -1,0 +1,7 @@
+Controls:
+	P1: Up/Down/Left/Right 
+		Fire: L
+		Plant Mine: K
+	P2: W/A/S/D
+		Fire: Q
+		Plant Mine: Z
