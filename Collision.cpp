@@ -12,7 +12,7 @@
 Collision::Collision(const Collision& col) :
 	_collider(col._collider),
 	_collidee(col._collidee),
-	_approachVelocity(col._approachVelocity),
+	//_approachVelocity(col._approachVelocity),
 	_collisionEdge(col._collisionEdge)
 { }
 
@@ -23,7 +23,6 @@ Collision::Collision(
 		const shared_ptr<GameObject>& obj2)
 {
 	findCollision(obj1, obj2);
-	findApproachVelocity();
 	try
 	{
 		findCollisionEdge();
@@ -68,15 +67,6 @@ void Collision::findCollisionEdge()
 	catch (No_Line_Intersects&)
 	{
 		throw No_Collision{};
-	}
-}
-void Collision::findApproachVelocity()
-{
-	_approachVelocity = _collider->getVelocity() - _collidee->getVelocity();
-	if (_approachVelocity < NOTHING)
-	{
-		_approachVelocity = _collidee->getCenter() - _collider->getCenter();
-		_approachVelocity = _approachVelocity/_approachVelocity.magnitude()*NOTHING;
 	}
 }
 

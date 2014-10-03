@@ -24,14 +24,12 @@ public:
 	shared_ptr<GameObject> _collider;
 	shared_ptr<GameObject> _collidee;
 
-	Coordinate _approachVelocity{};
 	Line _collisionEdge;
 
 	void findCollisionEdge();
 	void findCollision(
 			shared_ptr<GameObject> obj1,
 			shared_ptr<GameObject> obj2);
-	void findApproachVelocity();
 };
 
 #endif /* COLLISION_H_ */

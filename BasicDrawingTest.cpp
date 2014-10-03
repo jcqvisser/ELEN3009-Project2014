@@ -23,7 +23,6 @@
 //					if (event.type == sf::Event::Closed)
 //						interface._window.close();
 //				}
-//
 //				interface.controllerInput();
 //				interface.step(frameTime);
 //			lastLogicTime = clock.getElapsedTime();
