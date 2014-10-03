@@ -8,7 +8,7 @@
 #include "Boundary.h"
 
 Boundary::Boundary(const int hres, const int vres, direction side) :
-	GameObject(0)
+	GameObject(0.1)
 {
 
 	float fhres = hres;

@@ -52,7 +52,6 @@ public:
 
 	list<shared_ptr<Tank>> _players;
 	list<shared_ptr<Rocket>> _rockets;
-	list<shared_ptr<ImmovableCrate>> _immovableCrates;
 	list<shared_ptr<Crate>> _crates;
 	list<shared_ptr<Mine>> _mines;
 	list<shared_ptr<Turret>> _turrets;
@@ -72,6 +71,11 @@ public:
 
 	int _hres = 1300;
 	int _vres = 700;
+
+private:
+	void buildCrate(const Coordinate pos, const bool glued);
+	void buildTank(const Coordinate pos);
+	void buildTurret(const Coordinate pos);
 };
 
 #endif /* GAMELOGIC_H_ */

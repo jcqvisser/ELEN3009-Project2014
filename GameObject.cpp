@@ -262,3 +262,13 @@ bool GameObject::isGlued() const
 {
 	return _glued;
 }
+
+void GameObject::glue()
+{
+	_glued = true;
+}
+
+void GameObject::unglue()
+{
+	_glued = false;
+}

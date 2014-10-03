@@ -105,8 +105,6 @@ void Collision::resolve(const float stepTime)
 	float collideeMass = _collidee->getMass();
 	float totalMass = collideeMass + colliderMass;
 
-	//Solve Clipping
-
 
 	_collider->clearForce();
 	_collidee->clearForce();
@@ -119,17 +117,19 @@ void Collision::resolve(const float stepTime)
 	Coordinate ColliderImpulse = momentum*-(collideeMass/totalMass)*0.5;
 	Coordinate CollideeImpulse = momentum*(colliderMass/totalMass)*0.5;
 
+	auto fwd = normal;
+
 	if(!_collidee->isGlued())
 	{
 		_collidee->react(CollideeImpulse);
-			_collidee->animate(stepTime);
+		_collidee->animate(stepTime);
 	}
 	if (!_collider->isGlued())
 	{
 		_collider->react(ColliderImpulse);
 		_collider->animate(stepTime);
 	}
-
+	//solve clipping
 
 	while (_collidee->hasInside(_collider) || _collider->hasInside(_collidee))
 	{

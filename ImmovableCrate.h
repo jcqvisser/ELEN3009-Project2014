@@ -14,7 +14,7 @@ class ImmovableCrate : public Crate
 public:
 	ImmovableCrate();
 	virtual ~ImmovableCrate();
-	virtual void react(const Coordinate&);
+	virtual void react(const Coordinate&, const Coordinate& normal);
 };
 
 #endif /* IMMOVABLECRATE_H_ */

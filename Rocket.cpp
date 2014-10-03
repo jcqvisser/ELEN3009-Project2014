@@ -37,13 +37,7 @@ void Rocket::propel()
 void Rocket::react(const Coordinate& bounce)
 {
 	applyImpulseLinear(bounce*10);
-
-	float normal = bounce.angle();
-	float fwd = _forward.angle();
-
-	float dir = (normal - fwd)/2;
-
-	setDirection(dir);
+	setDirection(bounce.angle()+PI/2);
 }
 
 void Rocket::setDirection(const float angle)

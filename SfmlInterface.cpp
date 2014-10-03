@@ -15,6 +15,9 @@ SfmlInterface::SfmlInterface(const float& hres, const float& vres) :
 	_tankTexture.setSmooth(true);
 	_tankTexture.loadFromFile("tank.png", sf::IntRect(0, 0, 50, 50));
 
+	_tank2Texture.setSmooth(true);
+	_tank2Texture.loadFromFile("tank2.png", sf::IntRect(0, 0, 50, 50));
+
 	_rocketTexture.setSmooth(true);
 	_rocketTexture.loadFromFile("rocket.png", sf::IntRect(0,0, 10,34));
 
@@ -30,8 +33,20 @@ SfmlInterface::SfmlInterface(const float& hres, const float& vres) :
 	_turretTexture.setSmooth(true);
 	_turretTexture.loadFromFile("turret.png", sf::IntRect(0, 0, 50, 50));
 
+	_turretDeadTexture.setSmooth(true);
+	_turretDeadTexture.loadFromFile("turret_dead.png", sf::IntRect(0, 0, 50, 50));
+
 	_tankDeadTexture.setSmooth(true);
 	_tankDeadTexture.loadFromFile("tank_dead.png", sf::IntRect(0, 0, 50, 50));
+
+	_tank2DeadTexture.setSmooth(true);
+	_tank2DeadTexture.loadFromFile("tank2_dead.png", sf::IntRect(0, 0, 50, 50));
+
+	_background.setSmooth(true);
+	_background.loadFromFile("grass.png", sf::IntRect(0, 0, 1330, 630));
+	_backSprite.setTexture(_background,true);
+	_backSprite.setOrigin(665,315);
+	_backSprite.setPosition(665,315);
 }
 
 SfmlInterface::~SfmlInterface() {}
@@ -45,15 +60,32 @@ void SfmlInterface::updateSprites()
 	{
 		_sprites[n].setPosition(tank->getCenter().x(), tank->getCenter().y());
 		_sprites[n].setRotation(tank->getRotation()*180/PI+90);
-		if (tank->getHealth() > 0)
+		if (n==0)
 		{
-			_sprites[n].setOrigin(25,25);
-			_sprites[n].setTexture(_tankTexture,true);
+
+			if (tank->getHealth() > 0)
+			{
+				_sprites[n].setOrigin(25,25);
+				_sprites[n].setTexture(_tankTexture,true);
+			}
+			else
+			{
+				_sprites[n].setOrigin(25,25);
+				_sprites[n].setTexture(_tankDeadTexture,true);
+			}
 		}
 		else
 		{
-			_sprites[n].setOrigin(25,25);
-			_sprites[n].setTexture(_tankDeadTexture,true);
+			if (tank->getHealth() > 0)
+			{
+				_sprites[n].setOrigin(25,25);
+				_sprites[n].setTexture(_tank2Texture,true);
+			}
+			else
+			{
+				_sprites[n].setOrigin(25,25);
+				_sprites[n].setTexture(_tank2DeadTexture,true);
+			}
 		}
 
 		n++;
@@ -99,7 +131,11 @@ void SfmlInterface::updateSprites()
 		_sprites[n].setPosition(turret->getCenter().x(), turret->getCenter().y());
 		_sprites[n].setOrigin(25,25);
 		_sprites[n].setRotation(turret->getRotation()*180/PI+90);
-		_sprites[n].setTexture(_turretTexture,true);
+		if (turret->getHealth() <= 0)
+			_sprites[n].setTexture(_turretDeadTexture,true);
+		else
+			_sprites[n].setTexture(_turretTexture,true);
+
 		n++;
 	}
 }
@@ -113,10 +149,12 @@ void SfmlInterface::step(const sf::Time& stepTime)
 void SfmlInterface::display()
 {
 	_window.clear();
+	_window.draw(_backSprite);
 	for (auto sprite : _sprites)
 	{
 		_window.draw(sprite);
 	}
+
 	_window.display();
 }
 

@@ -16,7 +16,7 @@ using namespace std;
 
 class SfmlInterface {
 public:
-	SfmlInterface(const float& hres=1300, const float& vres=700);
+	SfmlInterface(const float& hres=1330, const float& vres=630);
 	virtual ~SfmlInterface();
 
 	float _hres;
@@ -28,11 +28,17 @@ public:
 
 	Texture _tankTexture;
 	Texture _tankDeadTexture;
+	Texture _tank2Texture;
+	Texture _tank2DeadTexture;
 	Texture _rocketTexture;
 	Texture _explosionTexture01;
 	Texture _crateTexture;
 	Texture _mineTexture;
 	Texture _turretTexture;
+	Texture _turretDeadTexture;
+
+	Texture _background;
+	Sprite _backSprite;
 
 	void step(const sf::Time& stepTime);
 	void updateSprites();

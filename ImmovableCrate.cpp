@@ -7,16 +7,15 @@
 
 #include "ImmovableCrate.h"
 
-ImmovableCrate::ImmovableCrate() {
-	// TODO Auto-generated constructor stub
-
+ImmovableCrate::ImmovableCrate() :
+	Crate()
+{
+	_glued = true;
 }
 
-ImmovableCrate::~ImmovableCrate() {
-	// TODO Auto-generated destructor stub
-}
+ImmovableCrate::~ImmovableCrate() {}
 
-void ImmovableCrate::react(const Coordinate& rhs)
+void ImmovableCrate::react(const Coordinate& rhs, const Coordinate& normal)
 {
 	clearForce();
 }

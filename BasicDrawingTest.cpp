@@ -7,8 +7,8 @@ int main()
 {
 
 	Clock clock{};
-	SfmlInterface interface{1300,700};
-	Time frameTime = seconds(0.01);
+	SfmlInterface interface{1360,630};
+	Time frameTime = seconds(0.02);
 	Time elapsedTime = clock.getElapsedTime();
 	Time loopStartTime = elapsedTime;
 	Time lastDisplayTime = elapsedTime;
@@ -35,7 +35,6 @@ int main()
             }
             if (loopStartTime - lastDisplayTime < frameTime)
             	sleep(frameTime - (loopStartTime - lastDisplayTime));
-
         }
 
     return 0;

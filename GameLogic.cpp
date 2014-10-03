@@ -85,7 +85,6 @@ void GameLogic::playControl(const playerControl& control, const int& playerNo)
 				origin = origin + (*player)->getForward()*-50.0;
 				mine->setPosition(origin);
 				_mines.push_back(mine);
-
 			}
 			catch(Mine_Plant_frequency_too_High&)
 			{
@@ -119,8 +118,6 @@ void GameLogic::updateCollisionManager()
 		tempGOs.push_back(player);
     for (auto rocket : _rockets)
     	tempGOs.push_back(rocket);
-    for (auto crate : _immovableCrates)
-    	tempGOs.push_back(crate);
     for (auto crate : _crates)
         tempGOs.push_back(crate);
     for (auto mine : _mines)
@@ -139,7 +136,7 @@ void GameLogic::checkRocketDamage()
 		{
 			if (player->hasInside(rocket))
 			{
-				player->damage(10);
+				player->damage(51);
 				rocket->kill();
 				shared_ptr<GameObject> expl01{new GameObject{1}};
 				expl01->setPosition(Coordinate{(player)->getCenter()});
@@ -164,7 +161,7 @@ void GameLogic::checkRocketDamage()
 			if (turret->hasInside(rocket))
 			{
 				rocket->kill();
-				turret->damage(10);
+				turret->damage(51);
 				shared_ptr<GameObject> expl01{new GameObject{1}};
 				expl01->setPosition(Coordinate{(turret)->getCenter()});
 				_explosion01s.push_back(expl01);
@@ -183,7 +180,7 @@ void GameLogic::checkMineDamage()
 		for (auto player : _players)
 			if (player->hasInside(mine))
 			{
-				player->damage(50);
+				player->damage(51);
 				shared_ptr<GameObject> expl01{new GameObject{1}};
 				expl01->setPosition(Coordinate{(player)->getCenter()});
 				_explosion01s.push_back(expl01);
@@ -234,7 +231,6 @@ void GameLogic::checkTimedDeath()
 		else
 			++n;
 	}
-
 }
 
 
@@ -283,24 +279,40 @@ void GameLogic::checkHealthDeath()
 
 void GameLogic::loadLevel()
 {
-	shared_ptr<Tank> p1{new Tank{}};
-	shared_ptr<Tank> p2{new Tank{}};
-	p1->setPosition(Coordinate{1200,350});// TODO magic numbers
-	p2->setPosition(Coordinate{1200,450});
-	_players.push_back(p1);
-	_players.push_back(p2);
+//	vector<vector<char>> layout{
+//		 35  105 175 245 315 385 455 525 595 665 735 805 875 945 1015 1085 1155 1225 1295
+//	35	{' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ', ' ', ' ', ' ', ' '},
+//	105	{' ',' ',' ',' ','C',' ',' ',' ',' ','T',' ',' ',' ',' ','C', ' ', ' ', ' ', ' '},
+//	175	{' ',' ',' ',' ','C',' ',' ',' ',' ',' ',' ',' ',' ',' ','C', ' ', ' ', ' ', ' '},
+//	245	{' ',' ',' ',' ',' ',' ',' ',' ','C','C','C',' ',' ',' ',' ', ' ', ' ', ' ', ' '},
+//	315	{' ','P',' ',' ',' ',' ','C',' ',' ',' ',' ',' ','C',' ',' ', ' ', 'C', 'P', ' '},
+//	385	{' ',' ',' ',' ',' ',' ',' ',' ','C','C','C',' ',' ',' ',' ', ' ', ' ', ' ', ' '},
+//	455	{' ',' ',' ',' ','C',' ',' ',' ',' ',' ',' ',' ',' ',' ','C', ' ', ' ', ' ', ' '},
+//	525	{' ',' ',' ',' ','C',' ',' ',' ',' ','T',' ',' ',' ',' ','C', ' ', ' ', ' ', ' '},
+//	595	{' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ', ' ', ' ', ' ', ' '}};
 
-	shared_ptr<Crate> c1{new Crate{}};
-	c1->setPosition(Coordinate{1000,500});
-	_crates.push_back(c1);
+	buildCrate(Coordinate{315, 105}, true);
+	buildCrate(Coordinate{1015, 105}, true);
+	buildCrate(Coordinate{315, 175}, false);
+	buildCrate(Coordinate{1015, 175}, false);
+	buildCrate(Coordinate{595, 245}, false);
+	buildCrate(Coordinate{665, 245}, true);
+	buildCrate(Coordinate{735, 245}, false);
+	buildCrate(Coordinate{445, 315}, false);
+	buildCrate(Coordinate{875, 315}, false);
+	buildCrate(Coordinate{595, 385}, false);
+	buildCrate(Coordinate{665, 385}, true);
+	buildCrate(Coordinate{735, 385}, false);
+	buildCrate(Coordinate{315, 455}, false);
+	buildCrate(Coordinate{1015, 455}, false);
+	buildCrate(Coordinate{315, 525}, true);
+	buildCrate(Coordinate{1015, 525}, true);
 
-	shared_ptr<Turret> t1(new Turret{});
-		t1->setPosition(Coordinate{650,150});
-		_turrets.push_back(t1);
+	buildTank(Coordinate{105,315});
+	buildTank(Coordinate{1225,315});
 
-//	shared_ptr<Turret> t2(new Turret{});
-//		t2->setPosition(Coordinate{650,550});
-//		_turrets.push_back(t2);
+	buildTurret(Coordinate{665,105});
+	buildTurret(Coordinate{665,525});
 
 	loadBoundary(_hres, _vres);
 }
@@ -318,7 +330,6 @@ int GameLogic::numObjects() const
 	int total = 0;
 	total += _players.size();
 	total += _rockets.size();
-	total += _immovableCrates.size();
 	total += _crates.size();
 	total += _explosion01s.size();
 	total += _mines.size();
@@ -336,29 +347,25 @@ void GameLogic::turretAction()
 	for (auto turret : _turrets)
 	{
 		turret->setTargets(targets);
-		if (turret->getHealth() <=0)
-			break;
-		if (turret->aim())
-		{
-			try
+		if (turret->getHealth() >0)
+			if (turret->aim())
 			{
-				turret->fireRocket();
-				shared_ptr<Rocket> rocket{new Rocket{}};
-				Coordinate origin{turret->getCenter()};
-				origin = origin + turret->getForward()*50.0;
-				rocket->setPosition(origin);
-				rocket->setDirection(-turret->getForward().angle() + PI);
-				_rockets.push_back(rocket);
+				try
+				{
+					turret->fireRocket();
+					shared_ptr<Rocket> rocket{new Rocket{}};
+					Coordinate origin{turret->getCenter()};
+					origin = origin + turret->getForward()*50.0;
+					rocket->setPosition(origin);
+					rocket->setDirection(-turret->getForward().angle() + PI);
+					_rockets.push_back(rocket);
+				}
+				catch (Rocket_Fire_Frequency_too_High&)
+				{
+					//do nothing
+				}
 			}
-			catch (Rocket_Fire_Frequency_too_High&)
-			{
-				//do nothing
-			}
-
-		}
 	}
-
-
 }
 
 bool GameLogic::isDead(const shared_ptr<GameObject>& a)
@@ -370,16 +377,14 @@ bool GameLogic::isDead(const shared_ptr<GameObject>& a)
 
 void GameLogic::animate(const float time)
 {
-		for (auto player : _players)
-			player->animate(time);
-		for (auto rocket : _rockets)
-			rocket->animate(time);
-		for (auto crate : _immovableCrates)
-			crate->animate(time);
-		for (auto crate : _crates)
-			crate->animate(time);
-		for (auto turret : _turrets)
-			turret->animate(time);
+	for (auto player : _players)
+		player->animate(time);
+	for (auto rocket : _rockets)
+		rocket->animate(time);
+	for (auto crate : _crates)
+		crate->animate(time);
+	for (auto turret : _turrets)
+		turret->animate(time);
 }
 
 void GameLogic::clearForces()
@@ -388,10 +393,31 @@ void GameLogic::clearForces()
 		player->clearForce();
 	for (auto rocket : _rockets)
 		rocket->clearForce();
-	for (auto crate : _immovableCrates)
-		crate->clearForce();
 	for (auto crate : _crates)
 		crate->clearForce();
 	for (auto turret : _turrets)
 		turret->clearForce();
+}
+
+void GameLogic::buildCrate(const Coordinate pos, const bool glued)
+{
+	shared_ptr<Crate> c1(new Crate{});
+	c1->setPosition(pos);
+	if (glued)
+		c1->glue();
+	_crates.push_back(c1);
+}
+
+void GameLogic::buildTank(const Coordinate pos)
+{
+	shared_ptr<Tank> t{new Tank{}};
+	t->setPosition(pos);
+	_players.push_back(t);
+}
+
+void GameLogic::buildTurret(const Coordinate pos)
+{
+	shared_ptr<Turret> t{new Turret{}};
+	t->setPosition(pos);
+	_turrets.push_back(t);
 }

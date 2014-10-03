@@ -45,6 +45,8 @@ public:
 	void setPosition(const Coordinate& pos);
 	virtual void clearForce();
 	void clearAngularForce();
+	void glue();
+	void unglue();
 
 	void addTriangle(shared_ptr<Triangle>& tri);
 

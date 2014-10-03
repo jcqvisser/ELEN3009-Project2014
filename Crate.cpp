@@ -21,7 +21,7 @@ Crate::Crate() :
 	//tweak these values
 	addTriangle(t0);
 	addTriangle(t1);
-	setDragCoeff(50);
+	setDragCoeff(100);
 
 	_glued = false;
 }
