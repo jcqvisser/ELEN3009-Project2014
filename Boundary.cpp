@@ -8,7 +8,7 @@
 #include "Boundary.h"
 
 Boundary::Boundary(const int hres, const int vres, direction side) :
-	GameObject(3000)
+	GameObject(0)
 {
 
 	float fhres = hres;
@@ -46,6 +46,7 @@ Boundary::Boundary(const int hres, const int vres, direction side) :
 
 	shared_ptr<Triangle> t0{new Triangle{c0, c1, c2}};
 	addTriangle(t0);
+	_glued = true;
 }
 
 Boundary::~Boundary() {

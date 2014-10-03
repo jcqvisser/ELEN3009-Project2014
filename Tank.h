@@ -7,7 +7,7 @@
 #define TANK_H_
 #include <time.h>
 #include "CollisionManager.h"
-#define TANKMASS 50
+#define TANKMASS 10
 
 class Tank : public GameObject
 {

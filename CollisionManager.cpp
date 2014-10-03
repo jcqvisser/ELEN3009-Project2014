@@ -5,10 +5,6 @@
 
 #include "CollisionManager.h"
 
-CollisionManager::CollisionManager(const float& stepTime) :
-		_stepTime(stepTime)
-{}
-
 CollisionManager::~CollisionManager() { }
 
 void CollisionManager::setGameObjecs(const vector<shared_ptr<GameObject>>& gameObjects)
@@ -27,7 +23,7 @@ void CollisionManager::findCollisions()
 			{
 				try
 				{
-					Collision col{_gameObjects[go1], _gameObjects[go2], _stepTime};
+					Collision col{_gameObjects[go1], _gameObjects[go2]};
 					_collisions.push_back(col);
 				}
 				catch(No_Collision&)
@@ -43,11 +39,11 @@ void CollisionManager::findCollisions()
 	}
 }
 
-void CollisionManager::ResolveCollisions()
+void CollisionManager::ResolveCollisions(const float stepTime)
 {
 	for (auto col : _collisions)
 	{
-		col.resolve();
+		col.resolve(stepTime);
 	}
 }
 

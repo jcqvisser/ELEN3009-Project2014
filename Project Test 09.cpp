@@ -460,7 +460,7 @@ TEST(Collision, Construction)
 	Coordinate velocity(0,1);
 	testGO1->applyImpulseLinear(velocity);
 
-	Collision col{testGO, testGO1, 0.1};
+	Collision col{testGO, testGO1};
 }
 
 

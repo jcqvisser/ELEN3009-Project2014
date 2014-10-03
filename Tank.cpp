@@ -16,9 +16,11 @@ Tank::Tank() :
 	//tweak these values
 	addTriangle(t0);
 	setDragCoeff(50);
-	_enginePowerFwd = 400000;
-	_enginePowerRev = -200000;
+	_enginePowerFwd = 100000;
+	_enginePowerRev = -100000;
 	_turningPower = 5;
+
+	_glued = false;
 }
 
 Tank::~Tank() {
@@ -62,6 +64,7 @@ void Tank::fireRocket()
 	{
 		throw Rocket_Fire_Frequency_too_High{};
 	}
+	cout << _centerOfMass.x() << " " << _centerOfMass.y() << endl;
 }
 
 void Tank::plantMine()

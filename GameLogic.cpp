@@ -14,29 +14,20 @@ GameLogic::~GameLogic() {}
 
 void GameLogic::step(const float time)
 {
+	animate(time);
 	checkRocketDamage();
 	checkMineDamage();
 	checkTimedDeath();
 
 	updateCollisionManager();
 	_collMan.findCollisions();
-	_collMan.ResolveCollisions();
+	_collMan.ResolveCollisions(time);
 	_collMan.purgeCollisions();
 
-	for (auto player : _players)
-		player->animate(time);
-	for (auto rocket : _rockets)
-		rocket->animate(time);
-	for (auto crate : _immovableCrates)
-		crate->animate(time);
-	for (auto crate : _crates)
-		crate->animate(time);
-	for (auto turret : _turrets)
-		turret->animate(time);
+	clearForces();
+
 	turretAction();
-
 	checkHealthDeath();
-
 }
 
 void GameLogic::playControl(const playerControl& control, const int& playerNo)
@@ -148,8 +139,13 @@ void GameLogic::checkRocketDamage()
 		{
 			if (player->hasInside(rocket))
 			{
-				player->kill();
+				player->damage(10);
 				rocket->kill();
+				shared_ptr<GameObject> expl01{new GameObject{1}};
+				expl01->setPosition(Coordinate{(player)->getCenter()});
+				_explosion01s.push_back(expl01);
+				if (player->getHealth() <= 0)
+					player->kill();
 				return;
 			}
 		}
@@ -157,7 +153,7 @@ void GameLogic::checkRocketDamage()
 		{
 			if (crate->hasInside(rocket))
 			{
-				crate->damage(34);
+				crate->damage(10);
 				if (crate->getHealth() <= 0)
 					crate->kill();
 				return;
@@ -168,7 +164,10 @@ void GameLogic::checkRocketDamage()
 			if (turret->hasInside(rocket))
 			{
 				rocket->kill();
-				turret->damage(34);
+				turret->damage(10);
+				shared_ptr<GameObject> expl01{new GameObject{1}};
+				expl01->setPosition(Coordinate{(turret)->getCenter()});
+				_explosion01s.push_back(expl01);
 				if (turret->getHealth() <= 0)
 					turret->kill();
 				return;
@@ -185,6 +184,9 @@ void GameLogic::checkMineDamage()
 			if (player->hasInside(mine))
 			{
 				player->damage(50);
+				shared_ptr<GameObject> expl01{new GameObject{1}};
+				expl01->setPosition(Coordinate{(player)->getCenter()});
+				_explosion01s.push_back(expl01);
 				if (player->getHealth() <=0)
 					player->kill();
 				mine->kill();
@@ -193,7 +195,10 @@ void GameLogic::checkMineDamage()
 		for (auto crate : _crates)
 			if (crate->hasInside(mine))
 			{
-				crate->damage(50);
+				crate->damage(35);
+				shared_ptr<GameObject> expl01{new GameObject{1}};
+				expl01->setPosition(Coordinate{(crate)->getCenter()});
+				_explosion01s.push_back(expl01);
 				if (crate->getHealth() <=0)
 					crate->kill();
 				mine->kill();
@@ -213,7 +218,12 @@ void GameLogic::checkTimedDeath()
 	for (auto rocket : _rockets)
 	{
 		if (rocket->getBirthTime() + rocket->getLifeTime() < clock()/CLOCKS_PER_SEC)
+		{
 			rocket->kill();
+			shared_ptr<GameObject> expl01{new GameObject{1}};
+			expl01->setPosition(Coordinate{(rocket)->getCenter()});
+			_explosion01s.push_back(expl01);
+		}
 	}
 
 	auto n = _explosion01s.begin();
@@ -235,10 +245,8 @@ void GameLogic::checkHealthDeath()
 	{
 		if (isDead(*rocket))
 		{
-			shared_ptr<GameObject> expl01{new GameObject{1}};
-			expl01->setPosition(Coordinate{(*rocket)->getCenter()});
-			_explosion01s.push_back(expl01);
 			rocket = _rockets.erase(rocket);
+
 		}
 		else
 			++rocket;
@@ -278,21 +286,21 @@ void GameLogic::loadLevel()
 	shared_ptr<Tank> p1{new Tank{}};
 	shared_ptr<Tank> p2{new Tank{}};
 	p1->setPosition(Coordinate{1200,350});// TODO magic numbers
-	p2->setPosition(Coordinate{100,350});
+	p2->setPosition(Coordinate{1200,450});
 	_players.push_back(p1);
 	_players.push_back(p2);
 
 	shared_ptr<Crate> c1{new Crate{}};
-	c1->setPosition(Coordinate{500,500});
+	c1->setPosition(Coordinate{1000,500});
 	_crates.push_back(c1);
 
 	shared_ptr<Turret> t1(new Turret{});
 		t1->setPosition(Coordinate{650,150});
 		_turrets.push_back(t1);
 
-	shared_ptr<Turret> t2(new Turret{});
-		t2->setPosition(Coordinate{650,550});
-		_turrets.push_back(t2);
+//	shared_ptr<Turret> t2(new Turret{});
+//		t2->setPosition(Coordinate{650,550});
+//		_turrets.push_back(t2);
 
 	loadBoundary(_hres, _vres);
 }
@@ -358,4 +366,32 @@ bool GameLogic::isDead(const shared_ptr<GameObject>& a)
 	if (a->getHealth() <= 0)
 		return true;
 	return false;
+}
+
+void GameLogic::animate(const float time)
+{
+		for (auto player : _players)
+			player->animate(time);
+		for (auto rocket : _rockets)
+			rocket->animate(time);
+		for (auto crate : _immovableCrates)
+			crate->animate(time);
+		for (auto crate : _crates)
+			crate->animate(time);
+		for (auto turret : _turrets)
+			turret->animate(time);
+}
+
+void GameLogic::clearForces()
+{
+	for (auto player : _players)
+		player->clearForce();
+	for (auto rocket : _rockets)
+		rocket->clearForce();
+	for (auto crate : _immovableCrates)
+		crate->clearForce();
+	for (auto crate : _crates)
+		crate->clearForce();
+	for (auto turret : _turrets)
+		turret->clearForce();
 }

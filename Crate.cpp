@@ -8,20 +8,22 @@
 Crate::Crate() :
 	GameObject(CRATEMASS)
 {
-	shared_ptr<Coordinate> c0{new Coordinate{0,0.0001}};
-	shared_ptr<Coordinate> c1{new Coordinate{50.00001,0}};
+	shared_ptr<Coordinate> c0{new Coordinate{0,0}};
+	shared_ptr<Coordinate> c1{new Coordinate{51,1}};
 	shared_ptr<Coordinate> c2{new Coordinate{50,50}};
 	shared_ptr<Triangle> t0{new Triangle{c0,c1,c2}};
 
-	shared_ptr<Coordinate> c3{new Coordinate{0.01,0}};
-	shared_ptr<Coordinate> c4{new Coordinate{1,50}};
-	shared_ptr<Coordinate> c5{new Coordinate{50.0001,50.01}};
+	shared_ptr<Coordinate> c3{new Coordinate{0,0}};
+	shared_ptr<Coordinate> c4{new Coordinate{1,51}};
+	shared_ptr<Coordinate> c5{new Coordinate{50,50}};
 	shared_ptr<Triangle> t1{new Triangle{c3,c4,c5}};
 
 	//tweak these values
 	addTriangle(t0);
 	addTriangle(t1);
-	setDragCoeff(75);
+	setDragCoeff(50);
+
+	_glued = false;
 }
 
 Crate::~Crate() {

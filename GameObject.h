@@ -38,10 +38,13 @@ public:
 	float getTimeOfDeath() const;
 	float getBirthTime() const;
 	float getLifeTime() const;
+	float getForceAngular() const;
+	bool isGlued() const;
 
 	void setDragCoeff(const float& dC);
 	void setPosition(const Coordinate& pos);
 	virtual void clearForce();
+	void clearAngularForce();
 
 	void addTriangle(shared_ptr<Triangle>& tri);
 
@@ -78,6 +81,8 @@ protected:
 	float _birthTime = 0;
 	float _timeOfDeath = 0;
 	float _lifeTime = 0;
+
+	bool _glued = false;
 
 };
 

@@ -20,10 +20,8 @@ Collision::~Collision() {}
 
 Collision::Collision(
 		const shared_ptr<GameObject>& obj1,
-		const shared_ptr<GameObject>& obj2,
-		const float& stepTime)
+		const shared_ptr<GameObject>& obj2)
 {
-	_stepTime = stepTime;
 	findCollision(obj1, obj2);
 	findApproachVelocity();
 	try
@@ -62,7 +60,7 @@ void Collision::findCollisionEdge()
 		shared_ptr<Coordinate> penetrator0{
 			new Coordinate{_collidee->avgCoordInside(*_collider)}};
 		shared_ptr<Coordinate> penetrator1{
-			new Coordinate{*penetrator0 - _approachVelocity*INF}};
+			new Coordinate{*penetrator0 - _collidee->getCenter()*INF}};//todo, replaced approach vel
 
 		Line penetratingLine{ penetrator0, penetrator1};
 		_collisionEdge = _collidee->intersectingLine(penetratingLine);
@@ -82,7 +80,7 @@ void Collision::findApproachVelocity()
 	}
 }
 
-void Collision::resolve()
+void Collision::resolve(const float stepTime)
 {
 
 	//get normal and check that it points out of the object
@@ -101,8 +99,6 @@ void Collision::resolve()
 		}
 	}
 
-
-
 	Coordinate colliderVel = _collider->getVelocity();
 	Coordinate collideeVel = _collidee->getVelocity();
 	float colliderMass = _collider->getMass();
@@ -110,46 +106,38 @@ void Collision::resolve()
 	float totalMass = collideeMass + colliderMass;
 
 	//Solve Clipping
-	if (colliderVel > 0)
+
+
+	_collider->clearForce();
+	_collidee->clearForce();
+
+
+	Coordinate momentum =
+			collideeVel*collideeMass +
+			colliderVel*colliderMass;
+
+	Coordinate ColliderImpulse = momentum*-(collideeMass/totalMass)*0.5;
+	Coordinate CollideeImpulse = momentum*(colliderMass/totalMass)*0.5;
+
+	if(!_collidee->isGlued())
 	{
-
-		//Solve clipping for Rotation
-		_collider->move(normal*_stepTime);
-
-//		cout <<"Normal:" << normal.x() << " " << normal.y() << endl;
-//		cout <<"ColPnt:" << _collisionPt.x() << " " << _collisionPt.y() << endl;
-//		cout <<"N+Clpt:" << normal.x() + _collisionPt.x() << " " << normal.y() + _collisionPt.y() << endl;
-//		cout <<"Center:" << _collidee->getCenter().x() << " " << _collidee->getCenter().y() << endl;
-//		cout <<"ColLn1:" << _collisionEdge._coordinate1->x() << " " << _collisionEdge._coordinate1->y() << endl;
-//		cout <<"ColLn2:" << _collisionEdge._coordinate2->x() << " " << _collisionEdge._coordinate2->y() << endl <<endl;
-
-		//Newton's First Law (effectively)
-		auto f = _collider->getForceLinear();
-		_collider->clearForce();
-
-
+		_collidee->react(CollideeImpulse);
+			_collidee->animate(stepTime);
 	}
-	else if (collideeVel > 0)
+	if (!_collider->isGlued())
 	{
-
-		//Solve clipping for Rotation
-		_collidee->move(normal*_stepTime);
-
-		//Newton's First Law (effectively)
-		auto f = _collidee->getForceLinear();
-		_collidee->clearForce();
-
+		_collider->react(ColliderImpulse);
+		_collider->animate(stepTime);
 	}
 
-	float momentum =
-			collideeMass*(collideeVel*normal) +
-			colliderMass*(colliderVel*normal);
 
-	Coordinate ColliderImpulse = normal*(collideeMass/totalMass)*-momentum*0.01;
-	Coordinate CollideeImpulse = normal*(colliderMass/totalMass)*momentum*0.01;
-
-	_collidee->react(CollideeImpulse);
-	_collider->react(ColliderImpulse);
+	while (_collidee->hasInside(_collider) || _collider->hasInside(_collidee))
+	{
+		if(!_collider->isGlued())
+			_collider->move(normal);
+		if(!_collidee->isGlued())
+			_collidee->move(normal*(-1));
+	}
 }
 
 void Collision::printCollisionEdge() const

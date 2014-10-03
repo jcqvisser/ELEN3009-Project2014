@@ -5,8 +5,9 @@ using namespace sf;
 
 int main()
 {
-	SfmlInterface interface{};
+
 	Clock clock{};
+	SfmlInterface interface{1300,700};
 	Time frameTime = seconds(0.01);
 	Time elapsedTime = clock.getElapsedTime();
 	Time loopStartTime = elapsedTime;

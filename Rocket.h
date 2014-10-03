@@ -6,7 +6,7 @@
 #ifndef ROCKET_H_
 #define ROCKET_H_
 #include "CollisionManager.h"
-#define ROCKETMASS 70
+#define ROCKETMASS 2
 
 class Rocket : public GameObject
 {

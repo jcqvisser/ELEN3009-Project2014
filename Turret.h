@@ -26,7 +26,7 @@ private:
 
 	float _turningPower = 5;
 	float _lastRocketFireTime = 0;
-	float _rocketFirePeriod = 1.5;
+	float _rocketFirePeriod = 0.5;
 
 	float _range = 500;
 	float _accuracy = PI/5;

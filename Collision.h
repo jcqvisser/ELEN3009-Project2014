@@ -16,11 +16,10 @@ public:
 	Collision(const Collision& col);
 	Collision(
 			const shared_ptr<GameObject>& obj1,
-			const shared_ptr<GameObject>& obj2,
-			const float& stepTime);
+			const shared_ptr<GameObject>& obj2);
 	virtual ~Collision();
 	void printCollisionEdge() const;
-	void resolve();
+	void resolve(const float stepTime);
 
 	shared_ptr<GameObject> _collider;
 	shared_ptr<GameObject> _collidee;
@@ -34,8 +33,6 @@ public:
 			shared_ptr<GameObject> obj1,
 			shared_ptr<GameObject> obj2);
 	void findApproachVelocity();
-	float _stepTime = 0.1;
-
 };
 
 #endif /* COLLISION_H_ */

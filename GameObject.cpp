@@ -118,7 +118,7 @@ bool GameObject::animate(const float& time)
 {
 	animateLinear(time);
 	rotate(_forceAngular*time);
-	clearForce();
+	//clearForce();
 	return false;
 }
 
@@ -246,4 +246,19 @@ float GameObject::getBirthTime() const
 float GameObject::getLifeTime() const
 {
 	return _lifeTime;
+}
+
+float GameObject::getForceAngular() const
+{
+	return _forceAngular;
+}
+
+void GameObject::clearAngularForce()
+{
+	_forceAngular = 0;
+}
+
+bool GameObject::isGlued() const
+{
+	return _glued;
 }

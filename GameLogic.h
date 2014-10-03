@@ -38,6 +38,8 @@ public:
 	void updateCollisionManager();
 
 	void step(const float time);
+	void animate(const float time);
+	void clearForces();
 
 	void checkRocketDamage();
 	void checkMineDamage();
