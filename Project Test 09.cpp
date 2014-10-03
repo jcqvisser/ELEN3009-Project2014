@@ -226,7 +226,11 @@ TEST(Line, Equality)
 	shared_ptr<Coordinate> c3{new Coordinate{5,0}};
 	Line lin1{c2,c3};
 
+	Line lin2{c3,c2};
+
 	EXPECT_EQ(lin1, lin0);
+	EXPECT_EQ(lin2, lin0);
+	EXPECT_EQ(lin2, lin1);
 }
 
 TEST(Line, Normal)
@@ -463,6 +467,31 @@ TEST(Collision, Construction)
 	Collision col{testGO, testGO1};
 }
 
+TEST(Collision, Finding_Collision_Edge)
+{
+	shared_ptr<Coordinate> tC0{new Coordinate{0,0}};
+	shared_ptr<Coordinate> tC1{new Coordinate{2,0}};
+	shared_ptr<Coordinate> tC2{new Coordinate{1,2}};
+	shared_ptr<Triangle> testTri{new Triangle{tC0, tC1, tC2}};
+	shared_ptr<GameObject> testGO{new GameObject{1}};
+	testGO->addTriangle(testTri);
+
+	shared_ptr<Coordinate> tC4{new Coordinate{0,-1}};
+	shared_ptr<Coordinate> tC5{new Coordinate{2,-1}};
+	shared_ptr<Coordinate> tC6{new Coordinate{1,1}};
+	shared_ptr<Triangle> testTri1{new Triangle{tC4, tC5, tC6}};
+	shared_ptr<GameObject> testGO1{new GameObject{1}};
+	testGO1->addTriangle(testTri1);
+
+	Coordinate velocity(0,1);
+	testGO1->applyImpulseLinear(velocity);
+
+	Collision col{testGO, testGO1};
+	col.findCollisionEdge();
+
+	Line actualColEdge{tC1, tC0};
+	EXPECT_EQ(col._collisionEdge, actualColEdge);
+}
 
 
 
@@ -470,7 +499,7 @@ TEST(Collision, Construction)
 //			CollisionManager
 //------------------------------------------------------------------------------
 
-TEST(Collision, objectsCollided_NoCollisions)
+TEST(CollisionManager, objectsCollided_NoCollisions)
 {
 	shared_ptr<Coordinate> tC0{new Coordinate{0,0}};
 	shared_ptr<Coordinate> tC1{new Coordinate{2,0}};
@@ -493,11 +522,10 @@ TEST(Collision, objectsCollided_NoCollisions)
 	GOs.push_back(testGO);
 	GOs.push_back(testGO1);
 
-	//CollisionManager CM{GOs};
+	CollisionManager CM{};
+	CM.setGameObjecs(GOs);
+	CM.findCollisions();
 
-	//CM.findCollisions();
-
-	//EXPECT_EQ(0, CM.numCollisions());
-
+	EXPECT_EQ(0, CM.numCollisions());
 }
 

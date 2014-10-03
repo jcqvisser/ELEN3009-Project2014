@@ -27,7 +27,6 @@ public:
 	Coordinate _approachVelocity{};
 	Line _collisionEdge;
 
-//private:
 	void findCollisionEdge();
 	void findCollision(
 			shared_ptr<GameObject> obj1,
