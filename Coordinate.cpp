@@ -38,8 +38,7 @@ float Coordinate::magnitude() const
 
 void Coordinate::print() const
 {
-	std::cout << std::endl << x() << " " << y() << std::endl;
-
+	std::cout << x() << " " << y() << std::endl;
 }
 
 void Coordinate::setX(float x)
