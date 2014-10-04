@@ -6,6 +6,7 @@
  */
 
 #include "SfmlInterface.h"
+#include <sstream>
 
 SfmlInterface::SfmlInterface(const float& hres, const float& vres) :
 	_hres(hres),
@@ -47,6 +48,32 @@ SfmlInterface::SfmlInterface(const float& hres, const float& vres) :
 	_backSprite.setTexture(_background,true);
 	_backSprite.setOrigin(665,315);
 	_backSprite.setPosition(665,315);
+
+	_font.loadFromFile("OpenSans-Bold.ttf");
+	_timeRemaingText.setFont(_font);
+	_p1Win.setFont(_font);
+	_p2Win.setFont(_font);
+	_timeUp.setFont(_font);
+
+	_timeRemaingText.setCharacterSize(30);
+	_timeRemaingText.setPosition(660,30);
+	_timeRemaingText.setColor(sf::Color::Black);
+
+	_p1Win.setCharacterSize(50);
+	_p1Win.setPosition(538,295);
+	_p1Win.setString("Red Wins!");
+	_p1Win.setColor(sf::Color::Black);
+
+	_p2Win.setCharacterSize(50);
+	_p2Win.setPosition(480,295);
+	_p2Win.setString("Purple Wins!");
+	_p2Win.setColor(sf::Color::Black);
+
+	_timeUp.setCharacterSize(50);
+	_timeUp.setPosition(290,295);
+	_timeUp.setString("                  Time is Up!\n\nMutual Destruction is Assured!");
+	_timeUp.setColor(sf::Color::Black);
+
 }
 
 SfmlInterface::~SfmlInterface() {}
@@ -144,6 +171,13 @@ void SfmlInterface::step(const sf::Time& stepTime)
 {
 	float time = stepTime.asSeconds();
 	_gameLogic.step(time);
+
+	if (_gameLogic.getRemainingTime() >= 0)
+	{
+		 std::ostringstream buff;
+		buff<<_gameLogic.getRemainingTime();
+		_timeRemaingText.setString(buff.str());
+	}
 }
 
 void SfmlInterface::display()
@@ -153,6 +187,21 @@ void SfmlInterface::display()
 	for (auto sprite : _sprites)
 	{
 		_window.draw(sprite);
+
+	}
+	_window.draw(_timeRemaingText);
+
+	if (_winner == 0)
+		_winner = _gameLogic.getWinner();
+	if (_winner == 1)
+		_window.draw(_p1Win);
+	else if (_winner == 2)
+		_window.draw(_p2Win);
+
+	if (_gameLogic.getRemainingTime() <= 0 &&
+			_winner == 0)
+	{
+			_window.draw(_timeUp);
 	}
 
 	_window.display();

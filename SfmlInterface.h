@@ -40,12 +40,20 @@ public:
 	Texture _background;
 	Sprite _backSprite;
 
+	Font _font;
+	Text _timeRemaingText;
+	Text _p1Win;
+	Text _p2Win;
+	Text _timeUp;
+
 	void step(const sf::Time& stepTime);
 	void updateSprites();
 	void display();
 
 	void controllerInput();
 	Clock _clock{};
+
+	int _winner = 0;
 };
 
 #endif /* SFMLINTERFACE_H_ */

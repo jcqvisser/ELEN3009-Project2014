@@ -49,6 +49,9 @@ public:
 	void playControl(const playerControl&, const int& player);
 	int numObjects() const;
 	bool isDead(const shared_ptr<GameObject>&);
+	float getRemainingTime();
+	int getWinner();
+	void endGame();
 
 	list<shared_ptr<Tank>> _players;
 	list<shared_ptr<Rocket>> _rockets;
@@ -65,14 +68,17 @@ public:
 
 	CollisionManager _collMan{};
 
+	int _hres = 1330;
+	int _vres = 630;
+
+private:
+	float _startTime = clock()/CLOCKS_PER_SEC;
+	float _roundTime = 10;
+
 	float p1FireTime = clock()/CLOCKS_PER_SEC;
 	float p2FireTime = clock()/CLOCKS_PER_SEC;
 	float FireTime = 0.25;
 
-	int _hres = 1300;
-	int _vres = 700;
-
-private:
 	void buildCrate(const Coordinate pos, const bool glued);
 	void buildTank(const Coordinate pos);
 	void buildTurret(const Coordinate pos);

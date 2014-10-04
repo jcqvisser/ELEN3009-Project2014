@@ -32,6 +32,9 @@ void GameLogic::step(const float time)
 
 void GameLogic::playControl(const playerControl& control, const int& playerNo)
 {
+	if (getRemainingTime() <= 0)
+		return;
+
 	if (playerNo >= _players.size()+1 || playerNo < 1)
 		throw Player_Does_not_Exist{};
 
@@ -231,6 +234,20 @@ void GameLogic::checkTimedDeath()
 		else
 			++n;
 	}
+
+	if (getRemainingTime() < -3 && getWinner() == 0)
+	{
+		for (auto tank : _players)
+		{
+			if (!isDead(tank))
+			{
+				tank->kill();
+				shared_ptr<GameObject> expl01{new GameObject{1}};
+				expl01->setPosition(Coordinate{(tank)->getCenter()});
+				_explosion01s.push_back(expl01);
+			}
+		}
+	}
 }
 
 
@@ -308,13 +325,16 @@ void GameLogic::loadLevel()
 	buildCrate(Coordinate{315, 525}, true);
 	buildCrate(Coordinate{1015, 525}, true);
 
-	buildTank(Coordinate{105,315});
 	buildTank(Coordinate{1225,315});
+	buildTank(Coordinate{105,315});
+
 
 	buildTurret(Coordinate{665,105});
 	buildTurret(Coordinate{665,525});
 
 	loadBoundary(_hres, _vres);
+
+	_startTime = clock()/CLOCKS_PER_SEC;
 }
 
 void GameLogic::loadBoundary(const int hres, const int vres)
@@ -420,4 +440,36 @@ void GameLogic::buildTurret(const Coordinate pos)
 	shared_ptr<Turret> t{new Turret{}};
 	t->setPosition(pos);
 	_turrets.push_back(t);
+}
+
+float GameLogic::getRemainingTime()
+{
+	float time = clock()/CLOCKS_PER_SEC;
+	return _roundTime -(time -_startTime);
+}
+
+int GameLogic::getWinner()
+{
+		int playersAlive = 0;
+		int winner = 0;
+		int player = 0;
+		for (auto tank : _players)
+		{
+			player++;
+			if (!isDead(tank))
+			{
+				winner = player;
+				playersAlive++;
+			}
+		}
+		if (playersAlive == 1)
+		{
+			return winner;
+		}
+	return 0;
+}
+
+void GameLogic::endGame()
+{
+	_startTime = clock()/CLOCKS_PER_SEC - _roundTime;
 }
