@@ -179,7 +179,7 @@ TEST(Line, Length)
 	std::shared_ptr<Coordinate> tC0{new Coordinate{0,0}};
 	std::shared_ptr<Coordinate> tC1{new Coordinate{1,1}};
 	Line lin{tC0, tC1};
-	EXPECT_EQ(sqrt(2), lin.length());
+	EXPECT_TRUE(lin.isBetween(sqrt(2), lin.length()-0.01, lin.length()+0.01));
 }
 
 TEST(Line, isBelowLineTrue)
@@ -202,14 +202,28 @@ TEST(Line, isBelowLineFalse)
 	EXPECT_FALSE(lin.isBelow(tC2));
 }
 
-TEST(Line, intersects)
+//TEST(Line, intersects)
+//{
+//	shared_ptr<Coordinate> c0{new Coordinate{0,0}};
+//	shared_ptr<Coordinate> c1{new Coordinate{5,0}};
+//	Line lin0{c0,c1};
+//
+//	shared_ptr<Coordinate> c2{new Coordinate{2,-1}};
+//	shared_ptr<Coordinate> c3{new Coordinate{2,1}};
+//	Line lin1{c2,c3};
+//
+//	EXPECT_TRUE(lin1.intersects(lin0));
+//	EXPECT_TRUE(lin0.intersects(lin1));
+//}
+
+TEST(Line, intersects_Horisontal_Line)
 {
 	shared_ptr<Coordinate> c0{new Coordinate{0,0}};
-	shared_ptr<Coordinate> c1{new Coordinate{5,0}};
+	shared_ptr<Coordinate> c1{new Coordinate{2,-1}};
 	Line lin0{c0,c1};
 
-	shared_ptr<Coordinate> c2{new Coordinate{2,-1}};
-	shared_ptr<Coordinate> c3{new Coordinate{2,1}};
+	shared_ptr<Coordinate> c2{new Coordinate{0.55,0.1}};
+	shared_ptr<Coordinate> c3{new Coordinate{1,-10}};
 	Line lin1{c2,c3};
 
 	EXPECT_TRUE(lin1.intersects(lin0));
@@ -240,7 +254,6 @@ TEST(Line, Normal)
 	Line lin0{c0,c1};
 
 	Coordinate norm = lin0.getNormal();
-	norm.print();
 }
 
 //------------------------------------------------------------------------------
@@ -441,12 +454,37 @@ TEST(GameObject, avgCoordInside)
 	EXPECT_EQ(coord, avgCoord);
 }
 
+TEST(GameObject, intersectingLine)
+{
+	shared_ptr<Coordinate> tC0{new Coordinate{0,0}};
+	shared_ptr<Coordinate> tC1{new Coordinate{1,1}};
+	shared_ptr<Coordinate> tC2{new Coordinate{1,0}};
+	shared_ptr<Triangle> testTri{new Triangle{tC0, tC1, tC2}};
+	GameObject testGO{1};
+	testGO.addTriangle(testTri);
+
+	shared_ptr<Coordinate> tC3{new Coordinate{0.5, 0.4}};
+	shared_ptr<Coordinate> tC4{new Coordinate{0.5, -0.4}};
+	Line penetrating{tC3, tC4};
+
+	Line intersected = testGO.intersectingLine(penetrating);
+	Line intersectedReal{tC0, tC2};
+
+	EXPECT_EQ(intersectedReal, intersected);
+}
+
 //------------------------------------------------------------------------------
 //					Collision
 //------------------------------------------------------------------------------
+// A paradigm of collider and collidee is used with this class, A collidee is
+// defined as an object that has one or more vertex of a collider inside of it.
+// when both objects have coordinates of the other inside them the roles of
+// collider and collidee is randomly selected. It is assumed that collisions
+// will be detected before objects intersect to this level.
 
-TEST(Collision, Construction)
+TEST(Collision, Construction_and_Find_Collision_Easy)
 {
+	//center of mass of collider is outside collidee
 	shared_ptr<Coordinate> tC0{new Coordinate{0,0}};
 	shared_ptr<Coordinate> tC1{new Coordinate{2,0}};
 	shared_ptr<Coordinate> tC2{new Coordinate{1,2}};
@@ -465,6 +503,58 @@ TEST(Collision, Construction)
 	testGO1->applyImpulseLinear(velocity);
 
 	Collision col{testGO, testGO1};
+
+	Line colEdgeReal{tC0, tC1};
+	Line colEdgeFound = col._collisionEdge;
+
+	EXPECT_EQ(colEdgeReal, colEdgeFound);
+}
+
+TEST(Collision, Construction_and_Find_Collision_Hard)
+{
+	//center of mass is inside collidee
+	shared_ptr<Coordinate> tC0{new Coordinate{0,0}};
+	shared_ptr<Coordinate> tC1{new Coordinate{2,0}};
+	shared_ptr<Coordinate> tC2{new Coordinate{1,2}};
+	shared_ptr<Triangle> testTri{new Triangle{tC0, tC1, tC2}};
+	shared_ptr<GameObject> testGO{new GameObject{1}};
+	testGO->addTriangle(testTri);
+
+	shared_ptr<Coordinate> tC4{new Coordinate{0.5,0.1}};
+	shared_ptr<Coordinate> tC5{new Coordinate{0.6,0.1}};
+	shared_ptr<Coordinate> tC6{new Coordinate{0.45, -0.01}};
+	shared_ptr<Triangle> testTri1{new Triangle{tC4, tC5, tC6}};
+	shared_ptr<GameObject> testGO1{new GameObject{1}};
+	testGO1->addTriangle(testTri1);
+
+	Coordinate velocity(0,100);
+	testGO1->applyImpulseLinear(velocity);
+	EXPECT_EQ(velocity, testGO1->getVelocity());
+
+	EXPECT_TRUE(testGO->hasInside(testGO1->getCenter()));
+
+	shared_ptr<Coordinate> penetrator0{
+			new Coordinate{testGO->avgCoordInside(*testGO1)}};
+	shared_ptr<Coordinate> penetrator1{ new Coordinate{
+		(*penetrator0) -
+		(testGO1->getVelocity())*INF/2 +
+		(testGO->getCenter()- (*penetrator0))
+	}};
+
+	Line penetratingLine{ penetrator0, penetrator1};
+	penetrator0->print();
+	penetrator1->print();
+	auto collisionEdge = testGO->intersectingLine(penetratingLine);
+	Line collisionEdgeActual{tC0, tC1};
+
+	EXPECT_EQ(collisionEdgeActual, collisionEdge);
+
+	Collision col{testGO, testGO1};
+
+	Line colEdgeReal{tC0, tC1};
+	Line colEdgeFound = col._collisionEdge;
+
+	EXPECT_EQ(colEdgeReal, colEdgeFound);
 }
 
 TEST(Collision, Finding_Collision_Edge)

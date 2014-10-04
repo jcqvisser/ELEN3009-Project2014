@@ -58,15 +58,18 @@ void Collision::findCollisionEdge()
 	{
 		shared_ptr<Coordinate> penetrator0{
 			new Coordinate{_collidee->avgCoordInside(*_collider)}};
-		shared_ptr<Coordinate> penetrator1{
-			new Coordinate{_collider->getCenter()}};
+		shared_ptr<Coordinate> penetrator1{ new Coordinate{
+			(*penetrator0) -
+			(_collider->getVelocity())*INF/2 +
+			(_collider->getCenter()- (*penetrator0))
+		}};
 
 		Line penetratingLine{ penetrator0, penetrator1};
 		_collisionEdge = _collidee->intersectingLine(penetratingLine);
 	}
 	catch (No_Line_Intersects&)
 	{
-		throw No_Collision{};
+		//throw No_Collision{};
 	}
 }
 
