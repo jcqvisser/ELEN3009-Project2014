@@ -527,7 +527,7 @@ TEST(Collision, Construction_and_Find_Collision_Edge_Hard)
 	shared_ptr<GameObject> testGO1{new GameObject{1}};
 	testGO1->addTriangle(testTri1);
 
-	Coordinate velocity(0,100);
+	Coordinate velocity(0,10);
 	testGO1->applyImpulseLinear(velocity);
 	EXPECT_EQ(velocity, testGO1->getVelocity());
 
@@ -611,9 +611,8 @@ TEST(Collision, Construction_Hard_No_Movement)
 		Collision col{testGO, testGO1};
 }
 
-TEST(Collision, Resolution)
+TEST(Collision, Resolution_No_Movement)
 {
-
 	shared_ptr<Coordinate> tC0{new Coordinate{0,0}};
 	shared_ptr<Coordinate> tC1{new Coordinate{2,0}};
 	shared_ptr<Coordinate> tC2{new Coordinate{1,2}};
@@ -627,6 +626,32 @@ TEST(Collision, Resolution)
 	shared_ptr<Triangle> testTri1{new Triangle{tC4, tC5, tC6}};
 	shared_ptr<GameObject> testGO1{new GameObject{1}};
 	testGO1->addTriangle(testTri1);
+
+	Collision col{testGO, testGO1};
+
+	col.resolve(0.015);
+
+	EXPECT_FALSE(testGO->hasInside(testGO1));
+}
+
+TEST(Collision, Resolution_With_Movement)
+{
+	shared_ptr<Coordinate> tC0{new Coordinate{0,0}};
+	shared_ptr<Coordinate> tC1{new Coordinate{2,0}};
+	shared_ptr<Coordinate> tC2{new Coordinate{1,2}};
+	shared_ptr<Triangle> testTri{new Triangle{tC0, tC1, tC2}};
+	shared_ptr<GameObject> testGO{new GameObject{1}};
+	testGO->addTriangle(testTri);
+
+	shared_ptr<Coordinate> tC4{new Coordinate{0.5,0.1}};
+	shared_ptr<Coordinate> tC5{new Coordinate{0.6,0.1}};
+	shared_ptr<Coordinate> tC6{new Coordinate{0.45, -0.01}};
+	shared_ptr<Triangle> testTri1{new Triangle{tC4, tC5, tC6}};
+	shared_ptr<GameObject> testGO1{new GameObject{1}};
+	testGO1->addTriangle(testTri1);
+
+	Coordinate velocity(0,10);
+	testGO1->applyImpulseLinear(velocity);
 
 	Collision col{testGO, testGO1};
 
