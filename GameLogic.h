@@ -13,6 +13,7 @@
 #include "Rocket.h"
 #include "Mine.h"
 #include "Crate.h"
+#include "Concrete.h"
 #include "ImmovableCrate.h"
 #include "Turret.h"
 #include "Boundary.h"
@@ -52,10 +53,12 @@ public:
 	float getRemainingTime();
 	int getWinner();
 	void endGame();
+	void setResolution(const int, const int);
 
 	list<shared_ptr<Tank>> _players;
 	list<shared_ptr<Rocket>> _rockets;
 	list<shared_ptr<Crate>> _crates;
+	list<shared_ptr<Concrete>> _concretes;
 	list<shared_ptr<Mine>> _mines;
 	list<shared_ptr<Turret>> _turrets;
 	//do not add to collision manager:
@@ -73,7 +76,7 @@ public:
 
 private:
 	float _startTime = clock()/CLOCKS_PER_SEC;
-	float _roundTime = 10;
+	float _roundTime = 120;
 
 	float p1FireTime = clock()/CLOCKS_PER_SEC;
 	float p2FireTime = clock()/CLOCKS_PER_SEC;
@@ -82,6 +85,7 @@ private:
 	void buildCrate(const Coordinate pos, const bool glued);
 	void buildTank(const Coordinate pos);
 	void buildTurret(const Coordinate pos);
+	void buildConcrete(const Coordinate pos, const float angle);
 };
 
 #endif /* GAMELOGIC_H_ */

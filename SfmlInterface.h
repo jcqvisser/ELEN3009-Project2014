@@ -37,6 +37,10 @@ public:
 	Texture _turretTexture;
 	Texture _turretDeadTexture;
 
+	Texture _concrete1Texture;
+	Texture _concrete2Texture;
+	Texture _concrete3Texture;
+
 	Texture _background;
 	Sprite _backSprite;
 
