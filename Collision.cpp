@@ -61,7 +61,7 @@ void Collision::findCollisionEdge()
 		shared_ptr<Coordinate> penetrator1{ new Coordinate{
 			(*penetrator0) -
 			(_collider->getVelocity())*INF +
-			(_collider->getCenter()- _collidee->getCenter())*INF/1000
+			(_collider->getCenter()- _collidee->getCenter())*INF
 		}};
 
 		Line penetratingLine{ penetrator0, penetrator1};
@@ -100,12 +100,13 @@ void Collision::resolve(const float stepTime)
 	_collider->clearForce();
 	_collidee->clearForce();
 
-	Coordinate momentum =
-			collideeVel*collideeMass +
-			colliderVel*colliderMass;
-	Coordinate ColliderImpulse = momentum*-(collideeMass/totalMass)*0.5;
-	Coordinate CollideeImpulse = momentum*(colliderMass/totalMass)*0.5;
+	float momentum =
+			(collideeVel*collideeMass).magnitude() +
+			(colliderVel*colliderMass).magnitude();
+	Coordinate ColliderImpulse = normal*momentum*(collideeMass/totalMass)*0.5;
+	Coordinate CollideeImpulse = normal*momentum*-(colliderMass/totalMass)*0.5;
 
+	//have objects react to the collision (only if they  aren't glued)
 	if(!_collidee->isGlued())
 	{
 		_collidee->react(CollideeImpulse);
@@ -117,7 +118,7 @@ void Collision::resolve(const float stepTime)
 		_collider->animate(stepTime);
 	}
 
-	//solve clipping
+	//solve clipping (only move objects not glued)
 	while (_collidee->hasInside(_collider) || _collider->hasInside(_collidee))
 	{
 		if(!_collider->isGlued())
