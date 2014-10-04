@@ -23,9 +23,7 @@ Tank::Tank() :
 	_glued = false;
 }
 
-Tank::~Tank() {
-	// TODO Auto-generated destructor stub
-}
+Tank::~Tank() {}
 
 void Tank::driveForward()
 {

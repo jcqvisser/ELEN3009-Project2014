@@ -202,24 +202,52 @@ TEST(Line, isBelowLineFalse)
 	EXPECT_FALSE(lin.isBelow(tC2));
 }
 
-//TEST(Line, intersects)
-//{
-//	shared_ptr<Coordinate> c0{new Coordinate{0,0}};
-//	shared_ptr<Coordinate> c1{new Coordinate{5,0}};
-//	Line lin0{c0,c1};
-//
-//	shared_ptr<Coordinate> c2{new Coordinate{2,-1}};
-//	shared_ptr<Coordinate> c3{new Coordinate{2,1}};
-//	Line lin1{c2,c3};
-//
-//	EXPECT_TRUE(lin1.intersects(lin0));
-//	EXPECT_TRUE(lin0.intersects(lin1));
-//}
+TEST(Line, intersects_Horisontal_and_Vertical)
+{
+	shared_ptr<Coordinate> c0{new Coordinate{0,0}};
+	shared_ptr<Coordinate> c1{new Coordinate{5,0}};
+	Line lin0{c0,c1};
 
-TEST(Line, intersects_Horisontal_Line)
+	shared_ptr<Coordinate> c2{new Coordinate{2,-1}};
+	shared_ptr<Coordinate> c3{new Coordinate{2,1}};
+	Line lin1{c2,c3};
+
+	EXPECT_TRUE(lin1.intersects(lin0));
+	EXPECT_TRUE(lin0.intersects(lin1));
+}
+
+TEST(Line, intersects_Sloped)
 {
 	shared_ptr<Coordinate> c0{new Coordinate{0,0}};
 	shared_ptr<Coordinate> c1{new Coordinate{2,-1}};
+	Line lin0{c0,c1};
+
+	shared_ptr<Coordinate> c2{new Coordinate{0.55,0.1}};
+	shared_ptr<Coordinate> c3{new Coordinate{1,-10}};
+	Line lin1{c2,c3};
+
+	EXPECT_TRUE(lin1.intersects(lin0));
+	EXPECT_TRUE(lin0.intersects(lin1));
+}
+
+TEST(Line, intersects_Sloped_Horisontal)
+{
+	shared_ptr<Coordinate> c0{new Coordinate{0,0}};
+	shared_ptr<Coordinate> c1{new Coordinate{2,0}};
+	Line lin0{c0,c1};
+
+	shared_ptr<Coordinate> c2{new Coordinate{2,1}};
+	shared_ptr<Coordinate> c3{new Coordinate{0,-1}};
+	Line lin1{c2,c3};
+
+	EXPECT_TRUE(lin1.intersects(lin0));
+	EXPECT_TRUE(lin0.intersects(lin1));
+}
+
+TEST(Line, intersects_Sloped_Vertical)
+{
+	shared_ptr<Coordinate> c0{new Coordinate{1,1}};
+	shared_ptr<Coordinate> c1{new Coordinate{1,-100}};
 	Line lin0{c0,c1};
 
 	shared_ptr<Coordinate> c2{new Coordinate{0.55,0.1}};
@@ -283,6 +311,31 @@ TEST(Triangle, isInside)
 	EXPECT_FALSE(testTri.hasInside(tC4));
 }
 
+TEST(Triangle, coordsInsideTriangle_VecOfTriangles)
+{
+	std::shared_ptr<Coordinate> tC0{new Coordinate{0,0}};
+	std::shared_ptr<Coordinate> tC1{new Coordinate{1,1}};
+	std::shared_ptr<Coordinate> tC2{new Coordinate{0,1}};
+
+	std::shared_ptr<Coordinate> tC3{new Coordinate{2,0}};
+	std::shared_ptr<Coordinate> tC4{new Coordinate{0.2,0.2}};
+	std::shared_ptr<Coordinate> tC5{new Coordinate{0.5,0.5}};
+	Triangle t1{tC3, tC4, tC5};
+
+	std::shared_ptr<Coordinate> tC6{new Coordinate{0.3,0.32}};
+	std::shared_ptr<Coordinate> tC7{new Coordinate{0.2,0.22}};
+	std::shared_ptr<Coordinate> tC8{new Coordinate{0.5,0.2}};
+	Triangle t2{tC6, tC7, tC8};
+
+	vector<Triangle> tVec;
+	tVec.push_back(t1);
+	tVec.push_back(t2);
+
+	Triangle testTri{tC0, tC1, tC2};
+
+	EXPECT_EQ(4, testTri.coordsInside(tVec).size());
+}
+
 TEST(Triangle, coordsInsideTriangle_VecOfCoords)
 {
 	std::shared_ptr<Coordinate> tC0{new Coordinate{0,0}};
@@ -293,38 +346,14 @@ TEST(Triangle, coordsInsideTriangle_VecOfCoords)
 	std::shared_ptr<Coordinate> tC4{new Coordinate{0.2,0.2}};
 	std::shared_ptr<Coordinate> tC5{new Coordinate{0.5,0.5}};
 
-	vector<shared_ptr<Coordinate>> _coords;
-	_coords.push_back(tC3);
-	_coords.push_back(tC4);
-	_coords.push_back(tC5);
+	vector<shared_ptr<Coordinate>> coords;
+	coords.push_back(tC3);
+	coords.push_back(tC4);
+	coords.push_back(tC5);
 
 	Triangle testTri{tC0, tC1, tC2};
 
-	//EXPECT_EQ(2, testTri.hasInside(_coords)); // TODO
-}
-
-TEST(Triangle, coordsInsideTriangle_VecOfTriangles)
-{
-	std::shared_ptr<Coordinate> t0C0{new Coordinate{0,0}};
-	std::shared_ptr<Coordinate> t0C1{new Coordinate{5,5}};
-	std::shared_ptr<Coordinate> t0C2{new Coordinate{0,5}};
-	std::shared_ptr<Triangle> t0{new Triangle{t0C0, t0C1, t0C2}};
-
-	std::shared_ptr<Coordinate> t1C0{new Coordinate{0.5, 0.5}};
-	std::shared_ptr<Coordinate> t1C1{new Coordinate{1, 1}};
-	std::shared_ptr<Coordinate> t1C2{new Coordinate{0.5, 1}};
-	std::shared_ptr<Triangle> t1{new Triangle{t1C0, t1C1, t1C2}};
-
-	std::shared_ptr<Coordinate> t2C0{new Coordinate{0.3, 0.3}};
-	std::shared_ptr<Coordinate> t2C1{new Coordinate{5,6}};
-	std::shared_ptr<Coordinate> t2C2{new Coordinate{2,0}};
-	std::shared_ptr<Triangle> t2{new Triangle{t2C0, t2C1, t2C2}};
-
-	std::vector<std::shared_ptr<Triangle>> tris;
-	tris.push_back(t1);
-	tris.push_back(t2);
-
-	//EXPECT_EQ(4, t0->hasInside(tris)); //TODO
+	EXPECT_EQ(2, testTri.coordsInside(coords).size());
 }
 
 TEST(Triangle, Move)
@@ -611,29 +640,6 @@ TEST(Collision, Construction_Hard_No_Movement)
 		Collision col{testGO, testGO1};
 }
 
-TEST(Collision, Resolution_No_Movement)
-{
-	shared_ptr<Coordinate> tC0{new Coordinate{0,0}};
-	shared_ptr<Coordinate> tC1{new Coordinate{2,0}};
-	shared_ptr<Coordinate> tC2{new Coordinate{1,2}};
-	shared_ptr<Triangle> testTri{new Triangle{tC0, tC1, tC2}};
-	shared_ptr<GameObject> testGO{new GameObject{1}};
-	testGO->addTriangle(testTri);
-
-	shared_ptr<Coordinate> tC4{new Coordinate{0.5,0.1}};
-	shared_ptr<Coordinate> tC5{new Coordinate{0.6,0.1}};
-	shared_ptr<Coordinate> tC6{new Coordinate{0.45, -0.01}};
-	shared_ptr<Triangle> testTri1{new Triangle{tC4, tC5, tC6}};
-	shared_ptr<GameObject> testGO1{new GameObject{1}};
-	testGO1->addTriangle(testTri1);
-
-	Collision col{testGO, testGO1};
-
-	col.resolve(0.015);
-
-	EXPECT_FALSE(testGO->hasInside(testGO1));
-}
-
 TEST(Collision, Resolution_With_Movement)
 {
 	shared_ptr<Coordinate> tC0{new Coordinate{0,0}};
@@ -652,6 +658,29 @@ TEST(Collision, Resolution_With_Movement)
 
 	Coordinate velocity(0,10);
 	testGO1->applyImpulseLinear(velocity);
+
+	Collision col{testGO, testGO1};
+
+	col.resolve(0.015);
+
+	EXPECT_FALSE(testGO->hasInside(testGO1));
+}
+
+TEST(Collision, Resolution_Without_Movement)
+{
+	shared_ptr<Coordinate> tC0{new Coordinate{0,0}};
+	shared_ptr<Coordinate> tC1{new Coordinate{2,0}};
+	shared_ptr<Coordinate> tC2{new Coordinate{1,2}};
+	shared_ptr<Triangle> testTri{new Triangle{tC0, tC1, tC2}};
+	shared_ptr<GameObject> testGO{new GameObject{1}};
+	testGO->addTriangle(testTri);
+
+	shared_ptr<Coordinate> tC4{new Coordinate{0.5,0.1}};
+	shared_ptr<Coordinate> tC5{new Coordinate{0.6,0.1}};
+	shared_ptr<Coordinate> tC6{new Coordinate{0.45, -0.01}};
+	shared_ptr<Triangle> testTri1{new Triangle{tC4, tC5, tC6}};
+	shared_ptr<GameObject> testGO1{new GameObject{1}};
+	testGO1->addTriangle(testTri1);
 
 	Collision col{testGO, testGO1};
 

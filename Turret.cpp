@@ -21,9 +21,7 @@ Turret::Turret() :
 	_glued = true;
 }
 
-Turret::~Turret() {
-	// TODO Auto-generated destructor stub
-}
+Turret::~Turret() {}
 
 Coordinate Turret::closestTarget()
 {

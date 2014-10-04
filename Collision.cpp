@@ -75,7 +75,6 @@ void Collision::findCollisionEdge()
 
 void Collision::resolve(const float stepTime)
 {
-
 	//get normal and check that it points out of the object
 	Coordinate normal = _collisionEdge.getNormal();
 	if (_collisionEdge.isBelow(make_shared<Coordinate>(_collidee->getCenter())))
@@ -98,19 +97,14 @@ void Collision::resolve(const float stepTime)
 	float collideeMass = _collidee->getMass();
 	float totalMass = collideeMass + colliderMass;
 
-
 	_collider->clearForce();
 	_collidee->clearForce();
-
 
 	Coordinate momentum =
 			collideeVel*collideeMass +
 			colliderVel*colliderMass;
-
 	Coordinate ColliderImpulse = momentum*-(collideeMass/totalMass)*0.5;
 	Coordinate CollideeImpulse = momentum*(colliderMass/totalMass)*0.5;
-
-	auto fwd = normal;
 
 	if(!_collidee->isGlued())
 	{
@@ -122,8 +116,8 @@ void Collision::resolve(const float stepTime)
 		_collider->react(ColliderImpulse);
 		_collider->animate(stepTime);
 	}
-	//solve clipping
 
+	//solve clipping
 	while (_collidee->hasInside(_collider) || _collider->hasInside(_collidee))
 	{
 		if(!_collider->isGlued())

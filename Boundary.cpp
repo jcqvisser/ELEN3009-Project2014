@@ -49,7 +49,5 @@ Boundary::Boundary(const int hres, const int vres, direction side) :
 	_glued = true;
 }
 
-Boundary::~Boundary() {
-	// TODO Auto-generated destructor stub
-}
+Boundary::~Boundary() {}
 

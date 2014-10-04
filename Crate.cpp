@@ -26,9 +26,7 @@ Crate::Crate() :
 	_glued = false;
 }
 
-Crate::~Crate() {
-	// TODO Auto-generated destructor stud
-}
+Crate::~Crate() {}
 
 void Crate::react(const Coordinate& rhs)
 {

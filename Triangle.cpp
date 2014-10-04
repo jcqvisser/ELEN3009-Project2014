@@ -16,9 +16,7 @@ Triangle::Triangle(const shared_ptr<Coordinate>& coord0,
 	_coordinates.push_back(std::shared_ptr<Coordinate>{coord2});
 }
 
-Triangle::~Triangle() {
-	// TODO Auto-generated destructor stub
-}
+Triangle::~Triangle() {}
 
 shared_ptr<Coordinate> Triangle::getCoordinate(const int coord) const
 {
@@ -65,7 +63,7 @@ vector<shared_ptr<Coordinate>> Triangle::coordsInside(const vector<Triangle> tri
 	for (auto tri : triangles)
 	{
 		auto inside = this->coordsInside(tri._coordinates);
-		for(auto coord : inside)
+		for (auto coord : inside)
 		{
 			coordsInside.push_back(coord);
 		}

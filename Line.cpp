@@ -7,9 +7,7 @@
 
 #include "Line.h"
 
-Line::~Line() {
-	// TODO Auto-generated destructor stub
-}
+Line::~Line() {}
 
 Line::Line(const std::shared_ptr<Coordinate>& coord1, const std::shared_ptr<Coordinate>& coord2) :
 	_coordinate1(coord1),
