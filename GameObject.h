@@ -47,6 +47,7 @@ public:
 	void clearAngularForce();
 	void glue();
 	void unglue();
+	void rotate(const float& angle);
 
 	void addTriangle(shared_ptr<Triangle>& tri);
 
@@ -65,7 +66,6 @@ public:
 protected:
 	vector<Triangle> _triangles;
 
-	void rotate(const float& angle);
 	bool animateLinear(const float& time);
 
 	float _mass = 1;

@@ -7,7 +7,7 @@
 
 GameLogic::GameLogic()
 {
-	loadLevel();
+
 }
 
 GameLogic::~GameLogic() {}
@@ -123,6 +123,8 @@ void GameLogic::updateCollisionManager()
     	tempGOs.push_back(rocket);
     for (auto crate : _crates)
         tempGOs.push_back(crate);
+    for (auto concrete : _concretes)
+    	tempGOs.push_back(concrete);
     for (auto mine : _mines)
     	tempGOs.push_back(mine);
     for (auto turret : _turrets)
@@ -153,9 +155,19 @@ void GameLogic::checkRocketDamage()
 		{
 			if (crate->hasInside(rocket))
 			{
-				crate->damage(10);
+				crate->damage(51);
 				if (crate->getHealth() <= 0)
 					crate->kill();
+				return;
+			}
+		}
+		for (auto concrete : _concretes)
+		{
+			if (concrete->hasInside(rocket))
+			{
+				concrete->damage(34);
+				if (concrete->getHealth() <= 0)
+					concrete->kill();
 				return;
 			}
 		}
@@ -279,6 +291,20 @@ void GameLogic::checkHealthDeath()
 			++crate;
 	}
 
+	auto concrete = _concretes.begin();
+	while (concrete != _concretes.end())
+	{
+		if (isDead(*concrete))
+		{
+			shared_ptr<GameObject> expl01{new GameObject{1}};
+			expl01->setPosition(Coordinate{(*concrete)->getCenter()});
+			_explosion01s.push_back(expl01);
+			concrete = _concretes.erase(concrete);
+		}
+		else
+			++concrete;
+	}
+
 	auto mine = _mines.begin();
 	while (mine != _mines.end())
 	{
@@ -296,41 +322,30 @@ void GameLogic::checkHealthDeath()
 
 void GameLogic::loadLevel()
 {
-//	vector<vector<char>> layout{
-//		 35  105 175 245 315 385 455 525 595 665 735 805 875 945 1015 1085 1155 1225 1295
-//	35	{' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ', ' ', ' ', ' ', ' '},
-//	105	{' ',' ',' ',' ','C',' ',' ',' ',' ','T',' ',' ',' ',' ','C', ' ', ' ', ' ', ' '},
-//	175	{' ',' ',' ',' ','C',' ',' ',' ',' ',' ',' ',' ',' ',' ','C', ' ', ' ', ' ', ' '},
-//	245	{' ',' ',' ',' ',' ',' ',' ',' ','C','C','C',' ',' ',' ',' ', ' ', ' ', ' ', ' '},
-//	315	{' ','P',' ',' ',' ',' ','C',' ',' ',' ',' ',' ','C',' ',' ', ' ', 'C', 'P', ' '},
-//	385	{' ',' ',' ',' ',' ',' ',' ',' ','C','C','C',' ',' ',' ',' ', ' ', ' ', ' ', ' '},
-//	455	{' ',' ',' ',' ','C',' ',' ',' ',' ',' ',' ',' ',' ',' ','C', ' ', ' ', ' ', ' '},
-//	525	{' ',' ',' ',' ','C',' ',' ',' ',' ','T',' ',' ',' ',' ','C', ' ', ' ', ' ', ' '},
-//	595	{' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ', ' ', ' ', ' ', ' '}};
+	buildConcrete(Coordinate{633, 282},0);
+	buildConcrete(Coordinate{683, 232},0);
+	buildConcrete(Coordinate{733, 282},0);
 
-	buildCrate(Coordinate{315, 105}, true);
-	buildCrate(Coordinate{1015, 105}, true);
-	buildCrate(Coordinate{315, 175}, false);
-	buildCrate(Coordinate{1015, 175}, false);
-	buildCrate(Coordinate{595, 245}, false);
-	buildCrate(Coordinate{665, 245}, true);
-	buildCrate(Coordinate{735, 245}, false);
-	buildCrate(Coordinate{445, 315}, false);
-	buildCrate(Coordinate{875, 315}, false);
-	buildCrate(Coordinate{595, 385}, false);
-	buildCrate(Coordinate{665, 385}, true);
-	buildCrate(Coordinate{735, 385}, false);
-	buildCrate(Coordinate{315, 455}, false);
-	buildCrate(Coordinate{1015, 455}, false);
-	buildCrate(Coordinate{315, 525}, true);
-	buildCrate(Coordinate{1015, 525}, true);
+	buildConcrete(Coordinate{633, 423},PI);
+	buildConcrete(Coordinate{683, 473},PI);
+	buildConcrete(Coordinate{733, 423},PI);
+
+	buildCrate(Coordinate{683, 352},false);
+
+	buildConcrete(Coordinate{341,352},PI/2);
+	buildConcrete(Coordinate{396,252},PI/4);
+	buildConcrete(Coordinate{396,452},-PI/4);
+
+	buildConcrete(Coordinate{1030,352},-PI/2);
+	buildConcrete(Coordinate{978,252},-PI/4);
+	buildConcrete(Coordinate{978,452},PI/4);
 
 	buildTank(Coordinate{1225,315});
 	buildTank(Coordinate{105,315});
 
 
-	buildTurret(Coordinate{665,105});
-	buildTurret(Coordinate{665,525});
+	buildTurret(Coordinate{683,141});
+	buildTurret(Coordinate{683,564});
 
 	loadBoundary(_hres, _vres);
 
@@ -354,6 +369,7 @@ int GameLogic::numObjects() const
 	total += _explosion01s.size();
 	total += _mines.size();
 	total += _turrets.size();
+	total += _concretes.size();
 
 	return total;
 }
@@ -428,6 +444,14 @@ void GameLogic::buildCrate(const Coordinate pos, const bool glued)
 	_crates.push_back(c1);
 }
 
+void GameLogic::buildConcrete(const Coordinate pos, const float angle)
+{
+	shared_ptr<Concrete> c1(new Concrete{});
+	c1->setPosition(pos);
+	c1->rotate(angle);
+	_concretes.push_back(c1);
+}
+
 void GameLogic::buildTank(const Coordinate pos)
 {
 	shared_ptr<Tank> t{new Tank{}};
@@ -472,4 +496,10 @@ int GameLogic::getWinner()
 void GameLogic::endGame()
 {
 	_startTime = clock()/CLOCKS_PER_SEC - _roundTime;
+}
+
+void GameLogic::setResolution(const int hres, const int vres)
+{
+	_hres = hres;
+	_vres = vres;
 }

@@ -7,7 +7,7 @@ int main()
 {
 
 	Clock clock{};
-	SfmlInterface interface{1360,630};
+	SfmlInterface interface{1366,705};
 	Time frameTime = seconds(0.015);
 	Time elapsedTime = clock.getElapsedTime();
 	Time loopStartTime = elapsedTime;

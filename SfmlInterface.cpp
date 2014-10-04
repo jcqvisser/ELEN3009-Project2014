@@ -43,6 +43,15 @@ SfmlInterface::SfmlInterface(const float& hres, const float& vres) :
 	_tank2DeadTexture.setSmooth(true);
 	_tank2DeadTexture.loadFromFile("tank2_dead.png", sf::IntRect(0, 0, 50, 50));
 
+	_concrete1Texture.setSmooth(true);
+	_concrete1Texture.loadFromFile("concrete1.png", sf::IntRect(0, 0, 100, 50));
+
+	_concrete2Texture.setSmooth(true);
+	_concrete2Texture.loadFromFile("concrete2.png", sf::IntRect(0, 0, 100, 50));
+
+	_concrete3Texture.setSmooth(true);
+	_concrete3Texture.loadFromFile("concrete3.png", sf::IntRect(0, 0, 100, 50));
+
 	_background.setSmooth(true);
 	_background.loadFromFile("grass.png", sf::IntRect(0, 0, 1330, 630));
 	_backSprite.setTexture(_background,true);
@@ -66,13 +75,16 @@ SfmlInterface::SfmlInterface(const float& hres, const float& vres) :
 
 	_p2Win.setCharacterSize(50);
 	_p2Win.setPosition(480,295);
-	_p2Win.setString("Purple Wins!");
+	_p2Win.setString(" Purple Wins!");
 	_p2Win.setColor(sf::Color::Black);
 
 	_timeUp.setCharacterSize(50);
 	_timeUp.setPosition(290,295);
 	_timeUp.setString("                  Time is Up!\n\nMutual Destruction is Assured!");
 	_timeUp.setColor(sf::Color::Black);
+
+	_gameLogic.setResolution(_hres, _vres);
+	_gameLogic.loadLevel();
 
 }
 
@@ -131,8 +143,23 @@ void SfmlInterface::updateSprites()
 	{
 		_sprites[n].setPosition(crate->getCenter().x(), crate->getCenter().y());
 		_sprites[n].setRotation(crate->getRotation()*180/PI+90);
-		_sprites[n].setOrigin(20,40);
+		_sprites[n].setOrigin(30,30);
 		_sprites[n].setTexture(_crateTexture,true);
+		n++;
+	}
+
+	for (auto concrete : _gameLogic._concretes)
+	{
+		_sprites[n].setPosition(concrete->getCenter().x(), concrete->getCenter().y());
+		_sprites[n].setRotation(concrete->getRotation()*180/PI+90);
+		_sprites[n].setOrigin(50,25);
+
+		if (concrete->getHealth() > 270)
+			_sprites[n].setTexture(_concrete1Texture,true);
+		else if (concrete->getHealth() > 100)
+			_sprites[n].setTexture(_concrete2Texture,true);
+		else if (concrete->getHealth() > 0)
+			_sprites[n].setTexture(_concrete3Texture,true);
 		n++;
 	}
 
@@ -189,6 +216,9 @@ void SfmlInterface::display()
 		_window.draw(sprite);
 
 	}
+
+
+//this in a function------------------------------------------------------------
 	_window.draw(_timeRemaingText);
 
 	if (_winner == 0)
@@ -203,6 +233,7 @@ void SfmlInterface::display()
 	{
 			_window.draw(_timeUp);
 	}
+//------------------------------------------------------------------------------
 
 	_window.display();
 }
