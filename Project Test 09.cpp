@@ -482,7 +482,7 @@ TEST(GameObject, intersectingLine)
 // collider and collidee is randomly selected. It is assumed that collisions
 // will be detected before objects intersect to this level.
 
-TEST(Collision, Construction_and_Find_Collision_Easy)
+TEST(Collision, Construction_and_Find_Collision_Edge_Easy)
 {
 	//center of mass of collider is outside collidee
 	shared_ptr<Coordinate> tC0{new Coordinate{0,0}};
@@ -510,9 +510,9 @@ TEST(Collision, Construction_and_Find_Collision_Easy)
 	EXPECT_EQ(colEdgeReal, colEdgeFound);
 }
 
-TEST(Collision, Construction_and_Find_Collision_Hard)
+TEST(Collision, Construction_and_Find_Collision_Edge_Hard)
 {
-	//center of mass is inside collidee
+	//center of mass of collider is inside collidee
 	shared_ptr<Coordinate> tC0{new Coordinate{0,0}};
 	shared_ptr<Coordinate> tC1{new Coordinate{2,0}};
 	shared_ptr<Coordinate> tC2{new Coordinate{1,2}};
@@ -542,23 +542,17 @@ TEST(Collision, Construction_and_Find_Collision_Hard)
 	}};
 
 	Line penetratingLine{ penetrator0, penetrator1};
-	penetrator0->print();
-	penetrator1->print();
 	auto collisionEdge = testGO->intersectingLine(penetratingLine);
 	Line collisionEdgeActual{tC0, tC1};
 
 	EXPECT_EQ(collisionEdgeActual, collisionEdge);
 
 	Collision col{testGO, testGO1};
-
-	Line colEdgeReal{tC0, tC1};
-	Line colEdgeFound = col._collisionEdge;
-
-	EXPECT_EQ(colEdgeReal, colEdgeFound);
 }
 
-TEST(Collision, Finding_Collision_Edge)
+TEST(Collision, Construction_Easy_No_Movement)
 {
+	//center of mass of collider is outside collidee
 	shared_ptr<Coordinate> tC0{new Coordinate{0,0}};
 	shared_ptr<Coordinate> tC1{new Coordinate{2,0}};
 	shared_ptr<Coordinate> tC2{new Coordinate{1,2}};
@@ -573,17 +567,73 @@ TEST(Collision, Finding_Collision_Edge)
 	shared_ptr<GameObject> testGO1{new GameObject{1}};
 	testGO1->addTriangle(testTri1);
 
-	Coordinate velocity(0,1);
-	testGO1->applyImpulseLinear(velocity);
-
 	Collision col{testGO, testGO1};
-	col.findCollisionEdge();
 
-	Line actualColEdge{tC1, tC0};
-	EXPECT_EQ(col._collisionEdge, actualColEdge);
+	Line colEdgeReal{tC0, tC1};
+	Line colEdgeFound = col._collisionEdge;
+
+	EXPECT_EQ(colEdgeReal, colEdgeFound);
 }
 
+TEST(Collision, Construction_Hard_No_Movement)
+{
+	//center of mass of collider is inside collidee
+		shared_ptr<Coordinate> tC0{new Coordinate{0,0}};
+		shared_ptr<Coordinate> tC1{new Coordinate{2,0}};
+		shared_ptr<Coordinate> tC2{new Coordinate{1,2}};
+		shared_ptr<Triangle> testTri{new Triangle{tC0, tC1, tC2}};
+		shared_ptr<GameObject> testGO{new GameObject{1}};
+		testGO->addTriangle(testTri);
 
+		shared_ptr<Coordinate> tC4{new Coordinate{0.5,0.1}};
+		shared_ptr<Coordinate> tC5{new Coordinate{0.6,0.1}};
+		shared_ptr<Coordinate> tC6{new Coordinate{0.45, -0.01}};
+		shared_ptr<Triangle> testTri1{new Triangle{tC4, tC5, tC6}};
+		shared_ptr<GameObject> testGO1{new GameObject{1}};
+		testGO1->addTriangle(testTri1);
+
+		EXPECT_TRUE(testGO->hasInside(testGO1->getCenter()));
+
+		shared_ptr<Coordinate> penetrator0{
+				new Coordinate{testGO->avgCoordInside(*testGO1)}};
+		shared_ptr<Coordinate> penetrator1{ new Coordinate{
+			(*penetrator0) -
+			(testGO1->getVelocity())*INF -
+			(testGO->getCenter()- (*penetrator0))*INF
+		}};
+
+		Line penetratingLine{ penetrator0, penetrator1};
+		auto collisionEdge = testGO->intersectingLine(penetratingLine);
+		Line collisionEdgeActual{tC0, tC1};
+
+		EXPECT_EQ(collisionEdgeActual, collisionEdge);
+
+		Collision col{testGO, testGO1};
+}
+
+TEST(Collision, Resolution)
+{
+
+	shared_ptr<Coordinate> tC0{new Coordinate{0,0}};
+	shared_ptr<Coordinate> tC1{new Coordinate{2,0}};
+	shared_ptr<Coordinate> tC2{new Coordinate{1,2}};
+	shared_ptr<Triangle> testTri{new Triangle{tC0, tC1, tC2}};
+	shared_ptr<GameObject> testGO{new GameObject{1}};
+	testGO->addTriangle(testTri);
+
+	shared_ptr<Coordinate> tC4{new Coordinate{0.5,0.1}};
+	shared_ptr<Coordinate> tC5{new Coordinate{0.6,0.1}};
+	shared_ptr<Coordinate> tC6{new Coordinate{0.45, -0.01}};
+	shared_ptr<Triangle> testTri1{new Triangle{tC4, tC5, tC6}};
+	shared_ptr<GameObject> testGO1{new GameObject{1}};
+	testGO1->addTriangle(testTri1);
+
+	Collision col{testGO, testGO1};
+
+	col.resolve(0.015);
+
+	EXPECT_FALSE(testGO->hasInside(testGO1));
+}
 
 //------------------------------------------------------------------------------
 //			CollisionManager
