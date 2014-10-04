@@ -69,7 +69,7 @@ void Collision::findCollisionEdge()
 	}
 	catch (No_Line_Intersects&)
 	{
-		//throw No_Collision{};
+		throw No_Collision{};
 	}
 }
 
