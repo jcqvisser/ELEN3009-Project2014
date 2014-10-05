@@ -8,7 +8,7 @@
 #include "Concrete.h"
 
 Concrete::Concrete() :
-	GameObject(200)
+	GameObject(10)
 {
 	shared_ptr<Coordinate> c0{new Coordinate{0,1}};
 	shared_ptr<Coordinate> c1{new Coordinate{100,0}};

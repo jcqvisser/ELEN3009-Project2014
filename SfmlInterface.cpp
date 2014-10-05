@@ -53,10 +53,10 @@ SfmlInterface::SfmlInterface(const float& hres, const float& vres) :
 	_concrete3Texture.loadFromFile("concrete3.png", sf::IntRect(0, 0, 100, 50));
 
 	_background.setSmooth(true);
-	_background.loadFromFile("grass.png", sf::IntRect(0, 0, 1330, 630));
+	_background.loadFromFile("grass.png", sf::IntRect(0, 0, 1366, 705));
 	_backSprite.setTexture(_background,true);
-	_backSprite.setOrigin(665,315);
-	_backSprite.setPosition(665,315);
+	_backSprite.setOrigin(683,353);
+	_backSprite.setPosition(683,353);
 
 	_font.loadFromFile("OpenSans-Bold.ttf");
 	_timeRemaingText.setFont(_font);
