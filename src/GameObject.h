@@ -24,7 +24,16 @@ public:
 	GameObject(float mass);
 	virtual ~GameObject(){};
 
+/*!
+*	Reduces the object's health to 0.
+*/
 	void kill();
+
+/*!
+*	\param dmg amount to reduce the object's health by
+*
+*	Reduces the object's health by the amount specified as dmg
+*/
 	void damage(const float& dmg);
 	void revive();
 
