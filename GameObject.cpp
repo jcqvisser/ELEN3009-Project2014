@@ -272,3 +272,8 @@ void GameObject::unglue()
 {
 	_glued = false;
 }
+
+void GameObject::revive()
+{
+	_health = 100;
+}

@@ -26,6 +26,7 @@ public:
 
 	void kill();
 	void damage(const float& dmg);
+	void revive();
 
 	Coordinate getCenter();
 	Coordinate getVelocity() const;

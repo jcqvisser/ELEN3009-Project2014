@@ -6,7 +6,7 @@
  */
 
 #include "SfmlInterface.h"
-#include <sstream>
+
 
 SfmlInterface::SfmlInterface(const float& hres, const float& vres) :
 	_hres(hres),
@@ -63,25 +63,89 @@ SfmlInterface::SfmlInterface(const float& hres, const float& vres) :
 	_p1Win.setFont(_font);
 	_p2Win.setFont(_font);
 	_timeUp.setFont(_font);
+	_p1Score.setFont(_font);
+	_p2Score.setFont(_font);
+	_p1Scores.setFont(_font);
+	_p2Scores.setFont(_font);
+	_noWin.setFont(_font);
 
 	_timeRemaingText.setCharacterSize(30);
-	_timeRemaingText.setPosition(660,30);
-	_timeRemaingText.setColor(sf::Color::Black);
+	_timeRemaingText.setPosition(683,30);
+	_timeRemaingText.setColor(Color::Black);
+
+	_noWin.setCharacterSize(50);
+	_noWin.setString("Nobody Wins!");
+	_noWin.setOrigin(_noWin.getLocalBounds().left +
+			_noWin.getLocalBounds().width/2,
+			_noWin.getLocalBounds().top  +
+			_noWin.getLocalBounds().height/2);
+	_noWin.setPosition(_hres/2,_vres/2);
+	_noWin.setColor(Color::Black);
 
 	_p1Win.setCharacterSize(50);
-	_p1Win.setPosition(538,295);
 	_p1Win.setString("Red Wins!");
-	_p1Win.setColor(sf::Color::Black);
+	_p1Win.setOrigin(_p1Win.getLocalBounds().left +
+			_p1Win.getLocalBounds().width/2,
+			_p1Win.getLocalBounds().top  +
+			_p1Win.getLocalBounds().height/2);
+	_p1Win.setPosition(_hres/2,_vres/2);
+	_p1Win.setColor(Color::Black);
+
+	_p1Scores.setCharacterSize(50);
+	_p1Scores.setString("Red Scores!");
+	_p1Scores.setOrigin(_p1Win.getLocalBounds().left +
+			_p1Scores.getLocalBounds().width/2,
+			_p1Scores.getLocalBounds().top  +
+			_p1Scores.getLocalBounds().height/2);
+	_p1Scores.setPosition(_hres/2,_vres/2);
+	_p1Scores.setColor(Color::Black);
 
 	_p2Win.setCharacterSize(50);
-	_p2Win.setPosition(480,295);
 	_p2Win.setString(" Purple Wins!");
-	_p2Win.setColor(sf::Color::Black);
+	_p2Win.setOrigin(_p2Win.getLocalBounds().left +
+			_p2Win.getLocalBounds().width/2,
+			_p2Win.getLocalBounds().top  +
+			_p2Win.getLocalBounds().height/2);
+	_p2Win.setPosition(_hres/2,_vres/2);
+	_p2Win.setColor(Color::Black);
+
+	_p2Scores.setCharacterSize(50);
+	_p2Scores.setString(" Purple Scores!");
+	_p2Scores.setOrigin(_p2Win.getLocalBounds().left +
+			_p2Scores.getLocalBounds().width/2,
+			_p2Scores.getLocalBounds().top  +
+			_p2Scores.getLocalBounds().height/2);
+	_p2Scores.setPosition(_hres/2,_vres/2);
+	_p2Scores.setColor(Color::Black);
 
 	_timeUp.setCharacterSize(50);
-	_timeUp.setPosition(290,295);
-	_timeUp.setString("                  Time is Up!\n\nMutual Destruction is Assured!");
-	_timeUp.setColor(sf::Color::Black);
+	_timeUp.setString("Time is Up!");
+	_timeUp.setOrigin(_p2Win.getLocalBounds().left +
+			_timeUp.getLocalBounds().width/2,
+			_timeUp.getLocalBounds().top  +
+			_timeUp.getLocalBounds().height/2);
+	_timeUp.setPosition(_hres/2,_vres/2+300);
+	_timeUp.setColor(Color::Black);
+
+
+	_p1Score.setCharacterSize(30);
+	_p1Score.setString(_gameLogic.getScore(1));
+	_p1Score.setOrigin(_p1Score.getLocalBounds().left +
+			_p1Score.getLocalBounds().width/2,
+			_p1Score.getLocalBounds().top  +
+			_p1Score.getLocalBounds().height/2);
+	_p1Score.setPosition(3*_hres/4,30);
+	_p1Score.setColor(Color::Black);
+
+	_p2Score.setCharacterSize(30);
+	_p2Score.setString(_gameLogic.getScore(2));
+	_p2Score.setOrigin(_p2Score.getLocalBounds().left +
+			_p2Score.getLocalBounds().width/2,
+			_p2Score.getLocalBounds().top  +
+			_p2Score.getLocalBounds().height/2);
+	_p2Score.setPosition(_hres/4,30);
+	_p2Score.setColor(Color::Black);
+
 
 	_gameLogic.setResolution(_hres, _vres);
 	_gameLogic.loadLevel();
@@ -204,6 +268,8 @@ void SfmlInterface::step(const sf::Time& stepTime)
 		 std::ostringstream buff;
 		buff<<_gameLogic.getRemainingTime();
 		_timeRemaingText.setString(buff.str());
+		_p1Score.setString(_gameLogic.getScore(1));
+		_p2Score.setString(_gameLogic.getScore(2));
 	}
 }
 
@@ -217,23 +283,15 @@ void SfmlInterface::display()
 
 	}
 
+	_window.draw(_p1Score);
+	_window.draw(_p2Score);
 
 //this in a function------------------------------------------------------------
 	_window.draw(_timeRemaingText);
 
-	if (_winner == 0)
-		_winner = _gameLogic.getWinner();
-	if (_winner == 1)
-		_window.draw(_p1Win);
-	else if (_winner == 2)
-		_window.draw(_p2Win);
-
-	if (_gameLogic.getRemainingTime() <= 0 &&
-			_winner == 0)
-	{
-			_window.draw(_timeUp);
-	}
+	displayAnnouncements();
 //------------------------------------------------------------------------------
+
 
 	_window.display();
 }
@@ -249,9 +307,9 @@ void SfmlInterface::controllerInput()
 		_gameLogic.playControl(ANTI_CLOCKWISE, 1);
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
 		_gameLogic.playControl(CLOCKWISE, 1);
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::L))
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::RShift))
 			_gameLogic.playControl(FIRE_ROCKET, 1);
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::K))
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::RControl))
 			_gameLogic.playControl(PLANT_MINE, 1);
 
 	//player2
@@ -263,10 +321,46 @@ void SfmlInterface::controllerInput()
 		_gameLogic.playControl(ANTI_CLOCKWISE, 2);
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
 		_gameLogic.playControl(CLOCKWISE, 2);
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q))
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::LShift))
 			_gameLogic.playControl(FIRE_ROCKET, 2);
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z))
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::LControl))
 			_gameLogic.playControl(PLANT_MINE, 2);
+
+	//misc
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
+	{
+		_gameLogic.playControl(RESPAWN, 1);
+		updateSprites();
+	}
+
 }
 
+void SfmlInterface::displayAnnouncements()
+{
+	if (_gameLogic.getRemainingTime() > 0)
+		{
+			_scorer = _gameLogic.getScorer();
+			if (_scorer == 1)
+				_window.draw(_p1Scores);
+			else if (_scorer == 2)
+				_window.draw(_p2Scores);
+		}
+		else
+		{
+			_window.draw(_timeUp);
+			int winner = _gameLogic.getWinner();
+			switch (winner)
+			{
+			case 0:
+				_window.draw(_noWin);
+				break;
+			case 1:
+				_window.draw(_p1Win);
+				break;
+			case 2:
+				_window.draw(_p2Win);
+				break;
+			}
+		}
+}
 

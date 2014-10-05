@@ -45,19 +45,26 @@ public:
 	Sprite _backSprite;
 
 	Font _font;
+
 	Text _timeRemaingText;
+	Text _noWin;
 	Text _p1Win;
 	Text _p2Win;
+	Text _p1Scores;
+	Text _p2Scores;
 	Text _timeUp;
+	Text _p1Score;
+	Text _p2Score;
 
 	void step(const sf::Time& stepTime);
 	void updateSprites();
 	void display();
+	void displayAnnouncements();
 
 	void controllerInput();
 	Clock _clock{};
 
-	int _winner = 0;
+	int _scorer = 0;
 };
 
 #endif /* SFMLINTERFACE_H_ */

@@ -18,7 +18,7 @@ Rocket::Rocket() :
 	setDragCoeff(100);
 	_rocketPower = 250000;
 	_lifeTime = 1;
-	_health = 100000;
+	_health = 100;
 }
 
 Rocket::~Rocket(){ }
@@ -43,6 +43,7 @@ void Rocket::react(const Coordinate& bounce)
 	Coordinate add = normal*-(normal*dir);
 
 	_forward += add*2;
+	damage(35);
 }
 
 void Rocket::setDirection(const float angle)

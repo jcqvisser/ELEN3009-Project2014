@@ -9,6 +9,7 @@
 #include <list>
 #include <time.h>
 #include <algorithm>
+#include <sstream>
 #include "Tank.h"
 #include "Rocket.h"
 #include "Mine.h"
@@ -17,6 +18,7 @@
 #include "ImmovableCrate.h"
 #include "Turret.h"
 #include "Boundary.h"
+
 
 class Player_Does_not_Exist{};
 
@@ -27,7 +29,8 @@ enum playerControl
 	CLOCKWISE,
 	ANTI_CLOCKWISE,
 	FIRE_ROCKET,
-	PLANT_MINE
+	PLANT_MINE,
+	RESPAWN
 };
 
 class GameLogic {
@@ -51,9 +54,12 @@ public:
 	int numObjects() const;
 	bool isDead(const shared_ptr<GameObject>&);
 	float getRemainingTime();
-	int getWinner();
+	int getScorer();
 	void endGame();
 	void setResolution(const int, const int);
+	void resetPlayers();
+	string getScore(const int);
+	int getWinner();
 
 	list<shared_ptr<Tank>> _players;
 	list<shared_ptr<Rocket>> _rockets;
@@ -81,6 +87,9 @@ private:
 	float p1FireTime = clock()/CLOCKS_PER_SEC;
 	float p2FireTime = clock()/CLOCKS_PER_SEC;
 	float FireTime = 0.25;
+
+	int _p1Score = 0;
+	int _p2Score = 0;
 
 	void buildCrate(const Coordinate pos, const bool glued);
 	void buildTank(const Coordinate pos);

@@ -32,6 +32,12 @@ void GameLogic::step(const float time)
 
 void GameLogic::playControl(const playerControl& control, const int& playerNo)
 {
+
+	if (getScorer() != 0 && control == RESPAWN)
+	{
+		resetPlayers();
+	}
+
 	if (getRemainingTime() <= 0)
 		return;
 
@@ -100,7 +106,7 @@ void GameLogic::playControl(const playerControl& control, const int& playerNo)
 		}
 		break;
 	default:
-		//This should not happen
+		//This happens when restart is passed
 		break;
 	}
 }
@@ -137,8 +143,10 @@ void GameLogic::checkRocketDamage()
 {
 	for(auto rocket : _rockets)
 	{
+		int n = 0;
 		for (auto player : _players)
 		{
+			n++;
 			if (player->hasInside(rocket))
 			{
 				player->damage(51);
@@ -147,7 +155,18 @@ void GameLogic::checkRocketDamage()
 				expl01->setPosition(Coordinate{(player)->getCenter()});
 				_explosion01s.push_back(expl01);
 				if (player->getHealth() <= 0)
+				{
 					player->kill();
+					switch (n)
+					{
+					case 1:
+						_p2Score++;
+						break;
+					case 2:
+						_p1Score++;
+						break;
+					}
+				}
 				return;
 			}
 		}
@@ -192,7 +211,10 @@ void GameLogic::checkMineDamage()
 {
 	for (auto mine : _mines)
 	{
+		int n =0;
 		for (auto player : _players)
+		{
+			n++;
 			if (player->hasInside(mine))
 			{
 				player->damage(51);
@@ -200,9 +222,21 @@ void GameLogic::checkMineDamage()
 				expl01->setPosition(Coordinate{(player)->getCenter()});
 				_explosion01s.push_back(expl01);
 				if (player->getHealth() <=0)
+				{
 					player->kill();
+					switch (n)
+					{
+					case 1:
+						_p2Score++;
+						break;
+					case 2:
+						_p1Score++;
+						break;
+					}
+				}
 				mine->kill();
 			}
+		}
 
 		for (auto crate : _crates)
 			if (crate->hasInside(mine))
@@ -227,17 +261,6 @@ void GameLogic::checkMineDamage()
 
 void GameLogic::checkTimedDeath()
 {
-	for (auto rocket : _rockets)
-	{
-		if (rocket->getBirthTime() + rocket->getLifeTime() < clock()/CLOCKS_PER_SEC)
-		{
-			rocket->kill();
-			shared_ptr<GameObject> expl01{new GameObject{1}};
-			expl01->setPosition(Coordinate{(rocket)->getCenter()});
-			_explosion01s.push_back(expl01);
-		}
-	}
-
 	auto n = _explosion01s.begin();
 	while (n != _explosion01s.end())
 	{
@@ -247,7 +270,7 @@ void GameLogic::checkTimedDeath()
 			++n;
 	}
 
-	if (getRemainingTime() < -3 && getWinner() == 0)
+	if (getRemainingTime() < 0 && getWinner() == 0)
 	{
 		for (auto tank : _players)
 		{
@@ -270,8 +293,10 @@ void GameLogic::checkHealthDeath()
 	{
 		if (isDead(*rocket))
 		{
+			shared_ptr<GameObject> expl01{new GameObject{1}};
+			expl01->setPosition(Coordinate{(*rocket)->getCenter()});
+			_explosion01s.push_back(expl01);
 			rocket = _rockets.erase(rocket);
-
 		}
 		else
 			++rocket;
@@ -472,8 +497,9 @@ float GameLogic::getRemainingTime()
 	return _roundTime -(time -_startTime);
 }
 
-int GameLogic::getWinner()
+int GameLogic::getScorer()
 {
+
 		int playersAlive = 0;
 		int winner = 0;
 		int player = 0;
@@ -488,6 +514,7 @@ int GameLogic::getWinner()
 		}
 		if (playersAlive == 1)
 		{
+			//endGame();
 			return winner;
 		}
 	return 0;
@@ -502,4 +529,52 @@ void GameLogic::setResolution(const int hres, const int vres)
 {
 	_hres = hres;
 	_vres = vres;
+}
+
+void GameLogic::resetPlayers()
+{
+	int n = 1;
+	for (auto player : _players)
+	{
+		switch (n)
+		{
+		case 1:
+			player->setPosition(Coordinate{1225,315});
+			player->revive();
+			break;
+		case 2:
+			player->setPosition(Coordinate{105,315});
+			player->revive();
+			break;
+		}
+		n++;
+	}
+}
+
+string GameLogic::getScore(const int player)
+{
+	if (player == 1)
+	{
+		std::ostringstream ss;
+		ss << _p1Score;
+		return ss.str();
+	}
+	else if (player == 2)
+	{
+		std::ostringstream ss;
+		ss << _p2Score;
+		return ss.str();
+	}
+
+	return "0";
+}
+
+int GameLogic::getWinner()
+{
+	if (_p1Score > _p2Score)
+		return 1;
+	else if (_p1Score < _p2Score)
+		return 2;
+
+	return 0;
 }
