@@ -54,15 +54,42 @@ public:
 	Text _p2Score; /**< The Text object that displays player 2's score*/
 	Text _p2Score;
 
+	/*!
+	*	\brief Steps the state of the game forward by a defined steptime.
+	*	\param stepTime An SFML time object representing the amount of time to step the game forward by.
+	*
+	*	This function runs the underlying GameLogic::step(const float time) function of the _gameObject member variable.
+	*	In addition to this it also gets and displays the time remaining of the match and the players' scores.
+	*/
 	void step(const sf::Time& stepTime);
+
+	/*!
+	*	\brief Updates the _sprites vector to reflect the drawable game objects in _gameLogic.
+	*
+	*	This function requests the amount of drawable objects from _gameObject and resizes the _sprites vector appropriately. It then loops through all the drawable GameObjects in _gameLogic and updates the Textures of the Sprite objects in _sprites to represent all the types of game object in _gameLogic.
+	*/
 	void updateSprites();
+
+	/*!
+	*	\brief Updates the display window.
+	*
+	*	Clears the display window, draws the background sprite, then all the Sprite objects in _sprite, followed by player 1 and 2's scores and the time remaining. This is followed by the Announcements being drawn. Finally everything that was drawn is dispayed.
+	*/
 	void display();
+
+	/*!
+	*	\brief Displays the appropriate announcement for the game state
+	*/
 	void displayAnnouncements();
 
+	/*!
+	*	\brief Interprets controller input and passes commands to the Tank objects in the _gameLogic object.
+	*/
 	void controllerInput();
-	Clock _clock{};
 
-	int _scorer = 0;
+	Clock _clock{}; /**< An SFML clock object*/
+
+	int _scorer = 0;/**< represents the last player to have scored. */
 };
 
 #endif /* SFMLINTERFACE_H_ */

@@ -279,12 +279,9 @@ void SfmlInterface::display()
 	_window.draw(_p1Score);
 	_window.draw(_p2Score);
 
-//this in a function------------------------------------------------------------
 	_window.draw(_timeRemaingText);
 
 	displayAnnouncements();
-//------------------------------------------------------------------------------
-
 
 	_window.display();
 }
