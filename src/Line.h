@@ -1,10 +1,3 @@
-/*
- * Line.h
- *
- *  Created on: 17 Sep 2014
- *      Author: Jacques
- */
-
 #ifndef LINE_H_
 #define LINE_H_
 #include "Coordinate.h"
@@ -75,19 +68,51 @@ public:
 	*/
 	bool intersects(const Line& line) const ;
 
-	
+	/*! \brief Finds the intersection point between two lines as a Coordinate.
+	*	\param ln A Line object to check for intersection
+	*	\throws Lines_Do_Not_Intersect Thrown when the lines under scrutiny do not intersect.
+	*
+	*/
 	Coordinate intersectionPt(const Line& ln) const;
+
+	/*!
+	*	\brief Returns true when the coordinate is on the line.
+	*/
 	bool isOnLine(const Coordinate& coord) const;
+
+	/*!
+	*	\brief Finds the normal to the line as a unit vector.
+	*	\return Returns a Coordinate representing a unit vector normal to the line.
+	*/
 	Coordinate getNormal();
 
-	std::shared_ptr<Coordinate> _coordinate1;
-	std::shared_ptr<Coordinate> _coordinate2;
+	std::shared_ptr<Coordinate> _coordinate1; /**< The starting point of the line */
+	std::shared_ptr<Coordinate> _coordinate2; /**< The end-point of the line*/
 
-	void print() const;
-//protected:
-	float getYVal(float xVal) const;
+	void print() const; /**< Prints the stert and end point to the console. */
+
+	/*!	\brief Finds the y value on the line corresponding to a supplied x value
+	*	\param xVal A floating point number representing the x-value of which to find the y-value
+	*	\return a floating point number, the Y value corresponding to the supplied x value.
+	*	\throws 
+	*/
+	float getYVal(float xVal) const; 
+
+	/*!
+	*	\brief Finds the slope of the line.
+	*	\return Returns a floating point number representing the slope of the line.
+	*/
 	float getSlope() const;
+	
+	/*!
+	*	\brief finds the Y-intercept of the line.
+	*	\return Returns a floating point number representing the Y-intercept of the line.
+	*/
 	float getYIntercept() const;
+
+	/*!
+	*	\brief Determines whether a floating bpoint number is between two other floating point numbers.
+	*/
 	float isBetween(const float& pt0, const float& bound1, const float& bound2) const;
 private:
 

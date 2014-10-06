@@ -1,10 +1,3 @@
-/*
- * Boundary.cpp
- *
- *  Created on: 28 Sep 2014
- *      Author: Jacques
- */
-
 #include "Boundary.h"
 
 Boundary::Boundary(const int hres, const int vres, direction side) :

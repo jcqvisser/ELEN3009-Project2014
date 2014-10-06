@@ -1,11 +1,3 @@
-//============================================================================
-// Name        : Project.cpp
-// Author      : Jacques Visser
-// Version     :
-// Copyright   : Your copyright notice
-// Description : Hello World in C++, Ansi-style
-//============================================================================
-
 #include <iostream>
 #include "CollisionManager.h"
 using namespace std;

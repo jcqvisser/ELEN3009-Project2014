@@ -1,9 +1,3 @@
-/*
- * GameObject.h
- *
- *  Created on: 17 Sep 2014
- */
-
 #ifndef GAMEOBJECT_H_
 #define GAMEOBJECT_H_
 #include "Triangle.h"

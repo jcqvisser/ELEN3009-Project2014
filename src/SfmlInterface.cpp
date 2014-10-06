@@ -1,10 +1,3 @@
-/*
- * SfmlInterface.cpp
- *
- *  Created on: 27 Sep 2014
- *      Author: Jacques
- */
-
 #include "SfmlInterface.h"
 
 

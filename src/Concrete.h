@@ -1,20 +1,15 @@
-/*
- * Concrete.h
- *
- *  Created on: 04 Oct 2014
- *      Author: Jacques
- */
-
 #ifndef CONCRETE_H_
 #define CONCRETE_H_
 #include "CollisionManager.h"
 
+/*!
+*	/brief Defined to automate the declaration of the hitbox triangles.
+*/
 class Concrete : public GameObject
 {
 public:
 	Concrete();
 	virtual ~Concrete();
-	virtual void react(const Coordinate&){};
 };
 
 #endif /* CONCRETE_H_ */

@@ -1,4 +1,3 @@
-
 #include "SfmlInterface.h"
 #include <SFML/System/Sleep.hpp>
 using namespace sf;

@@ -1,8 +1,3 @@
-/*
- * Tank.h
- *
- */
-
 #ifndef TANK_H_
 #define TANK_H_
 #include "CollisionManager.h"

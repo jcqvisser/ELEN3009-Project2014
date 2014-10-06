@@ -1,10 +1,3 @@
-/*
- * Triangle.cpp
- *
- *  Created on: 17 Sep 2014
- *      Author: Jacques
- */
-
 #include "Triangle.h"
 
 Triangle::Triangle(const shared_ptr<Coordinate>& coord0,

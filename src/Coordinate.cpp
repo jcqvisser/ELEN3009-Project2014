@@ -1,10 +1,3 @@
-/*
- * Coordinate.cpp
- *
- *  Created on: 17 Sep 2014
- *      Author: Jacques
- */
-
 #include "Coordinate.h"
 Coordinate::Coordinate() :
 		_x(0),

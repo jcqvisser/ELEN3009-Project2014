@@ -1,8 +1,3 @@
-/*
- * Rocket.cpp
- *
- */
-
 #include "Rocket.h"
 
 Rocket::Rocket() :

@@ -1,10 +1,3 @@
-/*
- * ImmovableCrate.cpp
- *
- *  Created on: 27 Sep 2014
- *      Author: Jacques
- */
-
 #include "ImmovableCrate.h"
 
 ImmovableCrate::ImmovableCrate() :

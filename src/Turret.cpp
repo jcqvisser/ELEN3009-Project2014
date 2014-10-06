@@ -1,10 +1,3 @@
-/*
- * Turret.cpp
- *
- *  Created on: 30 Sep 2014
- *      Author: Jacques
- */
-
 #include "Turret.h"
 
 

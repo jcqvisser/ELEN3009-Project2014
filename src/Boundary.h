@@ -1,10 +1,3 @@
-/*
- * Boundary.h
- *
- *  Created on: 28 Sep 2014
- *      Author: Jacques
- */
-
 #ifndef BOUNDARY_H_
 #define BOUNDARY_H_
 #include "CollisionManager.h"

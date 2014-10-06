@@ -1,10 +1,3 @@
-/*
- * Concrete.cpp
- *
- *  Created on: 04 Oct 2014
- *      Author: Jacques
- */
-
 #include "Concrete.h"
 
 Concrete::Concrete() :

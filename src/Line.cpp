@@ -1,10 +1,3 @@
-/*
- * Line.cpp
- *
- *  Created on: 17 Sep 2014
- *      Author: Jacques
- */
-
 #include "Line.h"
 
 Line::~Line() {}

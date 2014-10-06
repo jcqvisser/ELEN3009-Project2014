@@ -1,8 +1,3 @@
-/*
- * Crate.cpp
- *
- */
-
 #include "Crate.h"
 
 Crate::Crate() :

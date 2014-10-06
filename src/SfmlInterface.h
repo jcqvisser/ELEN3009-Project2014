@@ -1,10 +1,3 @@
-/*
- * SfmlInterface.h
- *
- *  Created on: 27 Sep 2014
- *      Author: Jacques
- */
-
 #ifndef SFMLINTERFACE_H_
 #define SFMLINTERFACE_H_
 #include "GameLogic.h"

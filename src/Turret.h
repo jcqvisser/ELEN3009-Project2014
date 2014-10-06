@@ -1,10 +1,3 @@
-/*
- * Turret.h
- *
- *  Created on: 30 Sep 2014
- *      Author: Jacques
- */
-
 #ifndef TURRET_H_
 #define TURRET_H_
 #include "CollisionManager.h"

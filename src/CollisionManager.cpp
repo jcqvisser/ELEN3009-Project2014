@@ -1,8 +1,3 @@
-/*
- * CollisionManager.cpp
- *
- */
-
 #include "CollisionManager.h"
 
 CollisionManager::~CollisionManager() { }

@@ -1,8 +1,3 @@
-/*
- * CollisionManager.h
- *
- */
-
 #ifndef COLLISIONMANAGER_H_
 #define COLLISIONMANAGER_H_
 #include "Collision.h"

@@ -1,10 +1,3 @@
-/*
- * GameObject.cpp
- *
- *  Created on: 17 Sep 2014
- *      Author: Jacques
- */
-
 #include "GameObject.h"
 #include <time.h>
 

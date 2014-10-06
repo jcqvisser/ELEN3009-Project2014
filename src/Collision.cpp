@@ -1,10 +1,3 @@
-/*
- * Collision.cpp
- *
- *  Created on: 19 Sep 2014
- *      Author: Jacques
- */
-
 #include "Collision.h"
 
 
