@@ -2,7 +2,6 @@
  * GameObject.h
  *
  *  Created on: 17 Sep 2014
- *      Author: Jacques
  */
 
 #ifndef GAMEOBJECT_H_
@@ -278,28 +277,29 @@ public:
 	Line intersectingLine(const Line& penetratingLine);
 
 protected:
-	vector<Triangle> _triangles;
+	vector<Triangle> _triangles; //< A vector of Triangle objects that collectively define the GameObject's surface area.
 
+	/*!
+	*	\brief Applies linear position and velocity changes to the GameObject.
+	*	\param time A floating point number representing the time over which to simulate the object moving.
+	*
+	*	This function is used in GameObject::animate(const float& time)
+	*/
 	bool animateLinear(const float& time);
 
-	float _mass = 1;
-	Coordinate _centerOfMass{0, 0};
+	float _mass = 1; //< Represents the mass of the GameObject.
+	Coordinate _centerOfMass{0, 0}; //< A Coordinate representing the center of mass of the GameObject
+	Coordinate _forward{0, 1};	//< A Coordinate representing the orientation of the GameObject as a vector.
+	Coordinate _velocityLinear{0, 0}; //< A Coordinate representing the linear velocity vector of the GameObject
+	Coordinate _forceLinear{0, 0}; //< A Coordinate representing the linear force vector currently acting on the GameObject
+	float _dragCoeff = 1; //< A floating point value representing the drag coefficient of the GameObject, used in simluating it's movement.
+	float _forceAngular = 0; //< A floating point number representing the angular force currently acting in the GameObject
 
-	Coordinate _forward{0, 1};
-	Coordinate _velocityLinear{0, 0};
-	Coordinate _forceLinear{0, 0};
-	float _dragCoeff = 1;
+	float _health = 100; //< The current health of the GameObject
+	float _birthTime = 0;	//< The time at which the GameObject is created, realtice to when the program was started
+	float _timeOfDeath = 0; //< The time at which the object's health last dropped to 0 or below.
+	float _lifeTime = 0; //< A limit on how long the object may have more than 0 health for.
 
-	float _forceAngular = 0;
-
-	float _health = 100;
-
-	float _birthTime = 0;
-	float _timeOfDeath = 0;
-	float _lifeTime = 0;
-
-	bool _glued = false;
-
+	bool _glued = false; //< A boolean value representing whether the object may move or not. False=may not move.
 };
-
 #endif /* GAMEOBJECT_H_ */
