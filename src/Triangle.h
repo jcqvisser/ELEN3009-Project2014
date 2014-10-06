@@ -4,8 +4,15 @@
 #include <vector>
 
 using namespace std;
-//Exception Classes
+
+/*!
+*	\brief Exception Class: Thrown from Triangle::getCoordinate(const int coord) const
+*/
 class argument_exceeds_number_of_coordinates{};
+
+/*!
+*	\brief Exception Class: Thrown from Triangle::getCoordinate(const int coord) const
+*/
 class provide_positive_argument{};
 
 /*! \class Triangle

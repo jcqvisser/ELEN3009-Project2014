@@ -4,7 +4,7 @@
 #define CRATEMASS 5
 
 /*!
-*	/brief Represents a movable crate object.
+*	\brief Represents a movable crate object.
 */
 class Crate : public GameObject
 {

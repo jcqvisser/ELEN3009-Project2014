@@ -3,7 +3,7 @@
 #include "CollisionManager.h"
 
 /*!
-*	/brief Defined to automate the declaration of the hitbox triangles.
+*	\brief Defined to automate the declaration of the hitbox triangles.
 */
 class Concrete : public GameObject
 {

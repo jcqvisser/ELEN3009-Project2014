@@ -18,6 +18,9 @@
 #define INF 200000
 #define NOTHING 0.001
 
+/*!
+*	\brief Exception Class: Children of which are thrown when some problem occurs with a collision.
+*/
 class Collision_Exception{};
 
 /*! \class Coordinate
@@ -190,6 +193,7 @@ public:
 	
 	/*! \brief Setter for _y
 	*	\param y This value is assigned to _y of the Coordinate object.
+	*
 	*/
 	void setY(float y);
 };

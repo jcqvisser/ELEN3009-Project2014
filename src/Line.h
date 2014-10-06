@@ -4,7 +4,14 @@
 #include <iostream>
 #include <memory>
 
+/*!
+*	\brief Exception Class: Thrown from Line::intersects(const Line& line) const and Line::intersectionPt(const Line& ln) const
+*/
 class Lines_Do_Not_Intersect{};
+
+/*!
+*	\brief Exception Class: Depreciated
+*/
 class Infinite_Slope{};
 
 /*! \class Line

@@ -5,32 +5,32 @@
 #include <iterator>
 
 /*!
- * 	\throws This class gets thrown as an exception when a glued object is moved.
+ * 	\brief Exception Class: gets thrown as an exception when a glued object is moved.
  */
 class object_is_glued_and_cannot_move{};
 
 /*!
- * 	\throws This class is thrown as an exception by intersectingLine(const Line& penetratingLine) when no lines intersect.
+ * 	\brief Exception Class: thrown as an exception by intersectingLine(const Line& penetratingLine) when no lines intersect.
  */
 class No_Line_Intersects{};
 
 /*!
- * \throws This class is thrown as an exception by avgCoordInside(const GameObject& gO) when no Coordinates are found inside of the GameObject
+ * \brief TException Class: thrown as an exception by avgCoordInside(const GameObject& gO) when no Coordinates are found inside of the GameObject
  */
 class No_Coordinates_Inside{};
 
 /*!
- * \throws This class is thrown as an exception when a rocket is fired during the rocket fire refractory period.
+ * \brief Exception Class: thrown as an exception when a rocket is fired during the rocket fire refractory period.
  */
 class Rocket_Fire_Frequency_too_High{};
 
 /*!
- * 	\throws This class is thrown as an exception when a mine is planted during the mine plant refractory period.
+ * 	\brief Exception Class: thrown as an exception when a mine is planted during the mine plant refractory period.
  */
 class Mine_Plant_frequency_too_High{};
 
 /*!
- * 	\throws This Class is thrown as an exception when a mine is planted when there are no mines left.
+ * 	\brief Exception Class: thrown as an exception when a mine is planted when there are no mines left.
  */
 class Out_of_Mines{};
 

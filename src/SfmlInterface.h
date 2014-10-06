@@ -7,6 +7,9 @@
 using namespace sf;
 using namespace std;
 
+/*!
+*	\brief A class that acts as the connection between SFML and the logic layer.
+*/
 class SfmlInterface {
 public:
 	/*!

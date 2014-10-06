@@ -29,6 +29,9 @@ enum playerControl
 	RESPAWN
 };
 
+/*!
+*	\brief A class representing the amalgamation of all the logical elements of this game.
+*/
 class GameLogic {
 public:
 	GameLogic(); /**< Default Constructor*/

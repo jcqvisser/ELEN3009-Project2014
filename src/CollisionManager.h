@@ -2,6 +2,11 @@
 #define COLLISIONMANAGER_H_
 #include "Collision.h"
 
+/*!
+*	\brief Handles Collisions between objects.
+*
+*	Creates, resolves and erases collisions between a set of GameObjects.
+*/
 class CollisionManager {
 public:
 	CollisionManager(){}; /**< Default Constructor*/

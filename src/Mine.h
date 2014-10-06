@@ -3,6 +3,8 @@
 #include "CollisionManager.h"
 
 /*!
+*	\brief Represents an immovable mine object
+*
 *	Mine inherits from GameObject, it serves as an easy way of declaring the collision triangle for a GameObject so that it represents a mine.
 */
 class Mine : public GameObject

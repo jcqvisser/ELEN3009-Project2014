@@ -2,9 +2,19 @@
 #define COLLISION_H_
 #include "GameObject.h"
 
+/*!
+*	\brief Exception Class: Thrown when no collision is detected between two GameObject objects.
+*/
 class No_Collision : public Collision_Exception {};
+
+/*!
+*	\brief Exception Class: Thrown when two objects collide but neither of them have an apreciable velocity.
+*/
 class object_Rotated_Into_Collision : public Collision_Exception {};
 
+/*!
+*	\brief This class represents a collision between two objects, it may be resolved.
+*/
 class Collision {
 public:
 	/*!
